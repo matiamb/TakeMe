@@ -40,6 +40,7 @@
         android:id="@+id/textfield_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="?attr/textInputFilledStyle"
         android:hint="User"
         android:textColorHint="@color/white"
         app:layout_constraintBottom_toTopOf="@id/textfield_password"
@@ -50,7 +51,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#5D21BE" />
+            android:background="#5D21BE"
+            />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -58,10 +60,11 @@
         android:id="@+id/textfield_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="?attr/textInputFilledStyle"
         android:hint="Password"
         android:textColorHint="@color/white"
-
         app:endIconMode="password_toggle"
+        app:endIconTint="@color/white"
         app:layout_constraintBottom_toTopOf="@id/check_rememberme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -115,7 +118,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Don't have an account?"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@id/btn_google"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -140,6 +142,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Facebook"
+
+        app:icon="@drawable/ic_facebook"
         app:layout_constraintBottom_toTopOf="@id/btn_signup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_google"
