@@ -127,22 +127,27 @@
     <Button
         android:id="@+id/btn_google"
         style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Google"
+        android:layout_marginEnd="5dp"
         app:icon="@drawable/icon_google"
+        app:iconGravity="textStart"
+        app:iconTintMode="multiply"
         app:layout_constraintBottom_toTopOf="@id/btn_signup"
         app:layout_constraintEnd_toStartOf="@id/btn_facebook"
-        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_noAccount" />
+        app:layout_constraintTop_toBottomOf="@id/txt_noAccount"
+        app:layout_constraintHorizontal_chainStyle="packed"/>
 
     <Button
         android:id="@+id/btn_facebook"
-        style="@style/Widget.Material3.Button.ElevatedButton"
-        android:layout_width="wrap_content"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Facebook"
+        app:iconTintMode="multiply"
+        app:iconGravity="textStart"
         app:icon="@drawable/ic_facebook"
         app:layout_constraintBottom_toTopOf="@id/btn_signup"
         app:layout_constraintEnd_toEndOf="parent"
