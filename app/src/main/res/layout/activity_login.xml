@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#4100AD"
     android:padding="20dp"
-    tools:context=".LoginActivity">
+    tools:context=".login.view.LoginActivity">
 
     <ImageView
         android:id="@+id/company_icon"
