@@ -6,4 +6,5 @@
     </style>
 
     <style name="Theme.TakeMe" parent="Base.Theme.TakeMe" />
+
 </resources>

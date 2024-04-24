@@ -1,15 +1,13 @@
 package contract
 
-interface ILoginContract {
-    interface LoginView{
-        fun showErrorMessage(message: String)
+interface LoginContract {
+    interface LoginView: BaseContract.IBaseView{
         fun openMapsScreen()
     }
 
-    interface ILoginPresenter{
+    interface ILoginPresenter<T: BaseContract.IBaseView>: BaseContract.IBasePresenter<T> {
         fun loginWithUserAndPass(user: String, password: String)
         fun loginWithProvider(provider: String)
-        fun attachView(loginView: LoginView)
     }
     interface ILoginModel{
         fun loginWithUserAndPass(user: String, password: String):Boolean

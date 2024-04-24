@@ -1,8 +1,8 @@
 package com.gfreeman.takeme.login.model
 
-import contract.ILoginContract
+import contract.LoginContract
 
-class LoginRepository: ILoginContract.ILoginModel {
+class LoginRepository: LoginContract.ILoginModel {
     override fun loginWithUserAndPass(user: String, password: String): Boolean {
         return false
     }

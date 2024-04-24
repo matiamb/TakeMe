@@ -1,21 +1,22 @@
 package com.gfreeman.takeme.login.view
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.gfreeman.takeme.R
 import com.gfreeman.takeme.login.model.LoginRepository
 import com.gfreeman.takeme.login.presenter.LoginPresenter
 import com.google.android.material.textfield.TextInputLayout
-import contract.ILoginContract
+import contract.LoginContract
+import home.view.HomeActivity
 
-class LoginActivity : AppCompatActivity(), ILoginContract.LoginView {
+class LoginActivity : AppCompatActivity(), LoginContract.LoginView {
 
-    lateinit var loginPresenter: ILoginContract.ILoginPresenter
+    lateinit var loginPresenter: LoginContract.ILoginPresenter<LoginContract.LoginView>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -51,8 +52,13 @@ class LoginActivity : AppCompatActivity(), ILoginContract.LoginView {
     override fun showErrorMessage(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-
     override fun openMapsScreen() {
-        TODO("Not yet implemented")
+        val intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    override fun getViewContext(): Context {
+        return this
     }
 }
