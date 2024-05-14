@@ -3,4 +3,6 @@
     <string name="nav_home_btn1">Favorites</string>
     <string name="nav_home_btn2">Map</string>
     <string name="nav_home_btn3">Profile</string>
+    <string name="sheet_home_search_hint">Where to?</string>
+
 </resources>
