@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/page_1"
+        android:id="@+id/nav_home_item1"
         android:enabled="true"
         android:icon="@drawable/favorite"
-        android:title="test"/>
+        android:title="@string/nav_home_btn1"/>
     <item
-        android:id="@+id/page_2"
+        android:id="@+id/nav_home_item2"
         android:enabled="true"
         android:icon="@drawable/map_arrow_square"
-        android:title="test"/>
+        android:title="@string/nav_home_btn2"/>
     <item
-        android:id="@+id/page_3"
+        android:id="@+id/nav_home_item3"
         android:enabled="true"
         android:icon="@drawable/profile_circle"
-        android:title="test"/>
+        android:title="@string/nav_home_btn3"/>
 </menu>
