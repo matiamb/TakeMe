@@ -8,12 +8,16 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.gfreeman.takeme.R
-import com.gfreeman.takeme.login.view.map.MapFragment
+import home.view.map.MapFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
+import home.view.fav.FavFragment
+import home.view.profile.ProfileFragment
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var mapFragment: Fragment
+    private lateinit var favFragment: Fragment
+    private lateinit var profileFragment: Fragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -28,13 +32,14 @@ class HomeActivity : AppCompatActivity() {
     private fun configureViews(){
 
         mapFragment = MapFragment()
+        favFragment = FavFragment()
+        profileFragment = ProfileFragment()
         loadFragment(mapFragment)
         val bottomNavbarView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavbarView.setOnItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.nav_home_item1 -> {
-                    // Respond to navigation item 1 click
-
+                    loadFragment(favFragment)
                     true
                 }
                 R.id.nav_home_item2 -> {
@@ -42,11 +47,13 @@ class HomeActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_home_item3 -> {
+                    loadFragment(profileFragment)
                     true
                 }
                 else -> false
             }
         }
+        bottomNavbarView.selectedItemId = R.id.nav_home_item2
     }
     private fun loadFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()

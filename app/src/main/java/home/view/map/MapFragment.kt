@@ -1,4 +1,4 @@
-package com.gfreeman.takeme.login.view.map
+package home.view.map
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -20,7 +20,7 @@ class MapFragment : Fragment() {
         val bottomSheet = view.findViewById<View>(R.id.map_bottom_sheet)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         bottomSheetBehavior.isHideable = false
-        bottomSheetBehavior.peekHeight = resources.getDimensionPixelSize(com.google.android.material.R.dimen.design_bottom_sheet_peek_height_min)
+        bottomSheetBehavior.peekHeight = resources.getDimensionPixelSize(com.google.android.material.R.dimen.m3_searchbar_height)
         return view
     }
 

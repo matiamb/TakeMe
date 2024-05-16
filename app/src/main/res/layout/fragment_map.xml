@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".login.view.map.MapFragment">
+    tools:context="home.view.map.MapFragment">
 
     <LinearLayout
         android:id="@+id/map_bottom_sheet"
@@ -17,9 +17,10 @@
 
         <com.google.android.material.bottomsheet.BottomSheetDragHandleView
             android:id="@+id/drag_handle"
+            style="@style/Widget.Material3.BottomSheet"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.Material3.BottomSheet"/>
+            android:layout_height="15dp"
+            android:paddingBottom="0dp" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -35,7 +36,8 @@
                 android:id="@+id/search_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/sheet_home_search_hint" />
+                android:hint="@string/sheet_home_search_hint"
+                />
         </com.google.android.material.appbar.AppBarLayout>
 
         <com.google.android.material.search.SearchView
