@@ -6,6 +6,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="home.view.map.MapFragment">
 
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/map"
+        tools:context="home.view.map.MapFragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment" />
+
     <LinearLayout
         android:id="@+id/map_bottom_sheet"
         style="@style/Widget.Material3.BottomSheet"

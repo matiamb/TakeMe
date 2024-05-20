@@ -1,23 +1,27 @@
 package home.view
 
 import android.os.Bundle
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.gfreeman.takeme.R
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import home.view.map.MapFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationBarView
 import home.view.fav.FavFragment
 import home.view.profile.ProfileFragment
 
 class HomeActivity : AppCompatActivity() {
-    private lateinit var mapFragment: Fragment
+    private lateinit var searchFragment: Fragment
     private lateinit var favFragment: Fragment
     private lateinit var profileFragment: Fragment
+    private lateinit var mMap: GoogleMap
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -31,10 +35,10 @@ class HomeActivity : AppCompatActivity() {
     }
     private fun configureViews(){
 
-        mapFragment = MapFragment()
+        searchFragment = MapFragment()
         favFragment = FavFragment()
         profileFragment = ProfileFragment()
-        loadFragment(mapFragment)
+        loadFragment(searchFragment)
         val bottomNavbarView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavbarView.setOnItemSelectedListener { item ->
             when(item.itemId) {
@@ -43,7 +47,7 @@ class HomeActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_home_item2 -> {
-                    loadFragment(mapFragment)
+                    loadFragment(searchFragment)
                     true
                 }
                 R.id.nav_home_item3 -> {
@@ -60,6 +64,5 @@ class HomeActivity : AppCompatActivity() {
         transaction.replace(R.id.home_container, fragment)
         transaction.commit()
     }
-
 
 }
