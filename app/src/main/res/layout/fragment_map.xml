@@ -12,59 +12,20 @@
         android:id="@+id/map_fragment"
         tools:context="home.view.map.MapFragment"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
-
-    <LinearLayout
-        android:id="@+id/map_bottom_sheet"
-        style="@style/Widget.Material3.BottomSheet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-
-        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
-            android:id="@+id/drag_handle"
-            style="@style/Widget.Material3.BottomSheet"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="0dp" />
-
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-            <!-- Screen content goes here. -->
-            <com.google.android.material.appbar.AppBarLayout
+            <com.google.android.material.search.SearchBar
+                android:id="@+id/search_bar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <com.google.android.material.search.SearchBar
-                    android:id="@+id/search_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:menu="@menu/search_bar_menu"
-                    android:hint="@string/sheet_home_search_hint"
-                    />
-            </com.google.android.material.appbar.AppBarLayout>
-        </androidx.core.widget.NestedScrollView>
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                app:menu="@menu/search_bar_menu"
+                android:hint="@string/sheet_home_search_hint"
+                />
+            <com.google.android.material.search.SearchView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/sheet_home_search_hint"
+                app:layout_anchor="@id/search_bar">
+            </com.google.android.material.search.SearchView>
 
-        <com.google.android.material.search.SearchView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="test"
-            app:layout_anchor="@id/search_bar">
-        </com.google.android.material.search.SearchView>
-
-        <Button
-            android:id="@+id/bottomsheet_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="test"/>
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="test"/>
-
-    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

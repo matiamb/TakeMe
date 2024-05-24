@@ -25,10 +25,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_map, container, false)
-        val bottomSheet = view.findViewById<View>(R.id.map_bottom_sheet)
+        /*val bottomSheet = view.findViewById<View>(R.id.map_bottom_sheet)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         bottomSheetBehavior.isHideable = false
-        bottomSheetBehavior.peekHeight = resources.getDimensionPixelSize(com.google.android.material.R.dimen.m3_searchbar_height)
+        bottomSheetBehavior.peekHeight = resources.getDimensionPixelSize(com.google.android.material.R.dimen.m3_searchbar_height)*/
         configureMap()
         return view
     }
