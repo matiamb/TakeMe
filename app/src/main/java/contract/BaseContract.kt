@@ -8,6 +8,6 @@ interface BaseContract {
         fun getViewContext(): Context
     }
     interface IBasePresenter<T: IBaseView>{
-        fun attachView(loginView: T)
+        fun attachView(view: T)
     }
 }

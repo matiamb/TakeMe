@@ -14,12 +14,21 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.search.SearchBar
+import com.google.android.material.search.SearchView
+import contract.BaseContract
+import contract.MapContract
+import home.model.map.Place
+
+import home.model.map.MapRepository
+import home.presenter.map.MapPresenter
 
 
-class MapFragment : Fragment(), OnMapReadyCallback {
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
+class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseContract.IBaseView> {
+    //private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
     //private lateinit var placesSearchView: CustomSearchView
-
+    private lateinit var mapPresenter: MapContract.IMapPresenter<MapContract.MapView<BaseContract.IBaseView>>
+    private lateinit var googleMap: GoogleMap
+    private lateinit var searchView: SearchView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,8 +38,16 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         bottomSheetBehavior.isHideable = false
         bottomSheetBehavior.peekHeight = resources.getDimensionPixelSize(com.google.android.material.R.dimen.m3_searchbar_height)*/
-        configureMap()
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        searchView = view.findViewById(R.id.map_search_view)
+        super.onViewCreated(view, savedInstanceState)
+        configureMap()
+        initPresenter()
+        //TODO IMPLEMENTAR LA BUSQUEDA CON LA BARRA Y QUE MUESTRE RESULTADOS
+        //searchView.setOnMenuItemClickListener()
     }
 
     private fun configureMap(){
@@ -48,6 +65,26 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             .tilt(30f)            // Sets the tilt of the camera to 30 degrees
             .build()              // Creates a CameraPosition from the builder
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
+
+    private fun initPresenter(){
+        val mapModel = MapRepository()
+        mapPresenter = MapPresenter(mapModel)
+        mapPresenter.attachView(this)
+    }
+
+    override fun showSearchResults(placeResults: List<Place>) {
+        TODO("Not yet implemented")
+        mapPresenter.performSearchPlaces(searchView.text.toString())
+
+    }
+
+    override fun drawRoute(route: List<LatLng>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getParentView(): BaseContract.IBaseView {
+        TODO("Not yet implemented")
     }
 
 }

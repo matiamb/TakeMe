@@ -21,9 +21,11 @@
                 android:hint="@string/sheet_home_search_hint"
                 />
             <com.google.android.material.search.SearchView
+                android:id="@+id/map_search_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/sheet_home_search_hint"
+                app:menu="@menu/search_bar_menu"
                 app:layout_anchor="@id/search_bar">
             </com.google.android.material.search.SearchView>
 
