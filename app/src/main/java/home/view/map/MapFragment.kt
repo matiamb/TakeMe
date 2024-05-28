@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import androidx.fragment.app.Fragment
 import com.gfreeman.takeme.R
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -12,8 +14,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.search.SearchBar
 import com.google.android.material.search.SearchView
 import contract.BaseContract
 import contract.MapContract
@@ -29,6 +29,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     private lateinit var mapPresenter: MapContract.IMapPresenter<MapContract.MapView<BaseContract.IBaseView>>
     private lateinit var googleMap: GoogleMap
     private lateinit var searchView: SearchView
+    private lateinit var listView: ListView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,13 +40,30 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         bottomSheetBehavior.isHideable = false
         bottomSheetBehavior.peekHeight = resources.getDimensionPixelSize(com.google.android.material.R.dimen.m3_searchbar_height)*/
         return view
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         searchView = view.findViewById(R.id.map_search_view)
+        listView = view.findViewById<ListView>(R.id.map_list_view)
+        val text = searchView.text
         super.onViewCreated(view, savedInstanceState)
         configureMap()
         initPresenter()
+        val query: ArrayList<Place> = ArrayList(showSearchResults(text.toString()))
+        val searchResults: ArrayList<String> = query.mapTo(arrayListOf()){
+            it.displayName
+        }
+        searchView.editText.setOnEditorActionListener { v, actionId, event ->
+                    //adapter?.filter?.filter(text)
+            val adapter = activity?.let {
+                ArrayAdapter<String>(
+                    it, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, searchResults
+                )
+            }
+            listView.adapter = adapter
+            false
+        }
         //TODO IMPLEMENTAR LA BUSQUEDA CON LA BARRA Y QUE MUESTRE RESULTADOS
         //searchView.setOnMenuItemClickListener()
     }
@@ -73,18 +91,23 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         mapPresenter.attachView(this)
     }
 
-    override fun showSearchResults(placeResults: List<Place>) {
-        TODO("Not yet implemented")
-        mapPresenter.performSearchPlaces(searchView.text.toString())
-
+    override fun showSearchResults(search: String): List<Place> {
+        //TODO("Not yet implemented")
+        return mapPresenter.performSearchPlaces(searchView.text.toString())
     }
 
     override fun drawRoute(route: List<LatLng>) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
+    }
+
+    override fun showResult(search: String): String {
+        val result = mapPresenter.getResult(search)
+        return result
     }
 
     override fun getParentView(): BaseContract.IBaseView {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
+        return getParentView()
     }
 
 }

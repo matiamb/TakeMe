@@ -5,7 +5,7 @@ import contract.MapContract
 
 class MapRepository: MapContract.MapModel {
     override fun getPlacesFromSearch(placeToSearch: String): List<Place> {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
         return listOf(
             Place(
                 "Abasto, Balvanera, Buenos Aires, Comuna 3, Autonomous City of Buenos Aires, C1193AAF, Argentina",
@@ -15,7 +15,7 @@ class MapRepository: MapContract.MapModel {
     }
 
     override fun getRoute(startPlace: Place, destination: Place): List<Point> {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
         return listOf(
             Point(-34.679437, -58.553777),
             Point(
@@ -42,8 +42,12 @@ class MapRepository: MapContract.MapModel {
     }
 
     override fun getCurrentPosition(): Point {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
         return Point(-34.679437, -58.553777)
+    }
+
+    override fun getResult(search: String): String {
+        return "Test text from backend"
     }
 
 }

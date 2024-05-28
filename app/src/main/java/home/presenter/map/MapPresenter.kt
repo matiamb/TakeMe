@@ -18,18 +18,19 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
         this.mapView = view
     }
 
-    override fun performSearchPlaces(placeToSearch: String) {
-        TODO("Buscar corutinas")
-        CoroutineScope(Dispatchers.IO).launch {
+    override fun performSearchPlaces(placeToSearch: String): List<Place> {
+        //TODO("Buscar corutinas")
+        /*CoroutineScope(Dispatchers.IO).launch {
             val results = mapModel.getPlacesFromSearch(placeToSearch)
             withContext(Dispatchers.Main){
                 mapView.showSearchResults(results)
             }
-        }
+        }*/
+        return mapModel.getPlacesFromSearch(placeToSearch)
     }
 
     override fun getRoute(destination: Place) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
         CoroutineScope(Dispatchers.IO).launch {
             val startPlace = Place("MyPosition", getCurrentPosition())
             val route = mapModel.getRoute(startPlace, destination).map {
@@ -42,10 +43,14 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     }
 
     override suspend fun getCurrentPosition(): Point {
-        TODO("googlear Deferred y metodo async de corrutinas")
+        //TODO("googlear Deferred y metodo async de corrutinas")
         val job: Deferred<Point> = CoroutineScope(Dispatchers.IO).async {
             mapModel.getCurrentPosition()
         }
         return job.await()
+    }
+
+    override fun getResult(search: String): String {
+        return mapModel.getResult(search)
     }
 }

@@ -27,7 +27,12 @@
                 android:hint="@string/sheet_home_search_hint"
                 app:menu="@menu/search_bar_menu"
                 app:layout_anchor="@id/search_bar">
-            </com.google.android.material.search.SearchView>
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/map_list_view">
 
+                </ListView>
+            </com.google.android.material.search.SearchView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

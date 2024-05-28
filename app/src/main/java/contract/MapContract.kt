@@ -6,19 +6,22 @@ import home.model.map.Point
 
 interface MapContract {
     interface MapView <T : BaseContract.IBaseView>: FragmentBaseContract.IFragmentBaseView<T>{
-        fun showSearchResults(placeResults: List<Place>)
+        fun showSearchResults(search: String): List<Place>
         fun drawRoute(route: List<LatLng>)
+        fun showResult(search: String): String
     }
     interface IMapPresenter<T: FragmentBaseContract.IFragmentBaseView<*>>: FragmentBaseContract.IBasePresenter<T>{
-        fun performSearchPlaces(placeToSearch: String)
+        fun performSearchPlaces(placeToSearch: String): List<Place>
         fun getRoute(destination: Place)
         //TODO buscar cual es la funcion del suspend
         suspend fun getCurrentPosition(): Point
+        fun getResult(search: String): String
     }
 
     interface MapModel {
         fun getPlacesFromSearch(placeToSearch: String): List<Place>
         fun getRoute(startPlace: Place, destination: Place): List <Point>
         fun getCurrentPosition(): Point
+        fun getResult(search: String): String
     }
 }
