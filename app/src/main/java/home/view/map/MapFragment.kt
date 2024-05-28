@@ -50,12 +50,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         super.onViewCreated(view, savedInstanceState)
         configureMap()
         initPresenter()
+        //Recibo la lista de tipo places desde el backend
         val query: ArrayList<Place> = ArrayList(showSearchResults(text.toString()))
+        //con el mapTo solo busco la propiedad que me interesa de la lista
         val searchResults: ArrayList<String> = query.mapTo(arrayListOf()){
             it.displayName
         }
+        //Esto es para setear un listener en el searchView de Material3 ya que no tiene el onQueryTextListener
         searchView.editText.setOnEditorActionListener { v, actionId, event ->
-                    //adapter?.filter?.filter(text)
+            //TODO implementar cuando hago click en la opcion de busqueda, me lleve o dibuje la ruta en el mapa
+            //Esto comentado de abajo es para filtrar con lo que se escriba en el editText
+            //adapter?.filter?.filter(text)
+            //Esto es para mostrar el ListView dentro de un Fragment
             val adapter = activity?.let {
                 ArrayAdapter<String>(
                     it, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, searchResults
@@ -64,8 +70,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             listView.adapter = adapter
             false
         }
-        //TODO IMPLEMENTAR LA BUSQUEDA CON LA BARRA Y QUE MUESTRE RESULTADOS
-        //searchView.setOnMenuItemClickListener()
     }
 
     private fun configureMap(){
@@ -92,7 +96,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     }
 
     override fun showSearchResults(search: String): List<Place> {
-        //TODO("Not yet implemented")
         return mapPresenter.performSearchPlaces(searchView.text.toString())
     }
 
@@ -107,7 +110,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
 
     override fun getParentView(): BaseContract.IBaseView {
         //TODO("Not yet implemented")
-        return getParentView()
+        return activity as BaseContract.IBaseView
     }
 
 }
