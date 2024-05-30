@@ -20,6 +20,7 @@ import contract.MapContract
 import home.model.map.Place
 
 import home.model.map.MapRepository
+import home.model.map.Point
 import home.presenter.map.MapPresenter
 
 
@@ -68,8 +69,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
                 )
             }
             listView.adapter = adapter
+            listView.setOnItemClickListener { parent, view, position, id ->
+                searchView.hide()
+            }
             false
         }
+
+
     }
 
     private fun configureMap(){
@@ -78,15 +84,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     }
 
     override fun onMapReady(map: GoogleMap) {
-        val mountainView = LatLng(37.4, -122.1)
-        // Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
-        val cameraPosition = CameraPosition.Builder()
-            .target(mountainView) // Sets the center of the map to Mountain View
-            .zoom(17f)            // Sets the zoom
-            .bearing(90f)         // Sets the orientation of the camera to east
-            .tilt(30f)            // Sets the tilt of the camera to 30 degrees
-            .build()              // Creates a CameraPosition from the builder
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+        googleMap = map
+        val initialFakePoint = LatLng(-34.679437, -58.553777)
+        MapsManager.addMarkerToMap(googleMap, initialFakePoint)
+        MapsManager.centerMapIntoLocation(googleMap, initialFakePoint)
     }
 
     private fun initPresenter(){
@@ -100,7 +101,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     }
 
     override fun drawRoute(route: List<LatLng>) {
-        //TODO("Not yet implemented")
+        context?.let { safeContext ->
+            MapsManager.addRouteToMap(safeContext, googleMap, route)
+            MapsManager.alignMapToRoute(googleMap, route)
+        }
     }
 
     override fun showResult(search: String): String {
