@@ -65,7 +65,7 @@ object MapsManager {
             .bearing(90f)         // Sets the orientation of the camera to east
             .tilt(30f)            // Sets the tilt of the camera to 30 degrees
             .build()
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 10000, null)
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2500, null)
     }
     fun addMarkerToMap(googleMap: GoogleMap, initialPoint: LatLng, title: String = "No title") {
         googleMap.addMarker(

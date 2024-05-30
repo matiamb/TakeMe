@@ -59,7 +59,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         }
         //Esto es para setear un listener en el searchView de Material3 ya que no tiene el onQueryTextListener
         searchView.editText.setOnEditorActionListener { v, actionId, event ->
-            //TODO implementar cuando hago click en la opcion de busqueda, me lleve o dibuje la ruta en el mapa
             //Esto comentado de abajo es para filtrar con lo que se escriba en el editText
             //adapter?.filter?.filter(text)
             //Esto es para mostrar el ListView dentro de un Fragment
@@ -69,8 +68,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
                 )
             }
             listView.adapter = adapter
+            //click listener para los items de la lista
             listView.setOnItemClickListener { parent, view, position, id ->
                 searchView.hide()
+                //TODO una vez realizada la busqueda, se borra la opcion correctamente,
+                // pero si hago otra busqueda el listview queda vacio
+                adapter?.clear()
+                mapPresenter.getRoute(query[0])
             }
             false
         }
@@ -104,6 +108,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         context?.let { safeContext ->
             MapsManager.addRouteToMap(safeContext, googleMap, route)
             MapsManager.alignMapToRoute(googleMap, route)
+            MapsManager.addMarkerToMap(googleMap, route.last())
         }
     }
 
