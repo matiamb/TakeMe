@@ -68,12 +68,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
                 )
             }
             listView.adapter = adapter
+            //TODO NO CONECTA Y NO FILTRA POR TEXTO LA API PARA BUSCAR LUGARES
+            adapter?.filter?.filter(text)
             //click listener para los items de la lista
             listView.setOnItemClickListener { parent, view, position, id ->
                 searchView.hide()
                 //TODO una vez realizada la busqueda, se borra la opcion correctamente,
                 // pero si hago otra busqueda el listview queda vacio
-                adapter?.clear()
+                //adapter?.clear()
                 mapPresenter.getRoute(query[0])
             }
             false

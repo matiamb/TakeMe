@@ -4,14 +4,20 @@ package home.model.map
 import contract.MapContract
 
 class MapRepository: MapContract.MapModel {
-    override fun getPlacesFromSearch(placeToSearch: String): List<Place> {
+    override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place> {
         //TODO("Not yet implemented")
-        return listOf(
+        /*return listOf(
             Place(
                 "Abasto, Balvanera, Buenos Aires, Comuna 3, Autonomous City of Buenos Aires, C1193AAF, Argentina",
                 Point("-34.6037283".toDouble(), "-58.4125926".toDouble())
             )
-        )
+        )*/
+        return ApiServiceProvider.searchServiceApi.getPlacesFromSearch(placeToSearch = placeToSearch)
+            .body()?.map{
+            val convertedLong = it.long.toDouble()
+            val convertedLat = it.lat.toDouble()
+            Place(displayName = it.displayName, point = Point(latitude = convertedLat, longitude = convertedLong))
+        }?: emptyList()
     }
 
     override fun getRoute(startPlace: Place, destination: Place): List<Point> {
