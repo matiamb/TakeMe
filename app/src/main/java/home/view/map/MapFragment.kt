@@ -52,22 +52,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         configureMap()
         initPresenter()
         //Recibo la lista de tipo places desde el backend
-        val query: ArrayList<Place> = ArrayList(showSearchResults(text.toString()))
+        //val query: ArrayList<Place> = ArrayList(showSearchResults(text.toString()))
         //con el mapTo solo busco la propiedad que me interesa de la lista
-        val searchResults: ArrayList<String> = query.mapTo(arrayListOf()){
+        /*val searchResults: ArrayList<String> = query.mapTo(arrayListOf()){
             it.displayName
-        }
+        }*/
         //Esto es para setear un listener en el searchView de Material3 ya que no tiene el onQueryTextListener
         searchView.editText.setOnEditorActionListener { v, actionId, event ->
             //Esto comentado de abajo es para filtrar con lo que se escriba en el editText
             //adapter?.filter?.filter(text)
             //Esto es para mostrar el ListView dentro de un Fragment
-            val adapter = activity?.let {
+            /*val adapter = activity?.let {
                 ArrayAdapter<String>(
                     it, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, searchResults
                 )
-            }
-            listView.adapter = adapter
+            }*/
+            /*listView.adapter = adapter
             //click listener para los items de la lista
             listView.setOnItemClickListener { parent, view, position, id ->
                 searchView.hide()
@@ -75,7 +75,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
                 // pero si hago otra busqueda el listview queda vacio
                 adapter?.clear()
                 mapPresenter.getRoute(query[0])
-            }
+            }*/
+            mapPresenter.performSearchPlaces(text.toString())
             false
         }
 
@@ -100,8 +101,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         mapPresenter.attachView(this)
     }
 
-    override fun showSearchResults(search: String): List<Place> {
-        return mapPresenter.performSearchPlaces(searchView.text.toString())
+    override fun showSearchResults(search: List<Place>){
+        val adapter = activity?.let {
+            ArrayAdapter<String>(
+                it, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, search.mapTo(arrayListOf()){
+                    it.displayName
+                }
+            )
+        }
+        listView.adapter = adapter
+        listView.setOnItemClickListener { parent, view, position, id ->
+            searchView.hide()
+            //TODO una vez realizada la busqueda, se borra la opcion correctamente,
+            // pero si hago otra busqueda el listview queda vacio
+            //adapter?.clear()
+            mapPresenter.getRoute(search[0])
+        }
     }
 
     override fun drawRoute(route: List<LatLng>) {

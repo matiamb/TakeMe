@@ -18,15 +18,15 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
         this.mapView = view
     }
 
-    override fun performSearchPlaces(placeToSearch: String): List<Place> {
+    override fun performSearchPlaces(placeToSearch: String) {
         //TODO("Buscar corutinas")
-        /*CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val results = mapModel.getPlacesFromSearch(placeToSearch)
             withContext(Dispatchers.Main){
                 mapView.showSearchResults(results)
             }
-        }*/
-        return mapModel.getPlacesFromSearch(placeToSearch)
+        }
+        //return mapModel.getPlacesFromSearch(placeToSearch)
     }
 
     override fun getRoute(destination: Place) {
