@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface SearchServiceApi {
-    @GET("/search")
+    @GET("/search.php")
     suspend fun getPlacesFromSearch(
         @Query("q") placeToSearch: String,
         @Query("format") format: String = "jsonv2"

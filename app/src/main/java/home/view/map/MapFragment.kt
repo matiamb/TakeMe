@@ -1,6 +1,7 @@
 package home.view.map
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,7 +48,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         searchView = view.findViewById(R.id.map_search_view)
         listView = view.findViewById<ListView>(R.id.map_list_view)
-        val text = searchView.text
+
         super.onViewCreated(view, savedInstanceState)
         configureMap()
         initPresenter()
@@ -67,7 +68,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
                     it, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, searchResults
                 )
             }*/
-            //TODO NO CONECTA Y NO FILTRA POR TEXTO LA API PARA BUSCAR LUGARES
             //adapter?.filter?.filter(text)
             //click listener para los items de la lista
             /*listView.setOnItemClickListener { parent, view, position, id ->
@@ -77,7 +77,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
                 //adapter?.clear()
                 mapPresenter.getRoute(query[0])
             }*/
+            val text = searchView.text
             mapPresenter.performSearchPlaces(text.toString())
+            Log.i("Mati", text.toString())
             false
         }
 
@@ -113,9 +115,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         listView.adapter = adapter
         listView.setOnItemClickListener { parent, view, position, id ->
             searchView.hide()
-            //TODO una vez realizada la busqueda, se borra la opcion correctamente,
-            // pero si hago otra busqueda el listview queda vacio
-            //adapter?.clear()
             mapPresenter.getRoute(search[0])
         }
     }
