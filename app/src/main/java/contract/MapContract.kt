@@ -20,7 +20,7 @@ interface MapContract {
 
     interface MapModel {
         suspend fun getPlacesFromSearch(placeToSearch: String): List<Place>
-        fun getRoute(startPlace: Place, destination: Place): List <Point>
+        suspend fun getRoute(startPlace: Place, destination: Place): List <Point>
         fun getCurrentPosition(): Point
         fun getResult(search: String): String
     }

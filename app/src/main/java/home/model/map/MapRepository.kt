@@ -5,7 +5,6 @@ import contract.MapContract
 
 class MapRepository: MapContract.MapModel {
     override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place> {
-        //TODO("Not yet implemented")
         /*return listOf(
             Place(
                 "Abasto, Balvanera, Buenos Aires, Comuna 3, Autonomous City of Buenos Aires, C1193AAF, Argentina",
@@ -20,9 +19,8 @@ class MapRepository: MapContract.MapModel {
         }?: emptyList()
     }
 
-    override fun getRoute(startPlace: Place, destination: Place): List<Point> {
-        //TODO("Not yet implemented")
-        return listOf(
+    override suspend fun getRoute(startPlace: Place, destination: Place): List<Point> {
+        /*return listOf(
             Point(-34.679437, -58.553777),
             Point(
                 -34.679217,
@@ -44,9 +42,24 @@ class MapRepository: MapContract.MapModel {
                 -34.676409,
                 -58.556671
             )
+        )*/
+        val rawRouteResponse = ApiServiceProvider.routesServiceApi.getRoute(
+            getFormatedPoints(startPlace),
+            getFormatedPoints(destination)
         )
+        return if (rawRouteResponse.isSuccessful){
+            mapRoute(rawRouteResponse.body()?.route?.geometry?.coordinates)
+        } else {
+            emptyList()
+        }
     }
 
+    private fun getFormatedPoints(place: Place): String =
+        "${place.point.latitude}, ${place.point.longitude}"
+
+    //TODO No borra la ruta vieja
+    private fun mapRoute(coordinates: List<List<Double>>?): List<Point> =
+        coordinates?.map{Point(it.first(), it.last())}?: emptyList()
     override fun getCurrentPosition(): Point {
         //TODO("Not yet implemented")
         return Point(-34.679437, -58.553777)
