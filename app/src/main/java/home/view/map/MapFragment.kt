@@ -123,6 +123,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         context?.let { safeContext ->
             MapsManager.addRouteToMap(safeContext, googleMap, route)
             MapsManager.alignMapToRoute(googleMap, route)
+            MapsManager.addMarkerToMap(googleMap, route.first())
             MapsManager.addMarkerToMap(googleMap, route.last())
         }
     }

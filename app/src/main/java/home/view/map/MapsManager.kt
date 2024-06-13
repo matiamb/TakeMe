@@ -39,6 +39,7 @@ object MapsManager {
         return brng
     }
     fun addRouteToMap(safeContext: Context, googleMap: GoogleMap, route: List<LatLng>){
+        googleMap.clear()
         val polyLineOptions = PolylineOptions()
             .addAll(route)
             .color(safeContext.getColor(R.color.md_theme_dark_inversePrimary))
