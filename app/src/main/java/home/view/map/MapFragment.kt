@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -161,7 +162,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             googleMap.isMyLocationEnabled = true
             return
         }
-
+        //PERMISSION RATIONALE ES PARA MOSTRAR UN DIALOGO QUE EXPLIQUE POR QUE NECESITAS EL PERMISO
         // 2. If if a permission rationale dialog should be shown
         /*if (shouldShowRequestPermissionRationale(
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -176,13 +177,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         }*/
         //SI ESTOY EN UN FRAGMENT, NO NECESITO EL ACTIVITYCOMPAT ANTES DE REQUEST PERMISSIONS O SHOULDSHOW...
         // 3. Otherwise, request permission
-        requestPermissions(
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ),
-            LOCATION_PERMISSION_REQUEST_CODE
-        )
+        requestPermission()
         }
     }
 
@@ -197,6 +192,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
                 permissions,
                 grantResults
             )
+            requestPermission()
             return
         }
 
@@ -214,8 +210,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             enableMyLocation()
         } else {
             // Permission was denied. Display an error message
-            // ...
+            Toast.makeText(context, "Location Permission denied, please change it through settings", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun requestPermission(){
+        requestPermissions(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            LOCATION_PERMISSION_REQUEST_CODE
+        )
     }
 
     companion object {
