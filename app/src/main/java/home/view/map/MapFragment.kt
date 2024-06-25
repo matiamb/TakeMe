@@ -1,5 +1,8 @@
 package home.view.map
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,6 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.gfreeman.takeme.R
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -23,6 +29,7 @@ import home.model.map.Place
 import home.model.map.MapRepository
 import home.model.map.Point
 import home.presenter.map.MapPresenter
+import home.view.map.PermissionUtils.isPermissionGranted
 
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseContract.IBaseView> {
@@ -96,6 +103,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         val initialFakePoint = LatLng(-34.679437, -58.553777)
         MapsManager.addMarkerToMap(googleMap, initialFakePoint)
         MapsManager.centerMapIntoLocation(googleMap, initialFakePoint)
+        enableMyLocation()
     }
 
     private fun initPresenter(){
@@ -136,6 +144,87 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     override fun getParentView(): BaseContract.IBaseView {
         //TODO("Not yet implemented")
         return activity as BaseContract.IBaseView
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun enableMyLocation() {
+        context?.let { safeContext ->
+        // 1. Check if permissions are granted, if so, enable the my location layer
+        if (ContextCompat.checkSelfPermission(
+                safeContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                safeContext,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            googleMap.isMyLocationEnabled = true
+            return
+        }
+
+        // 2. If if a permission rationale dialog should be shown
+        /*if (shouldShowRequestPermissionRationale(
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) || shouldShowRequestPermissionRationale(
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        ) {
+            PermissionUtils.RationaleDialog.newInstance(
+                LOCATION_PERMISSION_REQUEST_CODE, true
+            ).show(supportFragmentManager, "dialog")
+            return
+        }*/
+        //SI ESTOY EN UN FRAGMENT, NO NECESITO EL ACTIVITYCOMPAT ANTES DE REQUEST PERMISSIONS O SHOULDSHOW...
+        // 3. Otherwise, request permission
+        requestPermissions(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            LOCATION_PERMISSION_REQUEST_CODE
+        )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
+            super.onRequestPermissionsResult(
+                requestCode,
+                permissions,
+                grantResults
+            )
+            return
+        }
+
+        if (isPermissionGranted(
+                permissions,
+                grantResults,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) || isPermissionGranted(
+                permissions,
+                grantResults,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        ) {
+            // Enable the my location layer if the permission has been granted.
+            enableMyLocation()
+        } else {
+            // Permission was denied. Display an error message
+            // ...
+        }
+    }
+
+    companion object {
+        /**
+         * Request code for location permission request.
+         *
+         * @see .onRequestPermissionsResult
+         */
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
 }
