@@ -9,11 +9,6 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Tasks.await
 import contract.MapContract
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.launch
 
 class MapRepository: MapContract.MapModel {
     private lateinit var fusedLocationClient: FusedLocationProviderClient

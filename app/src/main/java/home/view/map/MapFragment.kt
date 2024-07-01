@@ -126,7 +126,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         listView.adapter = adapter
         listView.setOnItemClickListener { parent, view, position, id ->
             searchView.hide()
-            mapPresenter.getRoute(search[0])
+            mapPresenter.getRoute(search[position])
         }
     }
 
