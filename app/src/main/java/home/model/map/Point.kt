@@ -1,6 +1,6 @@
 package home.model.map
 
 data class Point(
-    val latitude: Double,
+    var latitude: Double,
     val longitude: Double
 )

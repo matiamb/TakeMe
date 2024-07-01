@@ -2,6 +2,7 @@ package home.view.map
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -60,6 +61,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         super.onViewCreated(view, savedInstanceState)
         configureMap()
         initPresenter()
+        initFusedLocationProviderClient()
         //Recibo la lista de tipo places desde el backend
         //val query: ArrayList<Place> = ArrayList(showSearchResults(text.toString()))
         //con el mapTo solo busco la propiedad que me interesa de la lista
@@ -132,7 +134,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         context?.let { safeContext ->
             MapsManager.addRouteToMap(safeContext, googleMap, route)
             MapsManager.alignMapToRoute(googleMap, route)
-            MapsManager.addMarkerToMap(googleMap, route.first())
             MapsManager.addMarkerToMap(googleMap, route.last())
         }
     }
@@ -140,6 +141,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     override fun showResult(search: String): String {
         val result = mapPresenter.getResult(search)
         return result
+    }
+
+    override fun initFusedLocationProviderClient() {
+        context?.let { safeContext ->
+            mapPresenter.initFusedLocationProviderClient(safeContext)
+        }
     }
 
     override fun getParentView(): BaseContract.IBaseView {

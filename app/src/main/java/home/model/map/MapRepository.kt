@@ -1,9 +1,22 @@
 package home.model.map
 
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.location.Location
+import android.util.Log
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.Tasks.await
 import contract.MapContract
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 
 class MapRepository: MapContract.MapModel {
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place> {
         /*return listOf(
             Place(
@@ -57,16 +70,47 @@ class MapRepository: MapContract.MapModel {
     private fun getFormatedPoints(place: Place): String =
         "${place.point.latitude}, ${place.point.longitude}"
 
-    //TODO No borra la ruta vieja
     private fun mapRoute(coordinates: List<List<Double>>?): List<Point> =
         coordinates?.map{Point(it.first(), it.last())}?: emptyList()
-    override fun getCurrentPosition(): Point {
-        //TODO("Not yet implemented")
-        return Point(-34.679437, -58.553777)
-    }
+    @SuppressLint("MissingPermission")
+    override fun getCurrentPosition(): Point? {
+        //return Point(-34.679437, -58.553777)
+            var lastKnownLocation: Point?
+                val lastLocation = fusedLocationClient.lastLocation
+                .addOnSuccessListener { location : Location? ->
+                    // Got last known location. In some rare situations this can be null.
+                    Log.i("Mati", "Location request successful")
+                    if (location != null) {
+                        val latitude = location.latitude
+                        val longitude = location.longitude
+                        // Do something with the latitude and longitude
+                        Log.i("Mati", "Location from inside: "+latitude.toString() +" "+ longitude.toString())
+                    }
+                }
+                .addOnFailureListener { exception: Exception ->
+                    // Handle location retrieval failure here
+                    Log.e("Mati", "Location request failed")
+                }
+        //pero aca me pone el valor por default, por que? tiene algo que ver con que la task no se completa, y por eso no debe guardar los cambios.
+        //Log.i("Mati", lastKnownLocation.latitude.toString() +" "+ lastKnownLocation.longitude.toString())
+        /*if (lastLocation.isComplete){
+            lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
+            return lastKnownLocation
+        } else {
+            await(lastLocation)
+            lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
+            return lastKnownLocation
+        }*/
+        await(lastLocation)
+        lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
+        return lastKnownLocation
+        }
 
     override fun getResult(search: String): String {
         return "Test text from backend"
+    }
+    override fun initFusedLocationProviderClient(context: Context){
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     }
 
 }

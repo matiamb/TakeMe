@@ -1,5 +1,7 @@
 package home.presenter.map
 
+import android.content.Context
+import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import contract.BaseContract
 import contract.MapContract
@@ -32,7 +34,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     override fun getRoute(destination: Place) {
         //TODO("Not yet implemented")
         CoroutineScope(Dispatchers.IO).launch {
-            val startPlace = Place("MyPosition", getCurrentPosition())
+            val startPlace = Place("MyPosition", getCurrentPosition()!!)
             val route = mapModel.getRoute(startPlace, destination).map {
                 LatLng(it.latitude, it.longitude)
             }
@@ -42,9 +44,9 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
         }
     }
 
-    override suspend fun getCurrentPosition(): Point {
+    override suspend fun getCurrentPosition(): Point? {
         //TODO("googlear Deferred y metodo async de corrutinas")
-        val job: Deferred<Point> = CoroutineScope(Dispatchers.IO).async {
+        val job: Deferred<Point?> = CoroutineScope(Dispatchers.IO).async {
             mapModel.getCurrentPosition()
         }
         return job.await()
@@ -52,5 +54,10 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
 
     override fun getResult(search: String): String {
         return mapModel.getResult(search)
+    }
+
+    override fun initFusedLocationProviderClient(context: Context){
+        //val context = mapView.getParentView().getViewContext()
+        mapModel.initFusedLocationProviderClient(context)
     }
 }
