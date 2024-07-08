@@ -4,14 +4,27 @@ package home.model.map
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
+import android.os.Looper
 import android.util.Log
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.Granularity
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.Priority
+import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.tasks.Tasks.await
 import contract.MapContract
 
 class MapRepository: MapContract.MapModel {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var mCurrentLocation: Location
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationSettingsRequest: LocationSettingsRequest
+    private lateinit var settingsClient: SettingsClient
     override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place> {
         /*return listOf(
             Place(
@@ -96,10 +109,44 @@ class MapRepository: MapContract.MapModel {
             lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
             return lastKnownLocation
         }*/
+        //await va a esperar a que una tarea especifica termine antes de seguir con el resto del codigo
         await(lastLocation)
         lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
+        mCurrentLocation = lastLocation.result
         return lastKnownLocation
         }
+    @SuppressLint("MissingPermission")
+    override fun startLocationUpdates(context: Context){
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+            }
+        }
+        //El intervalo esta en 5 segundos o 100 metros pq por cada request de location me resta uno de la api de maps que no es gratis OJO
+        locationRequest = LocationRequest.Builder(5000)
+            .setGranularity(Granularity.GRANULARITY_FINE)
+            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+            .setMinUpdateDistanceMeters(50F)
+            .build()
+        locationSettingsRequest = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest).build()
+        settingsClient = LocationServices.getSettingsClient(context)
+        settingsClient.checkLocationSettings(locationSettingsRequest).addOnCompleteListener(){ task ->
+            if(task.isSuccessful){
+                fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+            } else {
+                /*if(task.exception is ResolvableApiException){
+                   val resolvableApiException: ResolvableApiException = task.exception as ResolvableApiException
+                    resolvableApiException.
+                }*/
+                Log.i("Mati", "Location request failed")
+            }
+        }
+    }
+
+    override fun stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
 
     override fun getResult(search: String): String {
         return "Test text from backend"

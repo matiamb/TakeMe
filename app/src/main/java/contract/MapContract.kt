@@ -11,6 +11,8 @@ interface MapContract {
         fun drawRoute(route: List<LatLng>)
         fun showResult(search: String): String
         fun initFusedLocationProviderClient()
+        fun startLocationUpdates()
+        fun stopLocationUpdates()
     }
     interface IMapPresenter<T: FragmentBaseContract.IFragmentBaseView<*>>: FragmentBaseContract.IBasePresenter<T>{
         fun performSearchPlaces(placeToSearch: String)
@@ -19,6 +21,8 @@ interface MapContract {
         suspend fun getCurrentPosition(): Point?
         fun getResult(search: String): String
         fun initFusedLocationProviderClient(context: Context)
+        fun startLocationUpdates(context: Context)
+        fun stopLocationUpdates()
     }
 
     interface MapModel {
@@ -27,5 +31,7 @@ interface MapContract {
         fun getCurrentPosition(): Point?
         fun getResult(search: String): String
         fun initFusedLocationProviderClient(context: Context)
+        fun startLocationUpdates(context: Context)
+        fun stopLocationUpdates()
     }
 }

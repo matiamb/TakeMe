@@ -1,7 +1,6 @@
 package home.presenter.map
 
 import android.content.Context
-import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import contract.BaseContract
 import contract.MapContract
@@ -59,5 +58,13 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     override fun initFusedLocationProviderClient(context: Context){
         //val context = mapView.getParentView().getViewContext()
         mapModel.initFusedLocationProviderClient(context)
+    }
+
+    override fun startLocationUpdates(context: Context) {
+        mapModel.startLocationUpdates(context)
+    }
+
+    override fun stopLocationUpdates() {
+        mapModel.stopLocationUpdates()
     }
 }

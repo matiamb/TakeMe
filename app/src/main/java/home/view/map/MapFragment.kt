@@ -2,7 +2,6 @@ package home.view.map
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -12,16 +11,12 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.gfreeman.takeme.R
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.search.SearchView
 import contract.BaseContract
@@ -29,7 +24,6 @@ import contract.MapContract
 import home.model.map.Place
 
 import home.model.map.MapRepository
-import home.model.map.Point
 import home.presenter.map.MapPresenter
 import home.view.map.PermissionUtils.isPermissionGranted
 
@@ -92,8 +86,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             Log.i("Mati", text.toString())
             false
         }
+    }
 
-
+    override fun onStop() {
+        super.onStop()
+        stopLocationUpdates()
+        Log.i("Mati", "Location updates stopped")
     }
 
     private fun configureMap(){
@@ -135,6 +133,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             MapsManager.addRouteToMap(safeContext, googleMap, route)
             MapsManager.alignMapToRoute(googleMap, route)
             MapsManager.addMarkerToMap(googleMap, route.last())
+            startLocationUpdates()
         }
     }
 
@@ -147,6 +146,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         context?.let { safeContext ->
             mapPresenter.initFusedLocationProviderClient(safeContext)
         }
+    }
+
+    override fun startLocationUpdates() {
+        context?.let { safeContext ->
+            mapPresenter.startLocationUpdates(safeContext)
+        }
+    }
+
+    override fun stopLocationUpdates() {
+        mapPresenter.stopLocationUpdates()
     }
 
     override fun getParentView(): BaseContract.IBaseView {
