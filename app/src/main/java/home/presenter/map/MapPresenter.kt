@@ -45,6 +45,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
 
     override suspend fun getCurrentPosition(): Point? {
         //TODO("googlear Deferred y metodo async de corrutinas")
+        //DEFERRED ES UN JOB QUE DEVUELVE UN RESULTADO
         val job: Deferred<Point?> = CoroutineScope(Dispatchers.IO).async {
             mapModel.getCurrentPosition()
         }
@@ -66,5 +67,15 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
 
     override fun stopLocationUpdates() {
         mapModel.stopLocationUpdates()
+    }
+
+    override fun getLastLocation(){
+        CoroutineScope(Dispatchers.IO).launch {
+            val location = getCurrentPosition()!!
+            val myLocation = LatLng(location.latitude, location.longitude)
+            withContext(Dispatchers.Main){
+                mapView.getLastLocation(myLocation)
+            }
+        }
     }
 }

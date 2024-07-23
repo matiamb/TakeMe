@@ -26,6 +26,10 @@ import home.model.map.Place
 import home.model.map.MapRepository
 import home.presenter.map.MapPresenter
 import home.view.map.PermissionUtils.isPermissionGranted
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseContract.IBaseView> {
@@ -101,9 +105,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        val initialFakePoint = LatLng(-34.679437, -58.553777)
-        MapsManager.addMarkerToMap(googleMap, initialFakePoint)
-        MapsManager.centerMapIntoLocation(googleMap, initialFakePoint)
+//        val initialFakePoint = LatLng(-34.679437, -58.553777)
+//        MapsManager.addMarkerToMap(googleMap, initialFakePoint)
+//        MapsManager.centerMapIntoLocation(googleMap, initialFakePoint)
         enableMyLocation()
     }
 
@@ -176,6 +180,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             googleMap.isMyLocationEnabled = true
+            mapPresenter.getLastLocation()
             return
         }
         //PERMISSION RATIONALE ES PARA MOSTRAR UN DIALOGO QUE EXPLIQUE POR QUE NECESITAS EL PERMISO
@@ -238,6 +243,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             ),
             LOCATION_PERMISSION_REQUEST_CODE
         )
+    }
+    override fun getLastLocation(myLocation: LatLng) {
+        MapsManager.addMarkerToMap(googleMap, myLocation)
+        MapsManager.centerMapIntoLocation(googleMap, myLocation)
     }
 
     companion object {

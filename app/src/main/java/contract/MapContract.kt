@@ -13,6 +13,7 @@ interface MapContract {
         fun initFusedLocationProviderClient()
         fun startLocationUpdates()
         fun stopLocationUpdates()
+        fun getLastLocation(myLocation: LatLng)
     }
     interface IMapPresenter<T: FragmentBaseContract.IFragmentBaseView<*>>: FragmentBaseContract.IBasePresenter<T>{
         fun performSearchPlaces(placeToSearch: String)
@@ -23,6 +24,7 @@ interface MapContract {
         fun initFusedLocationProviderClient(context: Context)
         fun startLocationUpdates(context: Context)
         fun stopLocationUpdates()
+        fun getLastLocation()
     }
 
     interface MapModel {
