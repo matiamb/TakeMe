@@ -3,6 +3,7 @@ package home.view.map
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.gfreeman.takeme.R
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -24,6 +26,7 @@ import contract.MapContract
 import home.model.map.Place
 
 import home.model.map.MapRepository
+import home.model.map.Point
 import home.presenter.map.MapPresenter
 import home.view.map.PermissionUtils.isPermissionGranted
 import kotlinx.coroutines.CoroutineScope
@@ -156,6 +159,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         context?.let { safeContext ->
             mapPresenter.startLocationUpdates(safeContext)
         }
+        //mapPresenter.updateMapLocation()
     }
 
     override fun stopLocationUpdates() {
@@ -247,6 +251,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     override fun getLastLocation(myLocation: LatLng) {
         MapsManager.addMarkerToMap(googleMap, myLocation)
         MapsManager.centerMapIntoLocation(googleMap, myLocation)
+    }
+
+    override fun updateMapLocation(location: Point) {
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(LatLng(
+            location.latitude, location.longitude
+        )))
     }
 
     companion object {

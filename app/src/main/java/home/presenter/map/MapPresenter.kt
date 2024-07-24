@@ -1,9 +1,11 @@
 package home.presenter.map
 
 import android.content.Context
+import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import contract.BaseContract
 import contract.MapContract
+import home.model.map.MapRepository
 import home.model.map.Place
 import home.model.map.Point
 import kotlinx.coroutines.CoroutineScope
@@ -15,6 +17,8 @@ import kotlinx.coroutines.withContext
 
 class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMapPresenter<MapContract.MapView<BaseContract.IBaseView>>{
     private lateinit var mapView: MapContract.MapView<BaseContract.IBaseView>
+    //inicializo el listener que esta en el repo
+    private var locationListener: MapRepository.OnNewLocationListener? = null
     override fun attachView(view: MapContract.MapView<BaseContract.IBaseView>) {
         this.mapView = view
     }
@@ -49,6 +53,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
         val job: Deferred<Point?> = CoroutineScope(Dispatchers.IO).async {
             mapModel.getCurrentPosition()
         }
+        //Al usar async puedo usar await o join, si uso launch uso join para esperar que termine el job
         return job.await()
     }
 
@@ -62,7 +67,22 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     }
 
     override fun startLocationUpdates(context: Context) {
-        mapModel.startLocationUpdates(context)
+        //inicializo el locationListener como un objeto del repo (IMPORTANTE SABER ESTO) y sobrescribo el metodo del listener
+        locationListener = object : MapRepository.OnNewLocationListener {
+            override fun currentLocationUpdate(point: Point) {
+                when (mapModel.isNavigating()) {
+                    //si el metodo isNavigating devuelve falso, hago lo de abajo
+                    false -> {
+                        // Do nothing
+                    }
+                    //Si da verdadero, corre el metodo de abajo
+                    true -> updateMapLocation()
+                }
+            }
+        }
+        //esto no entiendo bien, formatea locationListener para decirle que metodo escuchar?
+        locationListener?.let { mapModel.startLocationUpdates(context, it) }
+        //mapModel.startLocationUpdates(context)
     }
 
     override fun stopLocationUpdates() {
@@ -77,5 +97,9 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
                 mapView.getLastLocation(myLocation)
             }
         }
+    }
+
+    override fun updateMapLocation() {
+        mapView.updateMapLocation(mapModel.updateMapLocation())
     }
 }

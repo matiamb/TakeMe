@@ -1,7 +1,9 @@
 package contract
 
 import android.content.Context
+import android.location.Location
 import com.google.android.gms.maps.model.LatLng
+import home.model.map.MapRepository.OnNewLocationListener
 import home.model.map.Place
 import home.model.map.Point
 
@@ -14,6 +16,7 @@ interface MapContract {
         fun startLocationUpdates()
         fun stopLocationUpdates()
         fun getLastLocation(myLocation: LatLng)
+        fun updateMapLocation(location: Point)
     }
     interface IMapPresenter<T: FragmentBaseContract.IFragmentBaseView<*>>: FragmentBaseContract.IBasePresenter<T>{
         fun performSearchPlaces(placeToSearch: String)
@@ -25,6 +28,7 @@ interface MapContract {
         fun startLocationUpdates(context: Context)
         fun stopLocationUpdates()
         fun getLastLocation()
+        fun updateMapLocation()
     }
 
     interface MapModel {
@@ -33,7 +37,9 @@ interface MapContract {
         fun getCurrentPosition(): Point?
         fun getResult(search: String): String
         fun initFusedLocationProviderClient(context: Context)
-        fun startLocationUpdates(context: Context)
+        fun startLocationUpdates(context: Context, locationListener: OnNewLocationListener)
         fun stopLocationUpdates()
+        fun updateMapLocation(): Point
+        fun isNavigating(): Boolean
     }
 }

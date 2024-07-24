@@ -17,14 +17,19 @@ import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.tasks.Tasks.await
 import contract.MapContract
+import java.lang.ref.WeakReference
 
 class MapRepository: MapContract.MapModel {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var mCurrentLocation: Location
+    private lateinit var mCurrentLocation: Point
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationSettingsRequest: LocationSettingsRequest
     private lateinit var settingsClient: SettingsClient
+    private var navigationStarted = false
+    //creo el nuevo listener, weak reference significa que puede ser borrada su ubicacion de memoria por el garbage collector antes de que termine el problema
+    //previene memory leaks
+    private lateinit var newLocationListener : WeakReference<OnNewLocationListener>
     override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place> {
         /*return listOf(
             Place(
@@ -112,14 +117,32 @@ class MapRepository: MapContract.MapModel {
         //await va a esperar a que una tarea especifica termine antes de seguir con el resto del codigo
         await(lastLocation)
         lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
-        mCurrentLocation = lastLocation.result
+        //mCurrentLocation = lastLocation.result
         return lastKnownLocation
         }
     @SuppressLint("MissingPermission")
-    override fun startLocationUpdates(context: Context){
+    override fun startLocationUpdates(context: Context, locationListener: OnNewLocationListener){
+        navigationStarted = true
+        //inicializo el location listener
+        this.newLocationListener = WeakReference(locationListener)
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
+                //super.onLocationResult(locationResult)
+                // ?: se llama Elvis Operator, devuelve un valor u otro
+//                locationResult ?: return
+//                for (location in locationResult.locations){
+//                    mCurrentLocation = location
+//                    updateMapLocation()
+//                    Log.i("Mati", mCurrentLocation.toString())
+//                }
                 super.onLocationResult(locationResult)
+                mCurrentLocation =
+                    locationResult.lastLocation.let { Point(it!!.latitude, it.longitude) }
+                //aplico el listener a mCurrentLocation
+                mCurrentLocation.let {
+                    //sobreescribo lo que sea que tenga el listener por mCurrentLocation, va actualizando la location a la que hace referencia
+                    newLocationListener.get()?.currentLocationUpdate(it)
+                }
             }
         }
         //El intervalo esta en 5 segundos o 100 metros pq por cada request de location me resta uno de la api de maps que no es gratis OJO
@@ -146,6 +169,7 @@ class MapRepository: MapContract.MapModel {
 
     override fun stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
+        navigationStarted = false
     }
 
     override fun getResult(search: String): String {
@@ -153,6 +177,19 @@ class MapRepository: MapContract.MapModel {
     }
     override fun initFusedLocationProviderClient(context: Context){
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    }
+
+    override fun updateMapLocation(): Point{
+        return mCurrentLocation
+    }
+
+    override fun isNavigating(): Boolean{
+        return navigationStarted
+    }
+
+    //Creo un custom listener
+    interface OnNewLocationListener {
+        fun currentLocationUpdate(point: Point)
     }
 
 }
