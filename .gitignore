@@ -13,3 +13,11 @@
 .externalNativeBuild
 .cxx
 local.properties
+/caches/8.7/groovy-dsl/gc.properties
+/caches/8.7/kotlin-dsl/gc.properties
+/caches/8.7/gc.properties
+/caches/jars-9/gc.properties
+/caches/modules-2/gc.properties
+/caches/transforms-4/gc.properties
+/daemon/8.7/registry.bin
+/daemon/8.7/registry.bin.lock
