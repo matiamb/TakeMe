@@ -102,4 +102,10 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     override fun updateMapLocation() {
         mapView.updateMapLocation(mapModel.updateMapLocation())
     }
+    override fun startCheckingDistanceToRoute(){
+        mapView.getParentView()?.let { mapModel.stopCheckingDistanceToRoute(it.getViewContext()) }
+    }
+    override fun stopCheckingDistanceToRoute(){
+        mapView.getParentView()?.let { mapModel.stopCheckingDistanceToRoute(it.getViewContext()) }
+    }
 }

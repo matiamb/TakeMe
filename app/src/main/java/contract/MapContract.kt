@@ -29,6 +29,8 @@ interface MapContract {
         fun stopLocationUpdates()
         fun getLastLocation()
         fun updateMapLocation()
+        fun startCheckingDistanceToRoute()
+        fun stopCheckingDistanceToRoute()
     }
 
     interface MapModel {
@@ -41,5 +43,7 @@ interface MapContract {
         fun stopLocationUpdates()
         fun updateMapLocation(): Point
         fun isNavigating(): Boolean
+        fun startCheckingDistanceToRoute(context: Context)
+        fun stopCheckingDistanceToRoute(context: Context)
     }
 }

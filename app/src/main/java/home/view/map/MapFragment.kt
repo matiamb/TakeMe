@@ -98,6 +98,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     override fun onStop() {
         super.onStop()
         stopLocationUpdates()
+        mapPresenter.stopCheckingDistanceToRoute()
         Log.i("Mati", "Location updates stopped")
     }
 
@@ -141,6 +142,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             MapsManager.alignMapToRoute(googleMap, route)
             MapsManager.addMarkerToMap(googleMap, route.last())
             startLocationUpdates()
+            mapPresenter.stopCheckingDistanceToRoute()
         }
     }
 
@@ -174,35 +176,35 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
         context?.let { safeContext ->
-        // 1. Check if permissions are granted, if so, enable the my location layer
-        if (ContextCompat.checkSelfPermission(
-                safeContext,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
-                safeContext,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            googleMap.isMyLocationEnabled = true
-            mapPresenter.getLastLocation()
-            return
-        }
-        //PERMISSION RATIONALE ES PARA MOSTRAR UN DIALOGO QUE EXPLIQUE POR QUE NECESITAS EL PERMISO
-        // 2. If if a permission rationale dialog should be shown
-        /*if (shouldShowRequestPermissionRationale(
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) || shouldShowRequestPermissionRationale(
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-        ) {
-            PermissionUtils.RationaleDialog.newInstance(
-                LOCATION_PERMISSION_REQUEST_CODE, true
-            ).show(supportFragmentManager, "dialog")
-            return
-        }*/
-        //SI ESTOY EN UN FRAGMENT, NO NECESITO EL ACTIVITYCOMPAT ANTES DE REQUEST PERMISSIONS O SHOULDSHOW...
-        // 3. Otherwise, request permission
-        requestPermission()
+            // 1. Check if permissions are granted, if so, enable the my location layer
+            if (ContextCompat.checkSelfPermission(
+                    safeContext,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                    safeContext,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                googleMap.isMyLocationEnabled = true
+                mapPresenter.getLastLocation()
+                return
+            }
+            //PERMISSION RATIONALE ES PARA MOSTRAR UN DIALOGO QUE EXPLIQUE POR QUE NECESITAS EL PERMISO
+            // 2. If if a permission rationale dialog should be shown
+            /*if (shouldShowRequestPermissionRationale(
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) || shouldShowRequestPermissionRationale(
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            ) {
+                PermissionUtils.RationaleDialog.newInstance(
+                    LOCATION_PERMISSION_REQUEST_CODE, true
+                ).show(supportFragmentManager, "dialog")
+                return
+            }*/
+            //SI ESTOY EN UN FRAGMENT, NO NECESITO EL ACTIVITYCOMPAT ANTES DE REQUEST PERMISSIONS O SHOULDSHOW...
+            // 3. Otherwise, request permission
+            requestPermission()
         }
     }
 

@@ -4,5 +4,6 @@
     <string name="nav_home_btn2">Map</string>
     <string name="nav_home_btn3">Profile</string>
     <string name="sheet_home_search_hint">Where to?</string>
+    <string name="check_route_service_description">This service alerts when you get out of presented route</string>
 
 </resources>

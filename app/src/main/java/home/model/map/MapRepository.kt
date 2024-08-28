@@ -2,8 +2,13 @@ package home.model.map
 
 
 import android.annotation.SuppressLint
+import android.content.ComponentName
 import android.content.Context
+import android.content.Context.BIND_AUTO_CREATE
+import android.content.Intent
+import android.content.ServiceConnection
 import android.location.Location
+import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -17,6 +22,7 @@ import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.tasks.Tasks.await
 import contract.MapContract
+import home.model.map.services.RouteCheckService
 import java.lang.ref.WeakReference
 
 class MapRepository: MapContract.MapModel {
@@ -30,6 +36,11 @@ class MapRepository: MapContract.MapModel {
     //creo el nuevo listener, weak reference significa que puede ser borrada su ubicacion de memoria por el garbage collector antes de que termine el problema
     //previene memory leaks
     private lateinit var newLocationListener : WeakReference<OnNewLocationListener>
+    //Este objeto es la conexion de la activity con mi service
+    private var routeCheckServiceConnection: ServiceConnection? = null
+    private var isServiceBound = false
+    private lateinit var routeCheckService: RouteCheckService
+    private lateinit var  context: Context
     override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place> {
         /*return listOf(
             Place(
@@ -39,10 +50,10 @@ class MapRepository: MapContract.MapModel {
         )*/
         return ApiServiceProvider.searchServiceApi.getPlacesFromSearch(placeToSearch = placeToSearch)
             .body()?.map{
-            val convertedLong = it.long.toDouble()
-            val convertedLat = it.lat.toDouble()
-            Place(displayName = it.displayName, point = Point(latitude = convertedLat, longitude = convertedLong))
-        }?: emptyList()
+                val convertedLong = it.long.toDouble()
+                val convertedLat = it.lat.toDouble()
+                Place(displayName = it.displayName, point = Point(latitude = convertedLat, longitude = convertedLong))
+            }?: emptyList()
     }
 
     override suspend fun getRoute(startPlace: Place, destination: Place): List<Point> {
@@ -88,22 +99,22 @@ class MapRepository: MapContract.MapModel {
     @SuppressLint("MissingPermission")
     override fun getCurrentPosition(): Point? {
         //return Point(-34.679437, -58.553777)
-            var lastKnownLocation: Point?
-                val lastLocation = fusedLocationClient.lastLocation
-                .addOnSuccessListener { location : Location? ->
-                    // Got last known location. In some rare situations this can be null.
-                    Log.i("Mati", "Location request successful")
-                    if (location != null) {
-                        val latitude = location.latitude
-                        val longitude = location.longitude
-                        // Do something with the latitude and longitude
-                        Log.i("Mati", "Location from inside: "+latitude.toString() +" "+ longitude.toString())
-                    }
+        var lastKnownLocation: Point?
+        val lastLocation = fusedLocationClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                // Got last known location. In some rare situations this can be null.
+                Log.i("Mati", "Location request successful")
+                if (location != null) {
+                    val latitude = location.latitude
+                    val longitude = location.longitude
+                    // Do something with the latitude and longitude
+                    Log.i("Mati", "Location from inside: "+latitude.toString() +" "+ longitude.toString())
                 }
-                .addOnFailureListener { exception: Exception ->
-                    // Handle location retrieval failure here
-                    Log.e("Mati", "Location request failed")
-                }
+            }
+            .addOnFailureListener { exception: Exception ->
+                // Handle location retrieval failure here
+                Log.e("Mati", "Location request failed")
+            }
         //pero aca me pone el valor por default, por que? tiene algo que ver con que la task no se completa, y por eso no debe guardar los cambios.
         //Log.i("Mati", lastKnownLocation.latitude.toString() +" "+ lastKnownLocation.longitude.toString())
         /*if (lastLocation.isComplete){
@@ -119,10 +130,11 @@ class MapRepository: MapContract.MapModel {
         lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
         //mCurrentLocation = lastLocation.result
         return lastKnownLocation
-        }
+    }
     @SuppressLint("MissingPermission")
     override fun startLocationUpdates(context: Context, locationListener: OnNewLocationListener){
         navigationStarted = true
+        this.context = context
         //inicializo el location listener
         this.newLocationListener = WeakReference(locationListener)
         locationCallback = object : LocationCallback() {
@@ -165,6 +177,7 @@ class MapRepository: MapContract.MapModel {
                 Log.i("Mati", "Location request failed")
             }
         }
+        setupServiceConnection()
     }
 
     override fun stopLocationUpdates() {
@@ -185,6 +198,33 @@ class MapRepository: MapContract.MapModel {
 
     override fun isNavigating(): Boolean{
         return navigationStarted
+    }
+    private fun setupServiceConnection(){
+        routeCheckServiceConnection = object: ServiceConnection{
+            override fun onServiceConnected(p0: ComponentName?, service: IBinder?) {
+                val binder = service as RouteCheckService.RouteCheckBinder
+                routeCheckService = binder.getService()
+                routeCheckService.showNotification(context)
+                isServiceBound = true
+            }
+
+            override fun onServiceDisconnected(p0: ComponentName?) {
+                isServiceBound = false
+            }
+        }
+    }
+    //aca recibo el context para controlar que no me desvie de la ruta
+    override fun startCheckingDistanceToRoute(context: Context){
+        //este if es para que si el service esta bindeado, salga de este metodo y no me lo bindee cada vez que entra
+        if(isServiceBound){
+            return
+        }
+        val intent = Intent(context, routeCheckService::class.java)
+        routeCheckServiceConnection?.let { context.bindService(intent, it, BIND_AUTO_CREATE) }
+    }
+    override fun stopCheckingDistanceToRoute(context: Context){
+        routeCheckServiceConnection?.let { context.unbindService(it) }
+        isServiceBound = false
     }
 
     //Creo un custom listener
