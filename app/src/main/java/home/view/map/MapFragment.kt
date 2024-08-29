@@ -165,12 +165,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     }
 
     override fun stopLocationUpdates() {
-        mapPresenter.stopLocationUpdates()
+        try {
+            mapPresenter.stopLocationUpdates()
+        } catch (e: Exception) {
+            Log.i("Mati", "location callback has not been initialized")
+        }
     }
 
-    override fun getParentView(): BaseContract.IBaseView {
-        //TODO("Not yet implemented")
-        return activity as BaseContract.IBaseView
+    override fun getParentView(): BaseContract.IBaseView? {
+        return activity as? BaseContract.IBaseView
     }
 
     @SuppressLint("MissingPermission")

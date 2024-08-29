@@ -8,13 +8,17 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import home.model.map.Point
 import java.lang.invoke.TypeDescriptor.OfField
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.pow
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 object MapsManager {
+    private const val DISTANCE_TO_BE_OUT_OF_ROUTE = 100
     private fun bearingBetweenLocations(latLng1: LatLng, latLng2: LatLng): Double {
         // Convert latitude and longitude to radians
         val lat1 = latLng1.latitude * PI / 180.0
@@ -74,5 +78,41 @@ object MapsManager {
                 .position(initialPoint)
                 .title(title)
         )
+    }
+    private fun calculateDistance(point1: Point, point2: Point): Double {
+        val earthRadius = 6371 // Earth's radius in kilometers
+        val lat1 = Math.toRadians(point1.latitude)
+        val lon1 = Math.toRadians(point1.longitude)
+        val lat2 = Math.toRadians(point2.latitude)
+        val lon2 = Math.toRadians(point2.longitude)
+        val dLat = lat2 - lat1
+        val dLon = lon2 - lon1
+        val a = sin(dLat / 2).pow(2) + cos(lat1) * cos(lat2) * sin(dLon / 2).pow(2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        val distanceInKm = earthRadius * c // Distance in kilometers
+        return distanceInKm * 1000
+    }
+    fun isOutsideOfRoute(currentPoint: Point, route: List<Point>): Boolean {
+        val nearestPoint = if (route.isEmpty()) -1 else findNearestPointIndex(
+            currentPoint,
+            route.map { LatLng(it.latitude, it.longitude) })
+        return nearestPoint >= 0 && calculateDistance(
+            currentPoint,
+            route[nearestPoint]
+        ) > DISTANCE_TO_BE_OUT_OF_ROUTE
+    }
+    fun findNearestPointIndex(userLocation: Point, route: List<LatLng>): Int {
+        var nearestIndex = -1
+        var shortestDistance = Double.MAX_VALUE
+        for (i in route.indices) {
+            val distance =
+                calculateDistance(userLocation, Point(route[i].latitude, route[i].longitude))
+            if (distance < shortestDistance) {
+                shortestDistance = distance
+                nearestIndex = i
+            }
+        }
+        return nearestIndex
     }
 }

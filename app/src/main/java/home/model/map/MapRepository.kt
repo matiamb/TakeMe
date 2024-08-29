@@ -41,6 +41,7 @@ class MapRepository: MapContract.MapModel {
     private var isServiceBound = false
     private lateinit var routeCheckService: RouteCheckService
     private lateinit var  context: Context
+    var currentRoute: List<Point>? = null
     override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place> {
         /*return listOf(
             Place(
@@ -177,7 +178,6 @@ class MapRepository: MapContract.MapModel {
                 Log.i("Mati", "Location request failed")
             }
         }
-        setupServiceConnection()
     }
 
     override fun stopLocationUpdates() {
@@ -204,7 +204,17 @@ class MapRepository: MapContract.MapModel {
             override fun onServiceConnected(p0: ComponentName?, service: IBinder?) {
                 val binder = service as RouteCheckService.RouteCheckBinder
                 routeCheckService = binder.getService()
-                routeCheckService.showNotification(context)
+                routeCheckService?.setLocationProvider(object :
+                RouteCheckService.CurrentLocationStatusProvider{
+                    override fun getCurrentLocation(): Point? {
+                        return mCurrentLocation
+                    }
+
+                    override fun getCurrentRoute(): List<Point>? {
+                        return currentRoute
+                    }
+                })
+                routeCheckService.showNotification()
                 isServiceBound = true
             }
 
@@ -219,6 +229,7 @@ class MapRepository: MapContract.MapModel {
         if(isServiceBound){
             return
         }
+        setupServiceConnection()
         val intent = Intent(context, routeCheckService::class.java)
         routeCheckServiceConnection?.let { context.bindService(intent, it, BIND_AUTO_CREATE) }
     }

@@ -2,6 +2,7 @@ package home.presenter.map
 
 import android.content.Context
 import android.location.Location
+import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import contract.BaseContract
 import contract.MapContract
@@ -36,6 +37,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
 
     override fun getRoute(destination: Place) {
         //TODO("Not yet implemented")
+        //stopCheckingDistanceToRoute()
         CoroutineScope(Dispatchers.IO).launch {
             val startPlace = Place("MyPosition", getCurrentPosition()!!)
             val route = mapModel.getRoute(startPlace, destination).map {
@@ -67,6 +69,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     }
 
     override fun startLocationUpdates(context: Context) {
+        startCheckingDistanceToRoute()
         //inicializo el locationListener como un objeto del repo (IMPORTANTE SABER ESTO) y sobrescribo el metodo del listener
         locationListener = object : MapRepository.OnNewLocationListener {
             override fun currentLocationUpdate(point: Point) {
@@ -87,6 +90,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
 
     override fun stopLocationUpdates() {
         mapModel.stopLocationUpdates()
+        stopCheckingDistanceToRoute()
     }
 
     override fun getLastLocation(){
@@ -104,6 +108,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     }
     override fun startCheckingDistanceToRoute(){
         mapView.getParentView()?.let { mapModel.stopCheckingDistanceToRoute(it.getViewContext()) }
+        Log.i("Mati", "Service started")
     }
     override fun stopCheckingDistanceToRoute(){
         mapView.getParentView()?.let { mapModel.stopCheckingDistanceToRoute(it.getViewContext()) }
