@@ -216,6 +216,7 @@ class MapRepository: MapContract.MapModel {
                 })
                 routeCheckService.showNotification()
                 isServiceBound = true
+                Log.i("Mati", "Service started? " + isServiceBound)
             }
 
             override fun onServiceDisconnected(p0: ComponentName?) {

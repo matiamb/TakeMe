@@ -36,7 +36,6 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     }
 
     override fun getRoute(destination: Place) {
-        //TODO("Not yet implemented")
         //stopCheckingDistanceToRoute()
         CoroutineScope(Dispatchers.IO).launch {
             val startPlace = Place("MyPosition", getCurrentPosition()!!)
@@ -45,6 +44,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
             }
             withContext(Dispatchers.Main){
                 mapView.drawRoute(route)
+                startCheckingDistanceToRoute()
             }
         }
     }
@@ -69,7 +69,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     }
 
     override fun startLocationUpdates(context: Context) {
-        startCheckingDistanceToRoute()
+        //startCheckingDistanceToRoute()
         //inicializo el locationListener como un objeto del repo (IMPORTANTE SABER ESTO) y sobrescribo el metodo del listener
         locationListener = object : MapRepository.OnNewLocationListener {
             override fun currentLocationUpdate(point: Point) {
@@ -107,8 +107,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
         mapView.updateMapLocation(mapModel.updateMapLocation())
     }
     override fun startCheckingDistanceToRoute(){
-        mapView.getParentView()?.let { mapModel.stopCheckingDistanceToRoute(it.getViewContext()) }
-        Log.i("Mati", "Service started")
+        mapView.getParentView()?.let { mapModel.startCheckingDistanceToRoute(it.getViewContext()) }
     }
     override fun stopCheckingDistanceToRoute(){
         mapView.getParentView()?.let { mapModel.stopCheckingDistanceToRoute(it.getViewContext()) }

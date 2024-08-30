@@ -3,7 +3,7 @@ package home.view.map
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -29,10 +29,6 @@ import home.model.map.MapRepository
 import home.model.map.Point
 import home.presenter.map.MapPresenter
 import home.view.map.PermissionUtils.isPermissionGranted
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseContract.IBaseView> {
@@ -63,6 +59,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         configureMap()
         initPresenter()
         initFusedLocationProviderClient()
+        requestNotificationPermission()
         //Recibo la lista de tipo places desde el backend
         //val query: ArrayList<Place> = ArrayList(showSearchResults(text.toString()))
         //con el mapTo solo busco la propiedad que me interesa de la lista
@@ -207,7 +204,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             }*/
             //SI ESTOY EN UN FRAGMENT, NO NECESITO EL ACTIVITYCOMPAT ANTES DE REQUEST PERMISSIONS O SHOULDSHOW...
             // 3. Otherwise, request permission
-            requestPermission()
+            requestLocationPermission()
         }
     }
 
@@ -222,7 +219,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
                 permissions,
                 grantResults
             )
-            requestPermission()
+            requestLocationPermission()
             return
         }
 
@@ -240,11 +237,23 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             enableMyLocation()
         } else {
             // Permission was denied. Display an error message
-            Toast.makeText(context, "Location Permission denied, please change it through settings", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Location Permission denied, please change it through settings", Toast.LENGTH_LONG).show()
+        }
+
+        if (isPermissionGranted(
+                permissions,
+                grantResults,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+        ) {
+            return
+        } else {
+            // Permission was denied. Display an error message
+            Toast.makeText(context, "Notification Permission denied, please change it through settings", Toast.LENGTH_LONG).show()
         }
     }
 
-    private fun requestPermission(){
+    private fun requestLocationPermission(){
         requestPermissions(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -264,6 +273,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         )))
     }
 
+    private fun requestNotificationPermission(){
+        if (Build.VERSION.SDK_INT >= 33){
+            requestPermissions(
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                NOTIFICATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
     companion object {
         /**
          * Request code for location permission request.
@@ -271,6 +289,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
          * @see .onRequestPermissionsResult
          */
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 2
     }
 
 }
