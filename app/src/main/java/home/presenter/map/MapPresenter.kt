@@ -44,7 +44,6 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
             }
             withContext(Dispatchers.Main){
                 mapView.drawRoute(route)
-                startCheckingDistanceToRoute()
             }
         }
     }
@@ -69,7 +68,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     }
 
     override fun startLocationUpdates(context: Context) {
-        //startCheckingDistanceToRoute()
+        startCheckingDistanceToRoute()
         //inicializo el locationListener como un objeto del repo (IMPORTANTE SABER ESTO) y sobrescribo el metodo del listener
         locationListener = object : MapRepository.OnNewLocationListener {
             override fun currentLocationUpdate(point: Point) {

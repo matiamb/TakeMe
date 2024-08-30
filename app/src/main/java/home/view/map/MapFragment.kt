@@ -139,7 +139,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             MapsManager.alignMapToRoute(googleMap, route)
             MapsManager.addMarkerToMap(googleMap, route.last())
             startLocationUpdates()
-            mapPresenter.stopCheckingDistanceToRoute()
         }
     }
 
