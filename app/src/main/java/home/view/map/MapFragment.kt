@@ -236,16 +236,20 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             enableMyLocation()
         } else {
             // Permission was denied. Display an error message
-            Toast.makeText(context, "Location Permission denied, please change it through settings", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context,
+                "Location Permission denied, please change it through settings",
+                Toast.LENGTH_LONG
+            ).show()
         }
-
+        //siempre da false, por que post notifications no esta en el array, no se como agregarlo
         if (isPermissionGranted(
                 permissions,
                 grantResults,
                 Manifest.permission.POST_NOTIFICATIONS
             )
         ) {
-            return
+            //do nothing
         } else {
             // Permission was denied. Display an error message
             Toast.makeText(context, "Notification Permission denied, please change it through settings", Toast.LENGTH_LONG).show()

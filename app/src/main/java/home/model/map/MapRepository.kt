@@ -37,11 +37,13 @@ class MapRepository: MapContract.MapModel {
     //previene memory leaks
     private lateinit var newLocationListener : WeakReference<OnNewLocationListener>
     //Este objeto es la conexion de la activity con mi service
-    private var routeCheckServiceConnection: ServiceConnection? = null
     private var isServiceBound = false
     private lateinit var routeCheckService: RouteCheckService
     private lateinit var  context: Context
     var currentRoute: List<Point>? = null
+    private lateinit var routeCheckServiceConnection: ServiceConnection
+
+
     override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place> {
         /*return listOf(
             Place(
@@ -104,12 +106,12 @@ class MapRepository: MapContract.MapModel {
         val lastLocation = fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
                 // Got last known location. In some rare situations this can be null.
-                Log.i("Mati", "Location request successful")
+                //Log.i("Mati", "Location request successful")
                 if (location != null) {
                     val latitude = location.latitude
                     val longitude = location.longitude
                     // Do something with the latitude and longitude
-                    Log.i("Mati", "Location from inside: "+latitude.toString() +" "+ longitude.toString())
+                    //Log.i("Mati", "Location from inside: "+latitude.toString() +" "+ longitude.toString())
                 }
             }
             .addOnFailureListener { exception: Exception ->
@@ -128,6 +130,7 @@ class MapRepository: MapContract.MapModel {
         }*/
         //await va a esperar a que una tarea especifica termine antes de seguir con el resto del codigo
         await(lastLocation)
+        //Log.i("Mati", "Last location test: " + lastLocation.result.latitude.toString())
         lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
         //mCurrentLocation = lastLocation.result
         return lastKnownLocation
@@ -190,6 +193,7 @@ class MapRepository: MapContract.MapModel {
     }
     override fun initFusedLocationProviderClient(context: Context){
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        //setupServiceConnection()
     }
 
     override fun updateMapLocation(): Point{
@@ -200,38 +204,47 @@ class MapRepository: MapContract.MapModel {
         return navigationStarted
     }
     private fun setupServiceConnection(){
-        routeCheckServiceConnection = object: ServiceConnection{
-            override fun onServiceConnected(p0: ComponentName?, service: IBinder?) {
+        Log.i("Mati", "Serivce connection started")
+        routeCheckServiceConnection = object : ServiceConnection {
+            //NO PASA DE ACA NUNCA LLAMA A EL METODO SIGUIENTE
+            override fun onServiceConnected(name: ComponentName, service: IBinder) {
+                Log.i("Mati", "Starting connection")
                 val binder = service as RouteCheckService.RouteCheckBinder
                 routeCheckService = binder.getService()
-                routeCheckService?.setLocationProvider(object :
+                routeCheckService.setLocationProvider(object :
                 RouteCheckService.CurrentLocationStatusProvider{
                     override fun getCurrentLocation(): Point? {
+                        //CHEQUEAR QUE SUCEDE CON ESTA VARIABLE
                         return mCurrentLocation
                     }
-
                     override fun getCurrentRoute(): List<Point>? {
                         return currentRoute
                     }
                 })
                 routeCheckService.showNotification()
                 isServiceBound = true
-                Log.i("Mati", "Service started? " + isServiceBound)
-            }
+                Log.i("Mati", "Service mCurrentLocation: $mCurrentLocation")
 
-            override fun onServiceDisconnected(p0: ComponentName?) {
+            }
+            override fun onServiceDisconnected(name: ComponentName?) {
                 isServiceBound = false
+                Log.i("Mati", "Service disconnected")
             }
         }
+        Log.i("Mati", "Service connection finished")
+        Log.i("Mati", "Service started? $isServiceBound")
     }
+
     //aca recibo el context para controlar que no me desvie de la ruta
     override fun startCheckingDistanceToRoute(context: Context){
+        Log.i("Mati", "Al menos llego aca?")
         //este if es para que si el service esta bindeado, salga de este metodo y no me lo bindee cada vez que entra
         if(isServiceBound){
             return
         }
         setupServiceConnection()
-        val intent = Intent(context, routeCheckService::class.java)
+        //ACA VA EL NOMBRE DE LA CLASE DEL SERVICE!!!! SI NO DA NULL POINTER EXCEPTION
+        val intent = Intent(context, RouteCheckService::class.java)
         routeCheckServiceConnection?.let { context.bindService(intent, it, BIND_AUTO_CREATE) }
     }
     override fun stopCheckingDistanceToRoute(context: Context){

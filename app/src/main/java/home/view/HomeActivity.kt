@@ -8,10 +8,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.gfreeman.takeme.R
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import home.view.map.MapFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import home.view.fav.FavFragment

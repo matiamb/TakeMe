@@ -1,8 +1,6 @@
 package home.presenter.map
 
 import android.content.Context
-import android.location.Location
-import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import contract.BaseContract
 import contract.MapContract
@@ -25,7 +23,6 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     }
 
     override fun performSearchPlaces(placeToSearch: String) {
-        //TODO("Buscar corutinas")
         CoroutineScope(Dispatchers.IO).launch {
             val results = mapModel.getPlacesFromSearch(placeToSearch)
             withContext(Dispatchers.Main){
@@ -49,7 +46,6 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     }
 
     override suspend fun getCurrentPosition(): Point? {
-        //TODO("googlear Deferred y metodo async de corrutinas")
         //DEFERRED ES UN JOB QUE DEVUELVE UN RESULTADO
         val job: Deferred<Point?> = CoroutineScope(Dispatchers.IO).async {
             mapModel.getCurrentPosition()
@@ -68,7 +64,6 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     }
 
     override fun startLocationUpdates(context: Context) {
-        startCheckingDistanceToRoute()
         //inicializo el locationListener como un objeto del repo (IMPORTANTE SABER ESTO) y sobrescribo el metodo del listener
         locationListener = object : MapRepository.OnNewLocationListener {
             override fun currentLocationUpdate(point: Point) {
@@ -85,6 +80,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
         //esto no entiendo bien, formatea locationListener para decirle que metodo escuchar?
         locationListener?.let { mapModel.startLocationUpdates(context, it) }
         //mapModel.startLocationUpdates(context)
+        startCheckingDistanceToRoute(context)
     }
 
     override fun stopLocationUpdates() {
@@ -105,8 +101,8 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     override fun updateMapLocation() {
         mapView.updateMapLocation(mapModel.updateMapLocation())
     }
-    override fun startCheckingDistanceToRoute(){
-        mapView.getParentView()?.let { mapModel.startCheckingDistanceToRoute(it.getViewContext()) }
+    override fun startCheckingDistanceToRoute(context: Context){
+        mapModel.startCheckingDistanceToRoute(context)
     }
     override fun stopCheckingDistanceToRoute(){
         mapView.getParentView()?.let { mapModel.stopCheckingDistanceToRoute(it.getViewContext()) }

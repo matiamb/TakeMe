@@ -17,12 +17,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TakeMe"
         tools:targetApi="31">
+        <service
+            android:name="home.model.map.services.RouteCheckService"
+            android:description="@string/check_route_service_description"
+            android:enabled="true"
+            android:exported="false"
+        />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
         <activity
             android:name="home.view.HomeActivity"
-            android:exported="false" />
+            android:exported="false">
+        </activity>
+
         <activity
             android:name=".login.view.LoginActivity"
             android:exported="true">
@@ -32,11 +40,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="home.model.map.services.RouteCheckService"
-            android:description="@string/check_route_service_description"
-            android:enabled="true"
-            android:exported="false"
-            />
+
     </application>
 
 

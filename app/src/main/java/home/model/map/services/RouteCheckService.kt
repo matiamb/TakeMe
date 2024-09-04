@@ -7,7 +7,6 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.graphics.drawable.Icon
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -38,6 +37,7 @@ class RouteCheckService : Service() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as
                 NotificationManager
         startRouteCheck()
+        Log.i("Mati", "Service created")
     }
 
     fun setLocationProvider ( locationProvider: CurrentLocationStatusProvider){
@@ -50,7 +50,7 @@ class RouteCheckService : Service() {
     }
 
     inner class RouteCheckBinder : Binder(){
-        fun getService() = this@RouteCheckService
+        fun getService(): RouteCheckService = this@RouteCheckService
     }
     fun showNotification(){
         val notification = buildNotification()
@@ -59,7 +59,7 @@ class RouteCheckService : Service() {
     }
 
     private fun buildNotification(): Notification{
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if(Build.VERSION.SDK_INT >= 33){
             createNotificationChannel()
         }
         return NotificationCompat.Builder(this, CHANNEL_ID)
@@ -71,7 +71,7 @@ class RouteCheckService : Service() {
             .build()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @RequiresApi(33)
     private fun createNotificationChannel(){
         val channel = NotificationChannel(
             CHANNEL_ID,
@@ -86,6 +86,7 @@ class RouteCheckService : Service() {
         fun getCurrentRoute(): List<Point>?
     }
     override fun onBind(p0: Intent?): IBinder? {
+        Log.i("Mati", "OnBind method test")
         return routeCheckBinder
     }
 

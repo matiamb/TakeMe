@@ -9,7 +9,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import home.model.map.Point
-import java.lang.invoke.TypeDescriptor.OfField
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.cos

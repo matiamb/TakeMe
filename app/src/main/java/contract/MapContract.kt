@@ -1,7 +1,6 @@
 package contract
 
 import android.content.Context
-import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import home.model.map.MapRepository.OnNewLocationListener
 import home.model.map.Place
@@ -21,7 +20,6 @@ interface MapContract {
     interface IMapPresenter<T: FragmentBaseContract.IFragmentBaseView<*>>: FragmentBaseContract.IBasePresenter<T>{
         fun performSearchPlaces(placeToSearch: String)
         fun getRoute(destination: Place)
-        //TODO buscar cual es la funcion del suspend
         suspend fun getCurrentPosition(): Point?
         fun getResult(search: String): String
         fun initFusedLocationProviderClient(context: Context)
@@ -29,7 +27,7 @@ interface MapContract {
         fun stopLocationUpdates()
         fun getLastLocation()
         fun updateMapLocation()
-        fun startCheckingDistanceToRoute()
+        fun startCheckingDistanceToRoute(context: Context)
         fun stopCheckingDistanceToRoute()
     }
 
