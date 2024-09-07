@@ -24,16 +24,16 @@ interface MapContract {
         fun getResult(search: String): String
         fun initFusedLocationProviderClient(context: Context)
         fun startLocationUpdates(context: Context)
-        fun stopLocationUpdates()
         fun getLastLocation()
         fun updateMapLocation()
         fun startCheckingDistanceToRoute(context: Context)
-        fun stopCheckingDistanceToRoute()
+        fun stopCheckingDistanceToRoute(context: Context)
+        fun stopLocationUpdates()
     }
 
     interface MapModel {
         suspend fun getPlacesFromSearch(placeToSearch: String): List<Place>
-        suspend fun getRoute(startPlace: Place, destination: Place): List <Point>
+        suspend fun getRoute(startPlace: Place, destination: Place): List<Point>?
         fun getCurrentPosition(): Point?
         fun getResult(search: String): String
         fun initFusedLocationProviderClient(context: Context)

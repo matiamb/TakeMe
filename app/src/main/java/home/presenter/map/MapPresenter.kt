@@ -36,11 +36,13 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
         //stopCheckingDistanceToRoute()
         CoroutineScope(Dispatchers.IO).launch {
             val startPlace = Place("MyPosition", getCurrentPosition()!!)
-            val route = mapModel.getRoute(startPlace, destination).map {
+            val route = mapModel.getRoute(startPlace, destination)?.map {
                 LatLng(it.latitude, it.longitude)
             }
             withContext(Dispatchers.Main){
-                mapView.drawRoute(route)
+                if (route != null) {
+                    mapView.drawRoute(route)
+                }
             }
         }
     }
@@ -85,7 +87,6 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
 
     override fun stopLocationUpdates() {
         mapModel.stopLocationUpdates()
-        stopCheckingDistanceToRoute()
     }
 
     override fun getLastLocation(){
@@ -104,7 +105,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     override fun startCheckingDistanceToRoute(context: Context){
         mapModel.startCheckingDistanceToRoute(context)
     }
-    override fun stopCheckingDistanceToRoute(){
-        mapView.getParentView()?.let { mapModel.stopCheckingDistanceToRoute(it.getViewContext()) }
+    override fun stopCheckingDistanceToRoute(context: Context){
+        mapModel.stopCheckingDistanceToRoute(context)
     }
 }

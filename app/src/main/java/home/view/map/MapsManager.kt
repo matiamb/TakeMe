@@ -1,6 +1,7 @@
 package home.view.map
 
 import android.content.Context
+import android.util.Log
 import com.gfreeman.takeme.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -101,12 +102,13 @@ object MapsManager {
             route[nearestPoint]
         ) > DISTANCE_TO_BE_OUT_OF_ROUTE
     }
-    fun findNearestPointIndex(userLocation: Point, route: List<LatLng>): Int {
+    private fun findNearestPointIndex(userLocation: Point, route: List<LatLng>): Int {
         var nearestIndex = -1
         var shortestDistance = Double.MAX_VALUE
         for (i in route.indices) {
             val distance =
                 calculateDistance(userLocation, Point(route[i].latitude, route[i].longitude))
+            //Log.i("Mati", "Distance from MapsManager: $distance/m")
             if (distance < shortestDistance) {
                 shortestDistance = distance
                 nearestIndex = i

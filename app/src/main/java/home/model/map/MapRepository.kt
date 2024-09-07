@@ -59,7 +59,7 @@ class MapRepository: MapContract.MapModel {
             }?: emptyList()
     }
 
-    override suspend fun getRoute(startPlace: Place, destination: Place): List<Point> {
+    override suspend fun getRoute(startPlace: Place, destination: Place): List<Point>? {
         /*return listOf(
             Point(-34.679437, -58.553777),
             Point(
@@ -87,18 +87,21 @@ class MapRepository: MapContract.MapModel {
             getFormatedPoints(startPlace),
             getFormatedPoints(destination)
         )
-        return if (rawRouteResponse.isSuccessful){
-            mapRoute(rawRouteResponse.body()?.route?.geometry?.coordinates)
+        if (rawRouteResponse.isSuccessful){
+            currentRoute = mapRoute(rawRouteResponse.body()?.route?.geometry?.coordinates)
+            Log.i("Mati", "Current route list: ${currentRoute.toString()}")
         } else {
-            emptyList()
+            return emptyList()
         }
+        return currentRoute
     }
 
     private fun getFormatedPoints(place: Place): String =
         "${place.point.latitude}, ${place.point.longitude}"
 
     private fun mapRoute(coordinates: List<List<Double>>?): List<Point> =
-        coordinates?.map{Point(it.first(), it.last())}?: emptyList()
+        coordinates?.map{Point(it.first(), it.last())} ?: emptyList()
+
     @SuppressLint("MissingPermission")
     override fun getCurrentPosition(): Point? {
         //return Point(-34.679437, -58.553777)
@@ -132,7 +135,7 @@ class MapRepository: MapContract.MapModel {
         await(lastLocation)
         //Log.i("Mati", "Last location test: " + lastLocation.result.latitude.toString())
         lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
-        //mCurrentLocation = lastLocation.result
+        mCurrentLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
         return lastKnownLocation
     }
     @SuppressLint("MissingPermission")
@@ -151,9 +154,10 @@ class MapRepository: MapContract.MapModel {
 //                    updateMapLocation()
 //                    Log.i("Mati", mCurrentLocation.toString())
 //                }
-                super.onLocationResult(locationResult)
+                //super.onLocationResult(locationResult)
                 mCurrentLocation =
                     locationResult.lastLocation.let { Point(it!!.latitude, it.longitude) }
+                //Log.i("Mati", "$mCurrentLocation")
                 //aplico el listener a mCurrentLocation
                 mCurrentLocation.let {
                     //sobreescribo lo que sea que tenga el listener por mCurrentLocation, va actualizando la location a la que hace referencia
@@ -221,9 +225,9 @@ class MapRepository: MapContract.MapModel {
                         return currentRoute
                     }
                 })
-                routeCheckService.showNotification()
+                //routeCheckService.showNotification()
                 isServiceBound = true
-                Log.i("Mati", "Service mCurrentLocation: $mCurrentLocation")
+                //Log.i("Mati", "Service mCurrentLocation: $mCurrentLocation")
 
             }
             override fun onServiceDisconnected(name: ComponentName?) {
@@ -237,7 +241,6 @@ class MapRepository: MapContract.MapModel {
 
     //aca recibo el context para controlar que no me desvie de la ruta
     override fun startCheckingDistanceToRoute(context: Context){
-        Log.i("Mati", "Al menos llego aca?")
         //este if es para que si el service esta bindeado, salga de este metodo y no me lo bindee cada vez que entra
         if(isServiceBound){
             return

@@ -37,7 +37,7 @@ class RouteCheckService : Service() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as
                 NotificationManager
         startRouteCheck()
-        Log.i("Mati", "Service created")
+        //Log.i("Mati", "Service created")
     }
 
     fun setLocationProvider ( locationProvider: CurrentLocationStatusProvider){
@@ -86,7 +86,6 @@ class RouteCheckService : Service() {
         fun getCurrentRoute(): List<Point>?
     }
     override fun onBind(p0: Intent?): IBinder? {
-        Log.i("Mati", "OnBind method test")
         return routeCheckBinder
     }
 
@@ -94,6 +93,7 @@ class RouteCheckService : Service() {
         routeCheckJob = CoroutineScope(Dispatchers.Default).launch {
             while (true) {
                 isOutOfRoute = checkIfOutOfRoute()
+                Log.i("Mati", "Is out of route? $isOutOfRoute")
                 if (isOutOfRoute && !notificationShown){
                     showNotification()
                     stopSelf()
@@ -101,6 +101,7 @@ class RouteCheckService : Service() {
                 delay(checkIntervalMs)
             }
         }
+        //Log.i("Mati", "RoutecheckJob= ${routeCheckJob.toString()}")
     }
 
     private fun stopRouteCheck(){

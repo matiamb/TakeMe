@@ -2,6 +2,7 @@ package home.view.map
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -95,7 +96,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     override fun onStop() {
         super.onStop()
         stopLocationUpdates()
-        mapPresenter.stopCheckingDistanceToRoute()
+        context?.let { safeContext ->
+            mapPresenter.stopCheckingDistanceToRoute(safeContext)
+        }
         Log.i("Mati", "Location updates stopped")
     }
 
