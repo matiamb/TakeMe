@@ -102,6 +102,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         Log.i("Mati", "Location updates stopped")
     }
 
+    override fun onResume() {
+        super.onResume()
+        startLocationUpdates()
+    }
+
     private fun configureMap(){
         val mapSupportFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
         mapSupportFragment?.getMapAsync(this)
