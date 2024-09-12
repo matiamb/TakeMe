@@ -83,6 +83,8 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
         locationListener?.let { mapModel.startLocationUpdates(context, it) }
         //mapModel.startLocationUpdates(context)
         startCheckingDistanceToRoute(context)
+        mapModel.startCheckingBatteryStatus(context)
+        mapModel.registerRouteAlarm(context)
     }
 
     override fun stopLocationUpdates() {

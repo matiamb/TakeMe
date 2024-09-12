@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.gfreeman.takeme.R
@@ -17,6 +18,7 @@ class BatteryLowReceiver : BroadcastReceiver() {
     private var notificationShown = false
 
     override fun onReceive(context: Context?, p1: Intent?) {
+        Log.i("Mati", "Broadcast start test")
         notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as
                 NotificationManager
         showNotification(context)

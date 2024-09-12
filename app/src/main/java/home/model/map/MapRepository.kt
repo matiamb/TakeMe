@@ -2,14 +2,18 @@ package home.model.map
 
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Context.BIND_AUTO_CREATE
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.location.Location
 import android.os.IBinder
 import android.os.Looper
+import android.os.SystemClock
 import android.util.Log
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Granularity
@@ -22,7 +26,9 @@ import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.tasks.Tasks.await
 import contract.MapContract
+import home.model.map.broadcasts.BatteryLowReceiver
 import home.model.map.services.RouteCheckService
+import home.view.HomeActivity
 import java.lang.ref.WeakReference
 
 class MapRepository: MapContract.MapModel {
@@ -42,6 +48,8 @@ class MapRepository: MapContract.MapModel {
     private lateinit var  context: Context
     var currentRoute: List<Point>? = null
     private lateinit var routeCheckServiceConnection: ServiceConnection
+    private var batteryLowReceiver: BatteryLowReceiver? = null
+    private var alarmMgr: AlarmManager? = null
 
 
     override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place> {
@@ -253,6 +261,22 @@ class MapRepository: MapContract.MapModel {
     override fun stopCheckingDistanceToRoute(context: Context){
         routeCheckServiceConnection?.let { context.unbindService(it) }
         isServiceBound = false
+    }
+
+    override fun registerRouteAlarm(context: Context) {
+        alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmIntent = Intent(context, HomeActivity::class.java)
+        alarmMgr!!.set(
+            AlarmManager.ELAPSED_REALTIME_WAKEUP,
+            SystemClock.elapsedRealtime() + 5000,
+            PendingIntent.getActivity(context,0,alarmIntent, PendingIntent.FLAG_IMMUTABLE)
+        )
+    }
+
+    override fun startCheckingBatteryStatus(context: Context?){
+        batteryLowReceiver = BatteryLowReceiver()
+        val batteryIntentFilter = IntentFilter(Intent.ACTION_BATTERY_LOW)
+        context?.registerReceiver(batteryLowReceiver, batteryIntentFilter)
     }
 
     //Creo un custom listener

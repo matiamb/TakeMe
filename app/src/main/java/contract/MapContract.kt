@@ -43,5 +43,7 @@ interface MapContract {
         fun isNavigating(): Boolean
         fun startCheckingDistanceToRoute(context: Context)
         fun stopCheckingDistanceToRoute(context: Context)
+        fun registerRouteAlarm(context: Context)
+        fun startCheckingBatteryStatus(context: Context?)
     }
 }
