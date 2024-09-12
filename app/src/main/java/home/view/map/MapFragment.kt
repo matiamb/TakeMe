@@ -102,10 +102,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         Log.i("Mati", "Location updates stopped")
     }
 
-    override fun onResume() {
-        super.onResume()
-        startLocationUpdates()
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        startLocationUpdates()
+//    }
 
     private fun configureMap(){
         val mapSupportFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
@@ -173,6 +173,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             mapPresenter.stopLocationUpdates()
         } catch (e: Exception) {
             Log.i("Mati", "location callback has not been initialized")
+            throw e
         }
     }
 
@@ -193,7 +194,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 googleMap.isMyLocationEnabled = true
-                mapPresenter.getLastLocation()
+                try {
+                    mapPresenter.getLastLocation()
+                } catch (e: Exception){
+                    Log.i("Mati", "mCurrentLocation is null")
+                }
                 return
             }
             //PERMISSION RATIONALE ES PARA MOSTRAR UN DIALOGO QUE EXPLIQUE POR QUE NECESITAS EL PERMISO
