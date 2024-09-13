@@ -12,6 +12,33 @@
         android:id="@+id/map_fragment"
         tools:context="home.view.map.MapFragment"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_endroute_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="146dp"
+        android:contentDescription="@string/btn_cancel_route"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_map_cancel_route"
+        app:backgroundTint="@color/design_default_color_on_primary"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_weather_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="80dp"
+        android:contentDescription="@string/btn_map_forecast"
+        app:srcCompat="@drawable/ic_forecast_sunny"
+        app:backgroundTint="@color/design_default_color_on_primary"
+        app:tint="@null"
+        />
+
             <com.google.android.material.search.SearchBar
                 android:id="@+id/search_bar"
                 android:layout_width="match_parent"

@@ -21,6 +21,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.search.SearchView
 import contract.BaseContract
 import contract.MapContract
@@ -39,6 +40,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     private lateinit var googleMap: GoogleMap
     private lateinit var searchView: SearchView
     private lateinit var listView: ListView
+    private lateinit var fab_weather: FloatingActionButton
+    private lateinit var fab_cancel_route: FloatingActionButton
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -162,8 +165,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     }
 
     override fun startLocationUpdates() {
+        fab_cancel_route = requireView().findViewById(R.id.floating_endroute_button)
         context?.let { safeContext ->
             mapPresenter.startLocationUpdates(safeContext)
+        }
+        fab_cancel_route.show()
+        fab_cancel_route.setOnClickListener{
+            googleMap.clear()
+            stopLocationUpdates()
+            context?.let { safeContext ->
+                mapPresenter.stopCheckingDistanceToRoute(safeContext)
+            }
+            fab_cancel_route.hide()
         }
         //mapPresenter.updateMapLocation()
     }
