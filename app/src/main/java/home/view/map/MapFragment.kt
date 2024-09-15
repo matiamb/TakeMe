@@ -3,6 +3,7 @@ package home.view.map
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -16,6 +17,9 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.gfreeman.takeme.R
+import com.gfreeman.takeme.login.weather_forecast.view.WeatherReportActivity
+import com.gfreeman.takeme.login.weather_forecast.view.WeatherReportActivity.Companion.LAT_EXTRA
+import com.gfreeman.takeme.login.weather_forecast.view.WeatherReportActivity.Companion.LONG_EXTRA
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -31,6 +35,9 @@ import home.model.map.MapRepository
 import home.model.map.Point
 import home.presenter.map.MapPresenter
 import home.view.map.PermissionUtils.isPermissionGranted
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseContract.IBaseView> {
@@ -58,12 +65,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         searchView = view.findViewById(R.id.map_search_view)
         listView = view.findViewById<ListView>(R.id.map_list_view)
+        fab_weather = view.findViewById(R.id.floating_weather_button)
 
         super.onViewCreated(view, savedInstanceState)
         configureMap()
         initPresenter()
         initFusedLocationProviderClient()
 
+        fab_weather.setOnClickListener{
+            CoroutineScope(Dispatchers.Main).launch {
+                val currentPosition = mapPresenter.getCurrentPosition()
+                val weatherIntent = Intent(context, WeatherReportActivity::class.java)
+                weatherIntent.putExtra(LAT_EXTRA, currentPosition?.latitude.toString())
+                weatherIntent.putExtra(LONG_EXTRA, currentPosition?.longitude.toString())
+                startActivity(weatherIntent)
+            }
+        }
         //Recibo la lista de tipo places desde el backend
         //val query: ArrayList<Place> = ArrayList(showSearchResults(text.toString()))
         //con el mapTo solo busco la propiedad que me interesa de la lista
