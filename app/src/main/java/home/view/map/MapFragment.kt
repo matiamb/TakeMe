@@ -63,7 +63,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         configureMap()
         initPresenter()
         initFusedLocationProviderClient()
-        requestNotificationPermission()
+
         //Recibo la lista de tipo places desde el backend
         //val query: ArrayList<Place> = ArrayList(showSearchResults(text.toString()))
         //con el mapTo solo busco la propiedad que me interesa de la lista
@@ -98,11 +98,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
 
     override fun onStop() {
         super.onStop()
-        stopLocationUpdates()
-        context?.let { safeContext ->
-            mapPresenter.stopCheckingDistanceToRoute(safeContext)
+        try {
+            stopLocationUpdates()
+            context?.let { safeContext ->
+                mapPresenter.stopCheckingDistanceToRoute(safeContext)
+            }
+            Log.i("Mati", "Location updates stopped")
         }
-        Log.i("Mati", "Location updates stopped")
+        catch (_: UninitializedPropertyAccessException){
+        }
     }
 
 //    override fun onResume() {
@@ -150,6 +154,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             MapsManager.alignMapToRoute(googleMap, route)
             MapsManager.addMarkerToMap(googleMap, route.last())
             startLocationUpdates()
+            requestNotificationPermission()
         }
     }
 
@@ -182,12 +187,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     }
 
     override fun stopLocationUpdates() {
-        try {
-            mapPresenter.stopLocationUpdates()
-        } catch (e: Exception) {
-            Log.i("Mati", "location callback has not been initialized")
-            throw e
-        }
+        mapPresenter.stopLocationUpdates()
+        //throw UninitializedPropertyAccessException()
     }
 
     override fun getParentView(): BaseContract.IBaseView? {
@@ -210,7 +211,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
                 try {
                     mapPresenter.getLastLocation()
                 } catch (e: Exception){
-                    Log.i("Mati", "mCurrentLocation is null")
+                    Log.i("Mati", "mCurrentLocation is $e")
                 }
                 return
             }
