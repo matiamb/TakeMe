@@ -79,6 +79,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
                 weatherIntent.putExtra(LAT_EXTRA, currentPosition?.latitude.toString())
                 weatherIntent.putExtra(LONG_EXTRA, currentPosition?.longitude.toString())
                 startActivity(weatherIntent)
+                activity?.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out)
             }
         }
         //Recibo la lista de tipo places desde el backend
@@ -101,7 +102,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             //click listener para los items de la lista
             /*listView.setOnItemClickListener { parent, view, position, id ->
                 searchView.hide()
-                //TODO una vez realizada la busqueda, se borra la opcion correctamente,
+                //una vez realizada la busqueda, se borra la opcion correctamente,
                 // pero si hago otra busqueda el listview queda vacio
                 //adapter?.clear()
                 mapPresenter.getRoute(query[0])
