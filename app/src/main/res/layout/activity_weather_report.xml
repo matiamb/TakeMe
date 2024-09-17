@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     style="@style/Base.Theme.TakeMe"
-    tools:context=".login.weather_forecast.view.WeatherReportActivity">
+    tools:context=".weather_forecast.view.WeatherReportActivity">
 
     <WebView
         android:id="@+id/webView_weather_forecast"

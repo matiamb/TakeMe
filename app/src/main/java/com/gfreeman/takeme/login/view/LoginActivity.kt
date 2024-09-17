@@ -12,7 +12,7 @@ import com.gfreeman.takeme.login.model.LoginRepository
 import com.gfreeman.takeme.login.presenter.LoginPresenter
 import com.google.android.material.textfield.TextInputLayout
 import contract.LoginContract
-import home.view.HomeActivity
+import com.gfreeman.takeme.home.view.HomeActivity
 
 class LoginActivity : AppCompatActivity(), LoginContract.LoginView {
 

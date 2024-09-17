@@ -15,6 +15,7 @@ constraintlayout = "2.1.4"
 playServicesMaps = "18.2.0"
 retrofit = "2.11.0"
 playServicesLocation = "21.3.0"
+navigationFragmentKtx = "2.8.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -31,6 +32,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
