@@ -37,6 +37,7 @@ import com.gfreeman.takeme.home.presenter.map.MapPresenter
 import com.gfreeman.takeme.home.view.HomeActivity
 import com.gfreeman.takeme.home.view.map.PermissionUtils.isPermissionGranted
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.google.android.material.transition.platform.MaterialSharedAxis
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,6 +61,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         bottomSheetBehavior.isHideable = false
         bottomSheetBehavior.peekHeight = resources.getDimensionPixelSize(com.google.android.material.R.dimen.m3_searchbar_height)*/
+//        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ true)
+//        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ true)
         return view
 
     }
@@ -122,16 +125,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
 
     override fun onStop() {
         super.onStop()
-        try {
-            stopLocationUpdates()
-            context?.let { safeContext ->
-                mapPresenter.stopCheckingDistanceToRoute(safeContext)
-            }
-            Log.i("Mati", "Location updates stopped")
-        }
-        catch (_: UninitializedPropertyAccessException){
-        }
-    }
+//        try {
+//            stopLocationUpdates()
+//            context?.let { safeContext ->
+//                mapPresenter.stopCheckingDistanceToRoute(safeContext)
+//            }
+//            Log.i("Mati", "Location updates stopped")
+//        }
+//        catch (_: UninitializedPropertyAccessException){
+//        }
+   }
 
 //    override fun onResume() {
 //        super.onResume()

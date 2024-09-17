@@ -14,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.gfreeman.takeme.home.view.fav.FavFragment
 import com.gfreeman.takeme.home.view.profile.ProfileFragment
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.google.android.material.transition.platform.MaterialSharedAxis
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var searchFragment: Fragment
@@ -45,6 +46,10 @@ class HomeActivity : AppCompatActivity() {
         bottomNavbarView.setOnItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.nav_home_item1 -> {
+                    searchFragment.enterTransition = MaterialSharedAxis(
+                        MaterialSharedAxis.X, /* forward= */ true)
+                    searchFragment.exitTransition = MaterialSharedAxis(
+                        MaterialSharedAxis.X, /* forward= */ false)
                     loadFragment(favFragment)
                     true
                 }
@@ -53,6 +58,10 @@ class HomeActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_home_item3 -> {
+                    searchFragment.enterTransition = MaterialSharedAxis(
+                        MaterialSharedAxis.X, /* forward= */ false)
+                    searchFragment.exitTransition = MaterialSharedAxis(
+                        MaterialSharedAxis.X, /* forward= */ true)
                     loadFragment(profileFragment)
                     true
                 }

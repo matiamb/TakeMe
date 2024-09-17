@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.gfreeman.takeme.R
+import com.google.android.material.transition.platform.MaterialSharedAxis
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,6 +25,8 @@ class ProfileFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ true)
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ false)
         arguments?.let {
             param1 = it.getString(com.gfreeman.takeme.home.view.profile.ARG_PARAM1)
             param2 = it.getString(com.gfreeman.takeme.home.view.profile.ARG_PARAM2)
