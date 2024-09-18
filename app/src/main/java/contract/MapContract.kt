@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.gfreeman.takeme.home.model.map.MapRepository.OnNewLocationListener
 import com.gfreeman.takeme.home.model.map.Place
 import com.gfreeman.takeme.home.model.map.Point
+import com.gfreeman.takeme.home.model.map.services.RouteCheckService
 
 interface MapContract {
     interface MapView <T : BaseContract.IBaseView>: FragmentBaseContract.IFragmentBaseView<T>{
@@ -16,6 +17,8 @@ interface MapContract {
         fun stopLocationUpdates()
         fun getLastLocation(myLocation: LatLng)
         fun updateMapLocation(location: Point)
+        fun openCongratsScreen()
+        fun cleanMap()
     }
     interface IMapPresenter<T: FragmentBaseContract.IFragmentBaseView<*>>: FragmentBaseContract.IBasePresenter<T>{
         fun performSearchPlaces(placeToSearch: String)
@@ -45,5 +48,6 @@ interface MapContract {
         fun stopCheckingDistanceToRoute(context: Context)
         fun registerRouteAlarm(context: Context)
         fun startCheckingBatteryStatus(context: Context?)
+        fun setArriveDestinationListener(arriveDestinationListener: RouteCheckService.OnArriveDestinationListener?)
     }
 }

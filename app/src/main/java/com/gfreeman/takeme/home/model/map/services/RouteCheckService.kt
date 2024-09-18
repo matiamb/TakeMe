@@ -31,6 +31,7 @@ class RouteCheckService : Service() {
     private val checkIntervalMs = 5000L
     private var locationProvider: CurrentLocationStatusProvider? = null
     private var notificationShown = false
+    private var arrivedToDestinationListener: OnArriveDestinationListener? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -38,6 +39,10 @@ class RouteCheckService : Service() {
                 NotificationManager
         startRouteCheck()
         //Log.i("Mati", "Service created")
+    }
+
+    fun setArriveDestinationListener(arriveDestinationListener: OnArriveDestinationListener) {
+        this.arrivedToDestinationListener = arriveDestinationListener
     }
 
     fun setLocationProvider ( locationProvider: CurrentLocationStatusProvider){
@@ -98,10 +103,28 @@ class RouteCheckService : Service() {
                     showNotification()
                     stopSelf()
                 }
+                if (arrivedToDestination()) {
+                    arrivedToDestinationListener?.onArriveDestination()
+                    stopSelf()
+                }
                 delay(checkIntervalMs)
             }
         }
         //Log.i("Mati", "RoutecheckJob= ${routeCheckJob.toString()}")
+    }
+
+    private fun arrivedToDestination(): Boolean {
+        return locationProvider?.let {
+            val currentLocation = it.getCurrentLocation()
+            val currentRoute = it.getCurrentRoute()
+            return currentRoute?.let {
+                currentLocation?.let {
+                    val distance =
+                        MapsManager.calculateDistance(currentLocation, currentRoute.last())
+                    distance < DISTANCE_TO_ARRIVE
+                }
+            } ?: false
+        } ?: false
     }
 
     private fun stopRouteCheck(){
@@ -118,8 +141,14 @@ class RouteCheckService : Service() {
             } ?: false
         } ?: false
     }
+
+    interface OnArriveDestinationListener{
+        fun onArriveDestination()
+    }
+
     companion object {
         const val CHANNEL_ID = "Out of route"
         const val NOTIFICATION_ID = 23223
+        const val DISTANCE_TO_ARRIVE = 20
     }
 }

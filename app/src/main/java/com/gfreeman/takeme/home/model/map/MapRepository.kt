@@ -50,7 +50,7 @@ class MapRepository: MapContract.MapModel {
     private lateinit var routeCheckServiceConnection: ServiceConnection
     private var batteryLowReceiver: BatteryLowReceiver? = null
     private var alarmMgr: AlarmManager? = null
-
+    private var arriveDestinationListener: RouteCheckService.OnArriveDestinationListener? = null
 
     override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place> {
         /*return listOf(
@@ -233,6 +233,12 @@ class MapRepository: MapContract.MapModel {
                         return currentRoute
                     }
                 })
+                routeCheckService.setArriveDestinationListener(object :
+                    RouteCheckService.OnArriveDestinationListener {
+                    override fun onArriveDestination() {
+                        arriveDestinationListener?.onArriveDestination()
+                    }
+                })
                 //routeCheckService.showNotification()
                 isServiceBound = true
                 //Log.i("Mati", "Service mCurrentLocation: $mCurrentLocation")
@@ -263,6 +269,10 @@ class MapRepository: MapContract.MapModel {
         isServiceBound = false
     }
 
+    override fun setArriveDestinationListener(arriveDestinationListener: RouteCheckService.OnArriveDestinationListener?) {
+        this.arriveDestinationListener = arriveDestinationListener
+    }
+
     override fun registerRouteAlarm(context: Context) {
         alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val alarmIntent = Intent(context, HomeActivity::class.java)
@@ -283,5 +293,7 @@ class MapRepository: MapContract.MapModel {
     interface OnNewLocationListener {
         fun currentLocationUpdate(point: Point)
     }
-
+    interface OnArriveDestinationListener {
+        fun onArriveDestination()
+    }
 }

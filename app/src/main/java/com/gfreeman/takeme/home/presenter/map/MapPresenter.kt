@@ -7,6 +7,8 @@ import contract.MapContract
 import com.gfreeman.takeme.home.model.map.MapRepository
 import com.gfreeman.takeme.home.model.map.Place
 import com.gfreeman.takeme.home.model.map.Point
+import com.gfreeman.takeme.home.model.map.services.RouteCheckService
+import com.gfreeman.takeme.home.view.map.MapFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -106,10 +108,19 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     }
     override fun startCheckingDistanceToRoute(context: Context){
         mapModel.startCheckingDistanceToRoute(context)
+        mapModel.setArriveDestinationListener(object : RouteCheckService.OnArriveDestinationListener {
+            override fun onArriveDestination() {
+                stopCheckingDistanceToRoute(context)
+                stopLocationUpdates()
+                mapView.openCongratsScreen()
+                mapView.cleanMap()
+            }
+        })
     }
     override fun stopCheckingDistanceToRoute(context: Context){
         try {
             mapModel.stopCheckingDistanceToRoute(context)
+            mapModel.setArriveDestinationListener(null)
         }
         catch (_: IllegalArgumentException){}
     }

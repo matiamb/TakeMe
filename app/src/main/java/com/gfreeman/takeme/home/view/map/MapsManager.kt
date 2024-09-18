@@ -79,7 +79,7 @@ object MapsManager {
                 .title(title)
         )
     }
-    private fun calculateDistance(point1: Point, point2: Point): Double {
+    fun calculateDistance(point1: Point, point2: Point): Double {
         val earthRadius = 6371 // Earth's radius in kilometers
         val lat1 = Math.toRadians(point1.latitude)
         val lon1 = Math.toRadians(point1.longitude)

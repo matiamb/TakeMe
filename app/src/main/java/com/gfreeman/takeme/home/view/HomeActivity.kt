@@ -26,6 +26,20 @@ class HomeActivity : AppCompatActivity() {
         window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
         setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
         window.sharedElementsUseOverlay = false
+        val exit = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
+
+            // Only run the transition on the contents of this activity, excluding
+            // system bars or app bars if provided by the app’s theme.
+            //addTarget(R.id.a_container)
+        }
+        window.exitTransition = exit
+        val reenter = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
+
+            // Only run the transition on the contents of this activity, excluding
+            // system bars or app bars if provided by the app’s theme.
+            //addTarget(R.id.a_container)
+        }
+        window.reenterTransition = reenter
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_home)

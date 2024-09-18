@@ -160,6 +160,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         enableMyLocation()
     }
 
+    override fun cleanMap(){
+        googleMap.clear()
+    }
+
     private fun initPresenter(){
         val mapModel = MapRepository()
         mapPresenter = MapPresenter(mapModel)
@@ -226,6 +230,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
 
     override fun getParentView(): BaseContract.IBaseView? {
         return activity as? BaseContract.IBaseView
+    }
+
+    override fun openCongratsScreen() {
+        context?.let {
+            val congratsIntent = Intent(it, ArrivedToDestinationActivity::class.java)
+            val bundle = ActivityOptions.makeSceneTransitionAnimation(activity).toBundle()
+            startActivity(congratsIntent)
+        }
     }
 
     @SuppressLint("MissingPermission")

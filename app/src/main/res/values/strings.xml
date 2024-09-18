@@ -7,5 +7,6 @@
     <string name="check_route_service_description">This service alerts when you get out of presented route</string>
     <string name="btn_cancel_route">End route</string>
     <string name="btn_map_forecast">See the forecast</string>
+    <string name="txt_arrived_to_destination_screen">Congrats! You have arrived to your destination.</string>
 
 </resources>
