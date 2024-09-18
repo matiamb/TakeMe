@@ -52,6 +52,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     private lateinit var listView: ListView
     private lateinit var fab_weather: FloatingActionButton
     private lateinit var fab_cancel_route: FloatingActionButton
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -125,15 +131,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
 
     override fun onStop() {
         super.onStop()
-//        try {
-//            stopLocationUpdates()
-//            context?.let { safeContext ->
-//                mapPresenter.stopCheckingDistanceToRoute(safeContext)
-//            }
-//            Log.i("Mati", "Location updates stopped")
-//        }
-//        catch (_: UninitializedPropertyAccessException){
-//        }
+        try {
+            stopLocationUpdates()
+            context?.let { safeContext ->
+                mapPresenter.stopCheckingDistanceToRoute(safeContext)
+            }
+            Log.i("Mati", "Location updates stopped")
+        }
+        catch (_: UninitializedPropertyAccessException){
+        }
    }
 
 //    override fun onResume() {

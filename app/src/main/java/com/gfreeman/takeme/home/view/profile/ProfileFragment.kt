@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import com.gfreeman.takeme.R
 import com.google.android.material.transition.platform.MaterialSharedAxis
 
-// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -19,7 +18,6 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
@@ -50,7 +48,6 @@ class ProfileFragment : Fragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment ProfileFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             com.gfreeman.takeme.home.view.profile.ProfileFragment().apply {

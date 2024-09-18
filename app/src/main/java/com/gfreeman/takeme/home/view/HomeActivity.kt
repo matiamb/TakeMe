@@ -40,7 +40,7 @@ class HomeActivity : AppCompatActivity() {
 
         searchFragment = MapFragment()
         favFragment = FavFragment()
-        profileFragment = com.gfreeman.takeme.home.view.profile.ProfileFragment()
+        profileFragment = ProfileFragment()
         loadFragment(searchFragment)
         val bottomNavbarView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavbarView.setOnItemSelectedListener { item ->
