@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="home.view.map.MapFragment">
+    tools:context="home.view.map.MapFragment"
+    >
 
     <fragment
         android:layout_width="match_parent"
@@ -36,7 +37,7 @@
         android:contentDescription="@string/btn_map_forecast"
         android:transitionName="transition_weather_forecast"
         app:srcCompat="@drawable/ic_forecast_sunny"
-        app:backgroundTint="@color/design_default_color_on_primary"
+        android:backgroundTint="@color/md_theme_light_primaryContainer"
         app:tint="@null"
         />
 

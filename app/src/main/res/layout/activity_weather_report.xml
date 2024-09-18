@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     style="@style/Base.Theme.TakeMe"
+    android:theme="@style/Theme.AppCompat.DayNight"
     tools:context=".weather_forecast.view.WeatherReportActivity">
 
     <WebView
@@ -17,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
+    <ProgressBar
         android:id="@+id/weather_webView_loading_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

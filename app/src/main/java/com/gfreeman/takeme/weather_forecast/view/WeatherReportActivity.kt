@@ -1,24 +1,30 @@
 package com.gfreeman.takeme.weather_forecast.view
 
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
+import android.view.animation.Animation
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.gfreeman.takeme.R
+import com.google.android.material.animation.AnimationUtils
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 
 class WeatherReportActivity : AppCompatActivity() {
     private lateinit var weatherWebView: WebView
-    private lateinit var loadingSpinner: CircularProgressIndicator
+    private lateinit var loadingSpinner: ProgressBar
+    private var isFirstLoad = true
     override fun onCreate(savedInstanceState: Bundle?) {
         window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
 
@@ -51,20 +57,44 @@ class WeatherReportActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun configureWebView(){
         //Log.i("Mati", "Test configurewebView start")
+        weatherWebView.visibility = View.INVISIBLE
         weatherWebView.settings.javaScriptEnabled = true
         weatherWebView.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 loadingSpinner.visibility = View.VISIBLE
-                //Log.i("Mati", "Test webView onPageStarted")
+                Log.i("Mati", "Test webView onPageStarted")
             }
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
+                if (isFirstLoad){
+                    loadPageWithAnimation()
+                }
                 loadingSpinner.visibility = View.GONE
-                //Log.i("Mati", "Test webView onPageFinished")
+                Log.i("Mati", "Test webView onPageFinished")
             }
         }
         loadCustomUrl()
+    }
+
+    private fun loadPageWithAnimation() {
+        val fadeInAnim = android.view.animation.AnimationUtils.loadAnimation(this@WeatherReportActivity, R.anim.fade_in)
+        fadeInAnim.setAnimationListener(object : Animation.AnimationListener{
+            override fun onAnimationStart(p0: Animation?) {
+
+            }
+
+            override fun onAnimationEnd(p0: Animation?) {
+                loadingSpinner.visibility = View.GONE
+                weatherWebView.visibility = View.VISIBLE
+                isFirstLoad = false
+            }
+
+            override fun onAnimationRepeat(p0: Animation?) {
+
+            }
+        })
+        weatherWebView.startAnimation(fadeInAnim)
     }
 
     private fun loadCustomUrl() {
