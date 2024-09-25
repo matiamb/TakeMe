@@ -113,7 +113,6 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
                 stopCheckingDistanceToRoute(context)
                 stopLocationUpdates()
                 mapView.openCongratsScreen()
-                mapView.cleanMap()
             }
         })
     }

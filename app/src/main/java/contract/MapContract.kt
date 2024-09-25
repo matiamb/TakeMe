@@ -18,7 +18,6 @@ interface MapContract {
         fun getLastLocation(myLocation: LatLng)
         fun updateMapLocation(location: Point)
         fun openCongratsScreen()
-        fun cleanMap()
     }
     interface IMapPresenter<T: FragmentBaseContract.IFragmentBaseView<*>>: FragmentBaseContract.IBasePresenter<T>{
         fun performSearchPlaces(placeToSearch: String)

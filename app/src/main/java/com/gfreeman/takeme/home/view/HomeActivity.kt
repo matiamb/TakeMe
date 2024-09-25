@@ -14,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.gfreeman.takeme.home.view.fav.FavFragment
 import com.gfreeman.takeme.home.view.profile.ProfileFragment
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.google.android.material.transition.platform.MaterialFadeThrough
 import com.google.android.material.transition.platform.MaterialSharedAxis
 
 class HomeActivity : AppCompatActivity() {
@@ -24,22 +25,13 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         //transition para activity con weather forecast
         window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
-        setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-        window.sharedElementsUseOverlay = false
-        val exit = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
+        val exit = MaterialFadeThrough().apply {
 
             // Only run the transition on the contents of this activity, excluding
             // system bars or app bars if provided by the app’s theme.
-            //addTarget(R.id.a_container)
+            addTarget(R.id.home_container)
         }
         window.exitTransition = exit
-        val reenter = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
-
-            // Only run the transition on the contents of this activity, excluding
-            // system bars or app bars if provided by the app’s theme.
-            //addTarget(R.id.a_container)
-        }
-        window.reenterTransition = reenter
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_home)
