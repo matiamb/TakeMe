@@ -1,6 +1,7 @@
 package contract
 
 import android.content.Context
+import android.os.Bundle
 import com.google.android.gms.maps.model.LatLng
 import com.gfreeman.takeme.home.model.map.MapRepository.OnNewLocationListener
 import com.gfreeman.takeme.home.model.map.Place
@@ -17,7 +18,7 @@ interface MapContract {
         fun stopLocationUpdates()
         fun getLastLocation(myLocation: LatLng)
         fun updateMapLocation(location: Point)
-        fun openCongratsScreen()
+        fun openCongratsScreen(congratsParams: Bundle)
     }
     interface IMapPresenter<T: FragmentBaseContract.IFragmentBaseView<*>>: FragmentBaseContract.IBasePresenter<T>{
         fun performSearchPlaces(placeToSearch: String)

@@ -8,5 +8,9 @@
     <string name="btn_cancel_route">End route</string>
     <string name="btn_map_forecast">See the forecast</string>
     <string name="txt_arrived_to_destination_screen">Congrats! You have arrived to your destination.</string>
+    <string name="fav_card_start_location">Start Location</string>
+    <string name="fav_card_end_location">End Location</string>
+    <string name="fab_favourite_button">Add to favourite button</string>
+    <string name="txt_card_title">If you liked this route, add it to your favorites!</string>
 
 </resources>

@@ -1,6 +1,8 @@
 package com.gfreeman.takeme.home.presenter.map
 
 import android.content.Context
+import android.os.Bundle
+import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import contract.BaseContract
 import contract.MapContract
@@ -8,6 +10,8 @@ import com.gfreeman.takeme.home.model.map.MapRepository
 import com.gfreeman.takeme.home.model.map.Place
 import com.gfreeman.takeme.home.model.map.Point
 import com.gfreeman.takeme.home.model.map.services.RouteCheckService
+import com.gfreeman.takeme.home.view.map.ArrivedToDestinationActivity.Companion.EXTRA_FINISH_PLACE
+import com.gfreeman.takeme.home.view.map.ArrivedToDestinationActivity.Companion.EXTRA_START_PLACE
 import com.gfreeman.takeme.home.view.map.MapFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -20,6 +24,8 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     private lateinit var mapView: MapContract.MapView<BaseContract.IBaseView>
     //inicializo el listener que esta en el repo
     private var locationListener: MapRepository.OnNewLocationListener? = null
+    private lateinit var startPlace: Place
+    private lateinit var finishPlace: Place
     override fun attachView(view: MapContract.MapView<BaseContract.IBaseView>) {
         this.mapView = view
     }
@@ -37,7 +43,8 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
     override fun getRoute(destination: Place) {
         //stopCheckingDistanceToRoute()
         CoroutineScope(Dispatchers.IO).launch {
-            val startPlace = Place("MyPosition", getCurrentPosition()!!)
+            startPlace = Place("MyPosition", getCurrentPosition()!!)
+            finishPlace = destination
             val route = mapModel.getRoute(startPlace, destination)?.map {
                 LatLng(it.latitude, it.longitude)
             }
@@ -87,6 +94,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
         startCheckingDistanceToRoute(context)
         mapModel.startCheckingBatteryStatus(context)
         //mapModel.registerRouteAlarm(context)
+        mapView.openCongratsScreen(getCongratsParams())
     }
 
     override fun stopLocationUpdates() {
@@ -112,7 +120,7 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
             override fun onArriveDestination() {
                 stopCheckingDistanceToRoute(context)
                 stopLocationUpdates()
-                mapView.openCongratsScreen()
+                mapView.openCongratsScreen(getCongratsParams())
             }
         })
     }
@@ -122,5 +130,26 @@ class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMap
             mapModel.setArriveDestinationListener(null)
         }
         catch (_: IllegalArgumentException){}
+    }
+    fun getCongratsParams(): Bundle {
+        val congratsParams = Bundle()
+        Log.i("Mati", "Is navigating? "+ mapModel.isNavigating().toString())
+        if (mapModel.isNavigating()) {
+                congratsParams.putSerializable(
+                    EXTRA_START_PLACE,
+                    Place(
+                        displayName = startPlace.displayName,
+                        point = Point(startPlace.point.latitude, startPlace.point.longitude)
+                    )
+                )
+                congratsParams.putSerializable(
+                    EXTRA_FINISH_PLACE,
+                    Place(
+                        displayName = finishPlace.displayName,
+                        point = Point(finishPlace.point.latitude, finishPlace.point.longitude)
+                    )
+                )
+            }
+        return congratsParams
     }
 }

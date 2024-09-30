@@ -81,6 +81,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         configureMap()
         initPresenter()
         initFusedLocationProviderClient()
+        //openCongratsScreen()
 
         fab_weather.setOnClickListener{
             CoroutineScope(Dispatchers.Main).launch {
@@ -228,9 +229,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         return activity as? BaseContract.IBaseView
     }
 
-    override fun openCongratsScreen() {
+    override fun openCongratsScreen(congratsParams: Bundle) {
         context?.let {
             val congratsIntent = Intent(it, ArrivedToDestinationActivity::class.java)
+            congratsIntent.putExtras(congratsParams)
             startActivity(congratsIntent)
         }
     }

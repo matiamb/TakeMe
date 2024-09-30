@@ -149,6 +149,7 @@ class MapRepository: MapContract.MapModel {
     @SuppressLint("MissingPermission")
     override fun startLocationUpdates(context: Context, locationListener: OnNewLocationListener){
         navigationStarted = true
+        Log.i("Mati", "Map Repo: Is navigation started? " + navigationStarted.toString())
         this.context = context
         //inicializo el location listener
         this.newLocationListener = WeakReference(locationListener)
