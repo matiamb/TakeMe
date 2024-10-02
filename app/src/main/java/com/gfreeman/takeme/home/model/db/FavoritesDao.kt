@@ -1,6 +1,7 @@
 package com.gfreeman.takeme.home.model.db
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.gfreeman.takeme.home.model.db.entities.FavoriteRoute
@@ -14,4 +15,7 @@ interface FavoritesDao {
 
     @Insert
     fun addFavorite(favorite: FavoriteRoute)
+
+    @Delete
+    fun deleteFavorite(favorite: FavoriteRoute)
 }

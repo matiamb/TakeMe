@@ -1,7 +1,9 @@
 package com.gfreeman.takeme.home.view.map
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Window
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -13,6 +15,7 @@ import com.gfreeman.takeme.R
 import com.gfreeman.takeme.home.model.congrats.ArrivedToDestinationModel
 import com.gfreeman.takeme.home.model.map.Place
 import com.gfreeman.takeme.home.presenter.congrats.ArrivedToDestinationPresenter
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.transition.platform.MaterialFadeThrough
 import contract.ArrivedToDestinationContract
@@ -21,9 +24,10 @@ class ArrivedToDestinationActivity : AppCompatActivity(), ArrivedToDestinationCo
     private lateinit var fab_fav_route: FloatingActionButton
     private lateinit var txt_start_location: TextView
     private lateinit var txt_end_location: TextView
-    private var isfavorite: Boolean = false
+    private var isFavorite: Boolean = false
     private var startPlace: Place? = null
     private var finishPlace: Place? = null
+    private var startPointName = ""
     private lateinit var arrivedToDestinationPresenter: ArrivedToDestinationContract.IArrivedToDestinationPresenter<ArrivedToDestinationContract.ArrivedToDestinationView>
     override fun onCreate(savedInstanceState: Bundle?) {
         window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
@@ -51,17 +55,19 @@ class ArrivedToDestinationActivity : AppCompatActivity(), ArrivedToDestinationCo
         txt_start_location.text = startPlace?.displayName
         txt_end_location.text = finishPlace?.displayName?.split(",")?.take(1)?.joinToString(",")?:""
         fab_fav_route.setOnClickListener {
-            isfavorite = !isfavorite
+            isFavorite = !isFavorite
             configFavButton()
-            if (isfavorite) {
-                arrivedToDestinationPresenter.saveFavoriteRoute(startPlace, finishPlace)
+                if (startPointName == "") {
+                    showAddNameToRouteDialog()
+                    return@setOnClickListener
+                }
+                arrivedToDestinationPresenter.saveFavoriteRoute(startPlace, finishPlace, isFavorite)
                 //notifyFavoriteSaved()
             }
         }
-    }
 
     private fun configFavButton() {
-        if (isfavorite) {
+        if (isFavorite) {
             fab_fav_route.setImageDrawable(
                 ResourcesCompat.getDrawable(resources, R.drawable.fav_route_heart, null)
             )
@@ -72,6 +78,33 @@ class ArrivedToDestinationActivity : AppCompatActivity(), ArrivedToDestinationCo
         }
     }
 
+    private fun showAddNameToRouteDialog() {
+        val customView = LayoutInflater.from(this@ArrivedToDestinationActivity)
+            .inflate(R.layout.name_route_dialog, null)
+        val editTextPlaceName = customView.findViewById<EditText>(R.id.editTextPlaceName)
+
+        val dialog = MaterialAlertDialogBuilder(
+            this@ArrivedToDestinationActivity,
+            com.google.android.material.R.style.AlertDialog_AppCompat
+        )
+            .setTitle("Ingresa el nombre del punto inicial")
+            .setView(customView)
+            .setPositiveButton(
+                "Ok"
+            ) { dialog, _ ->
+                startPointName = editTextPlaceName.text.toString()
+                startPlace?.displayName = startPointName
+                txt_start_location.text = startPointName
+                arrivedToDestinationPresenter.saveFavoriteRoute(startPlace, finishPlace, isFavorite)
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+            }
+
+        dialog.show()
+    }
+
     private fun getParamsFromIntent() {
         startPlace = intent.extras?.getSerializable(EXTRA_START_PLACE) as? Place
         finishPlace = intent.extras?.getSerializable(EXTRA_FINISH_PLACE) as? Place
@@ -79,6 +112,10 @@ class ArrivedToDestinationActivity : AppCompatActivity(), ArrivedToDestinationCo
 
     override fun notifyFavoriteSaved() {
         Toast.makeText(this, "Route saved!", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun notifyFavoriteDeleted() {
+        Toast.makeText(this, "Route deleted!", Toast.LENGTH_SHORT).show()
     }
 
     override fun showErrorMessage(message: String) {

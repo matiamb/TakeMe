@@ -20,6 +20,14 @@ class ArrivedToDestinationModel(context: Context): ArrivedToDestinationContract.
         )
     }
 
+    override suspend fun deleteFavoriteRoute(startPlace: Place, destinationPlace: Place): ResultDBOperation{
+        val favoriteRouteToDelete = FavoriteRoute(
+            startPlace = startPlace,
+            destinationPlace = destinationPlace,
+        )
+        return deleteFavorite(favoriteRouteToDelete)
+    }
+
     private lateinit var favoritesDao: FavoritesDao
 
     init {
@@ -37,6 +45,14 @@ class ArrivedToDestinationModel(context: Context): ArrivedToDestinationContract.
         favoritesDao.addFavorite(favorite)
         ResultOk
     } catch (e: Exception) {
+        e.printStackTrace()
+        ResultError
+    }
+
+    fun deleteFavorite(favorite: FavoriteRoute): ResultDBOperation = try {
+        favoritesDao.deleteFavorite(favorite)
+        ResultOk
+    } catch (e: Exception){
         e.printStackTrace()
         ResultError
     }

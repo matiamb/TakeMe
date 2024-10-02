@@ -12,5 +12,6 @@
     <string name="fav_card_end_location">End Location</string>
     <string name="fab_favourite_button">Add to favourite button</string>
     <string name="txt_card_title">If you liked this route, add it to your favorites!</string>
+    <string name="name_route_hint">Name this route</string>
 
 </resources>

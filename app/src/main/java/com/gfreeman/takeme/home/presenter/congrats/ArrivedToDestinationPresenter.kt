@@ -16,16 +16,39 @@ import java.util.Locale
 
 class ArrivedToDestinationPresenter(val congratsModel: ArrivedToDestinationContract.ArrivedToDestinationModel) : ArrivedToDestinationContract.IArrivedToDestinationPresenter<ArrivedToDestinationContract.ArrivedToDestinationView> {
     private lateinit var arrivedToDestinationView: ArrivedToDestinationContract.ArrivedToDestinationView
-    override fun saveFavoriteRoute(startPlace: Place?, finishPlace: Place?) {
+
+    override fun saveFavoriteRoute(startPlace: Place?, finishPlace: Place?, isFav: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             startPlace?.let{ safeStartPlace ->
                 finishPlace?.let { safeFinishPlace ->
-                    congratsModel.saveFavoriteRoute(safeStartPlace, safeFinishPlace, getCurrentDateFormatted()).let {
-                        onFavoriteSaved(it)
+                    when(isFav){
+                        true -> onFavoriteSaved(
+                            congratsModel.saveFavoriteRoute(
+                                safeStartPlace,
+                                safeFinishPlace,
+                                getCurrentDateFormatted()
+                            )
+                        )
+
+                        false -> onFavoriteDeleted(
+                            congratsModel.deleteFavoriteRoute(
+                                safeStartPlace,
+                                safeFinishPlace
+                            )
+                        )
                     }
                 }
             } ?: withContext(Dispatchers.Main){
                 arrivedToDestinationView.showErrorMessage("Places are null!")
+            }
+        }
+    }
+
+    private suspend fun onFavoriteDeleted(resultDBOperation: ResultDBOperation) {
+        withContext(Dispatchers.Main) {
+            when (resultDBOperation){
+                ResultOk -> arrivedToDestinationView.notifyFavoriteDeleted()
+                ResultError -> arrivedToDestinationView.showErrorMessage("Cannot delete this route")
             }
         }
     }
