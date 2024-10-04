@@ -13,5 +13,6 @@
     <string name="fab_favourite_button">Add to favourite button</string>
     <string name="txt_card_title">If you liked this route, add it to your favorites!</string>
     <string name="name_route_hint">Name this route</string>
+    <string name="my_favorite_routes_title">My Favorite routes</string>
 
 </resources>
