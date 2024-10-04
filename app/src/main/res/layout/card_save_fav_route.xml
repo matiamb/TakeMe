@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_save_fav_route"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".home.view.map.ArrivedToDestinationActivity"
+    android:theme="@style/Theme.Material3.DayNight">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:checkable="true"
+        android:layout_margin="24dp"
+        style="?attr/materialCardViewElevatedStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="14dp">
+            <TextView
+                android:id="@+id/txt_fav_card_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/txt_fav_card_title"
+                android:text="Date"
+                android:visibility="gone"
+                />
+            <TextView
+                android:id="@+id/txt_fav_card_title"
+                android:paddingBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/txt_start_location"
+                android:text="@string/txt_card_title"
+                android:textSize="20sp"
+                />
+
+            <TextView
+                android:id="@+id/txt_start_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/fav_card_start_location"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btn_fav_route"
+                app:layout_constraintTop_toBottomOf="@id/txt_fav_card_title"
+                app:layout_constraintBottom_toTopOf="@id/txt_end_location"/>
+
+            <TextView
+                android:id="@+id/txt_end_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/fav_card_end_location"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btn_fav_route"
+                app:layout_constraintTop_toBottomOf="@id/txt_start_location"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_fav_route"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/fab_favourite_button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/txt_start_location"
+                app:layout_constraintTop_toBottomOf="@id/txt_fav_card_title"
+                app:srcCompat="@drawable/not_fav_route"
+                app:tint="@null" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

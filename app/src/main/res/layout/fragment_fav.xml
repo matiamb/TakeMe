@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="home.view.fav.FavFragment"
-    android:layout_padding="24dp">
+    tools:context="home.view.fav.FavFragment">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
