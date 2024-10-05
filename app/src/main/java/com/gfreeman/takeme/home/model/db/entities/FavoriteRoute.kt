@@ -15,10 +15,10 @@ data class FavoriteRoute(
     @ColumnInfo(name = COLUMN_DATE)
     val date: String = ""
 ){
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = COLUMN_ID)
-    var id: String = getRouteId()
-    private fun getRouteId() = "${startPlace.displayName}-${destinationPlace.displayName}"
+    var id: Int = 0
+
 }
 
 const val TABLE_FAVORITE = "favorite"

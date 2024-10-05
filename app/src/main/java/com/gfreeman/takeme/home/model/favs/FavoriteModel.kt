@@ -21,4 +21,24 @@ class FavoriteModel(context: Context) : FavoritesContract.FavoritesModel {
 
     override suspend fun getFavorites(): List<FavoriteRoute> = favoritesDao.getFavorites()
 
+    override suspend fun deleteFavoriteRoute(id: Int): ResultDBOperation {
+        return deleteFavorite(findFavById(id))
+    }
+
+    override suspend fun findFavById(id: Int): FavoriteRoute{
+        return favoritesDao.findFavById(id)
+    }
+
+    fun deleteFavorite(favorite: FavoriteRoute): ResultDBOperation = try {
+        favoritesDao.deleteFavorite(favorite)
+        ResultOk
+    } catch (e: Exception){
+        e.printStackTrace()
+        ResultError
+    }
+
+sealed class ResultDBOperation
+data object ResultOk : ResultDBOperation()
+data object ResultError : ResultDBOperation()
+
 }

@@ -8,8 +8,10 @@
     android:focusable="true"
     android:checkable="true"
     android:layout_margin="24dp"
-    style="?attr/materialCardViewElevatedStyle">
-
+    app:strokeColor="@color/md_theme_light_primaryContainer"
+    app:strokeWidth="1dp"
+    style="?attr/materialCardViewElevatedStyle"
+    >
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
