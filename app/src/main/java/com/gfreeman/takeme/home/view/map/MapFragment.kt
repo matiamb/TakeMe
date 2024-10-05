@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
@@ -33,11 +32,8 @@ import contract.MapContract
 import com.gfreeman.takeme.home.model.map.Place
 import com.gfreeman.takeme.home.model.map.MapRepository
 import com.gfreeman.takeme.home.model.map.Point
-import com.gfreeman.takeme.home.presenter.map.MapPresenter
-import com.gfreeman.takeme.home.view.HomeActivity
+import com.gfreeman.takeme.home.presenter.map.MapPresenterFragment
 import com.gfreeman.takeme.home.view.map.PermissionUtils.isPermissionGranted
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
-import com.google.android.material.transition.platform.MaterialSharedAxis
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,7 +42,7 @@ import kotlinx.coroutines.launch
 class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseContract.IBaseView> {
     //private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
     //private lateinit var placesSearchView: CustomSearchView
-    private lateinit var mapPresenter: MapContract.IMapPresenter<MapContract.MapView<BaseContract.IBaseView>>
+    private lateinit var mapPresenter: MapContract.IFragmentMapPresenter<MapContract.MapView<BaseContract.IBaseView>>
     private lateinit var googleMap: GoogleMap
     private lateinit var searchView: SearchView
     private lateinit var listView: ListView
@@ -163,7 +159,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
 
     private fun initPresenter(){
         val mapModel = MapRepository()
-        mapPresenter = MapPresenter(mapModel)
+        mapPresenter = MapPresenterFragment(mapModel)
         mapPresenter.attachView(this)
     }
 

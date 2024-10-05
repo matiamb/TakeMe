@@ -48,8 +48,8 @@ class ArrivedToDestinationActivity : AppCompatActivity(), ArrivedToDestinationCo
             insets
         }
         initPresenter()
-        txt_start_location = findViewById(R.id.txt_start_location)
-        txt_end_location = findViewById(R.id.txt_end_location)
+        txt_start_location = findViewById(R.id.txt_fav_card_start_location)
+        txt_end_location = findViewById(R.id.txt_fav_card_finish_location)
         fab_fav_route = findViewById(R.id.btn_fav_route)
         getParamsFromIntent()
         txt_start_location.text = startPlace?.displayName

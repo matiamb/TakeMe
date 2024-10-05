@@ -12,7 +12,6 @@ import com.gfreeman.takeme.home.model.map.Point
 import com.gfreeman.takeme.home.model.map.services.RouteCheckService
 import com.gfreeman.takeme.home.view.map.ArrivedToDestinationActivity.Companion.EXTRA_FINISH_PLACE
 import com.gfreeman.takeme.home.view.map.ArrivedToDestinationActivity.Companion.EXTRA_START_PLACE
-import com.gfreeman.takeme.home.view.map.MapFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +19,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MapPresenter(private val mapModel: MapContract.MapModel): MapContract.IMapPresenter<MapContract.MapView<BaseContract.IBaseView>>{
+class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContract.IFragmentMapPresenter<MapContract.MapView<BaseContract.IBaseView>>{
     private lateinit var mapView: MapContract.MapView<BaseContract.IBaseView>
     //inicializo el listener que esta en el repo
     private var locationListener: MapRepository.OnNewLocationListener? = null

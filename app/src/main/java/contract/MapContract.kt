@@ -20,7 +20,7 @@ interface MapContract {
         fun updateMapLocation(location: Point)
         fun openCongratsScreen(congratsParams: Bundle)
     }
-    interface IMapPresenter<T: FragmentBaseContract.IFragmentBaseView<*>>: FragmentBaseContract.IBasePresenter<T>{
+    interface IFragmentMapPresenter<T: FragmentBaseContract.IFragmentBaseView<*>>: FragmentBaseContract.IFragmentBasePresenter<T>{
         fun performSearchPlaces(placeToSearch: String)
         fun getRoute(destination: Place)
         suspend fun getCurrentPosition(): Point?

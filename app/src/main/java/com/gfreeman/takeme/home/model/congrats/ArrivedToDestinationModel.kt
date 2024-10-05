@@ -39,8 +39,6 @@ class ArrivedToDestinationModel(context: Context): ArrivedToDestinationContract.
         }
     }
 
-    fun getFavorites(): List<FavoriteRoute> = favoritesDao.getFavorites()
-
     fun addFavorite(favorite: FavoriteRoute): ResultDBOperation = try {
         favoritesDao.addFavorite(favorite)
         ResultOk
