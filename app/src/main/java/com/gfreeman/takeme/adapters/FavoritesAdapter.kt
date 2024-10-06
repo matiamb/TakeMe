@@ -13,14 +13,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FavoritesAdapter : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHolder>() {
 
-    private var favorites: List<FavoriteRoute> = listOf()
+    private var favorites: MutableList<FavoriteRoute> = listOf<FavoriteRoute>().toMutableList()
     private lateinit var favoriteModel: FavoriteModel
     fun setData(favRoutes: List<FavoriteRoute>){
-       favorites = favRoutes
+       favorites = favRoutes.toMutableList()
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoritesViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -36,14 +35,11 @@ class FavoritesAdapter : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHold
         holder.savedDate.text = item.date
         holder.savedDate.visibility = View.VISIBLE
         holder.fabBtn.setOnClickListener {
+            favorites.removeAt(holder.adapterPosition)
+            notifyItemRemoved(holder.adapterPosition)
             CoroutineScope(Dispatchers.IO).launch {
                 favoriteModel.deleteFavoriteRoute(item.id)
-                withContext(Dispatchers.Main){
-                    holder.itemView.visibility = View.GONE
-                    notifyItemRemoved(position)
-                }
             }
-            Log.i("Mati", "Position Id: " + item.id.toString())
         }
     }
 
