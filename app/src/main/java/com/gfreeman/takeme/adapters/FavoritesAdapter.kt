@@ -31,9 +31,10 @@ class FavoritesAdapter : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHold
     override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
         val item = favorites[position]
         holder.startLocation.text = item.startPlace.displayName
-        holder.finishLocation.text = item.destinationPlace.displayName
+        holder.finishLocation.text = item.destinationPlace.displayName.split(",")?.take(3)?.joinToString(",")?:""
         holder.savedDate.text = item.date
         holder.savedDate.visibility = View.VISIBLE
+        holder.cardTitle.visibility = View.GONE
         holder.fabBtn.setOnClickListener {
             favorites.removeAt(holder.adapterPosition)
             notifyItemRemoved(holder.adapterPosition)
@@ -52,5 +53,6 @@ class FavoritesAdapter : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHold
         val finishLocation: TextView = itemView.findViewById(R.id.txt_fav_card_finish_location)
         val savedDate: TextView = itemView.findViewById(R.id.txt_fav_card_date)
         val fabBtn: FloatingActionButton = itemView.findViewById(R.id.btn_fav_route)
+        val cardTitle: TextView = itemView.findViewById(R.id.txt_fav_card_title)
     }
 }

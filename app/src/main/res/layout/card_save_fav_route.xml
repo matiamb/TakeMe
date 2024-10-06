@@ -24,7 +24,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/txt_fav_card_title"
+            app:layout_constraintBottom_toTopOf="@id/txt_fav_card_start_location"
             android:text="Date"
             android:visibility="gone"
             />
@@ -40,21 +40,43 @@
             android:text="@string/txt_card_title"
             android:textSize="20sp"
             />
+        <ImageView
+            android:id="@+id/icon_start_location"
+            android:adjustViewBounds="true"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:paddingEnd="14dp"
+            android:src="@drawable/fav_card_starting_point"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/txt_fav_card_start_location"
+            app:layout_constraintTop_toBottomOf="@id/txt_fav_card_title"
+            app:layout_constraintBottom_toTopOf="@id/icon_destination"/>
         <TextView
             android:id="@+id/txt_fav_card_start_location"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/fav_card_start_location"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/icon_start_location"
             app:layout_constraintEnd_toStartOf="@id/btn_fav_route"
             app:layout_constraintTop_toBottomOf="@id/txt_fav_card_title"
             app:layout_constraintBottom_toTopOf="@id/txt_fav_card_finish_location"/>
+        <ImageView
+            android:id="@+id/icon_destination"
+            android:adjustViewBounds="true"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:paddingEnd="14dp"
+            android:src="@drawable/fav_card_destination_point"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/txt_fav_card_finish_location"
+            app:layout_constraintTop_toBottomOf="@id/icon_start_location"
+            app:layout_constraintBottom_toBottomOf="parent"/>
         <TextView
             android:id="@+id/txt_fav_card_finish_location"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/fav_card_end_location"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/icon_destination"
             app:layout_constraintEnd_toStartOf="@id/btn_fav_route"
             app:layout_constraintTop_toBottomOf="@id/txt_fav_card_start_location"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -63,7 +85,11 @@
             android:id="@+id/btn_fav_route"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_marginEnd="10dp"
             android:contentDescription="@string/fab_favourite_button"
+            android:foregroundGravity="center_vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/txt_fav_card_start_location"
