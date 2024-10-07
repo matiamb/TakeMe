@@ -11,10 +11,12 @@ import com.gfreeman.takeme.R
 import com.gfreeman.takeme.adapters.FavoritesAdapter
 import com.gfreeman.takeme.home.model.db.entities.FavoriteRoute
 import com.gfreeman.takeme.home.model.favs.FavoriteModel
+import com.gfreeman.takeme.home.model.map.Place
 import com.gfreeman.takeme.home.presenter.favs.FavoritePresenter
 import com.google.android.material.transition.platform.MaterialSharedAxis
 import contract.BaseContract
 import contract.FavoritesContract
+import contract.HomeContract
 
 class FavFragment : Fragment(), FavoritesContract.FavoritesView<BaseContract.IBaseView> {
     private lateinit var favoritesPresenter: FavoritesContract.IFavoritesPresenter<FavoritesContract.FavoritesView<BaseContract.IBaseView>>
@@ -37,7 +39,14 @@ class FavFragment : Fragment(), FavoritesContract.FavoritesView<BaseContract.IBa
     }
 
     override fun setFavoritesItems(favorites: List<FavoriteRoute>) {
-        favoritesAdapter = FavoritesAdapter()
+        favoritesAdapter = FavoritesAdapter(object : FavoritesAdapter.StartFavoriteRouteListener {
+            override fun startFavoriteRoute(startPlace: Place, destinationPlace: Place) {
+                getParentView()?.let {
+                    it.openMapsScreenWithDestination(startPlace, destinationPlace)
+                }
+            }
+
+        })
         //Tengo que setear la data antes de decirle al recycler view cual es el adapter,
         //si no recibe que no tiene elementos y no crea la lista IMPORTANTISIMO
         favoritesAdapter.setData(favorites)
@@ -45,8 +54,8 @@ class FavFragment : Fragment(), FavoritesContract.FavoritesView<BaseContract.IBa
         favoritesRecyclerView.adapter = favoritesAdapter
     }
 
-    override fun getParentView(): BaseContract.IBaseView? {
-        return activity as BaseContract.IBaseView?
+    override fun getParentView(): HomeContract.HomeView {
+        return activity as HomeContract.HomeView
     }
 
     private fun initPresenter(){

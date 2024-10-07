@@ -16,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -45,6 +46,21 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
             startPlace = Place("MyPosition", getCurrentPosition()!!)
             finishPlace = destination
             val route = mapModel.getRoute(startPlace, destination)?.map {
+                LatLng(it.latitude, it.longitude)
+            }
+            withContext(Dispatchers.Main){
+                if (route != null) {
+                    mapView.drawRoute(route)
+                }
+            }
+        }
+    }
+
+    override fun getRouteFromFavs(startPlace: Place, destination: Place) {
+        this.startPlace = startPlace
+        finishPlace = destination
+        CoroutineScope(Dispatchers.IO).launch {
+            val route = mapModel.getRoute(this@MapPresenterFragment.startPlace, destination)?.map {
                 LatLng(it.latitude, it.longitude)
             }
             withContext(Dispatchers.Main){
@@ -93,7 +109,7 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
         startCheckingDistanceToRoute(context)
         mapModel.startCheckingBatteryStatus(context)
         //mapModel.registerRouteAlarm(context)
-        mapView.openCongratsScreen(getCongratsParams())
+        //mapView.openCongratsScreen(getCongratsParams())
     }
 
     override fun stopLocationUpdates() {
@@ -130,7 +146,7 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
         }
         catch (_: IllegalArgumentException){}
     }
-    fun getCongratsParams(): Bundle {
+    private fun getCongratsParams(): Bundle {
         val congratsParams = Bundle()
         Log.i("Mati", "Is navigating? "+ mapModel.isNavigating().toString())
         if (mapModel.isNavigating()) {

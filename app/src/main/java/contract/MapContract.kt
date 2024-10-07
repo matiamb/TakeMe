@@ -19,6 +19,7 @@ interface MapContract {
         fun getLastLocation(myLocation: LatLng)
         fun updateMapLocation(location: Point)
         fun openCongratsScreen(congratsParams: Bundle)
+        fun getRouteFromFavs(startPlace: Place, destination: Place)
     }
     interface IFragmentMapPresenter<T: FragmentBaseContract.IFragmentBaseView<*>>: FragmentBaseContract.IFragmentBasePresenter<T>{
         fun performSearchPlaces(placeToSearch: String)
@@ -32,6 +33,7 @@ interface MapContract {
         fun startCheckingDistanceToRoute(context: Context)
         fun stopCheckingDistanceToRoute(context: Context)
         fun stopLocationUpdates()
+        fun getRouteFromFavs(startPlace: Place, destination: Place)
     }
 
     interface MapModel {

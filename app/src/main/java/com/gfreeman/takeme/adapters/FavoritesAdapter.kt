@@ -9,12 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gfreeman.takeme.R
 import com.gfreeman.takeme.home.model.db.entities.FavoriteRoute
 import com.gfreeman.takeme.home.model.favs.FavoriteModel
+import com.gfreeman.takeme.home.model.map.Place
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class FavoritesAdapter : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHolder>() {
+class FavoritesAdapter(private val listener: StartFavoriteRouteListener) : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHolder>() {
 
     private var favorites: MutableList<FavoriteRoute> = listOf<FavoriteRoute>().toMutableList()
     private lateinit var favoriteModel: FavoriteModel
@@ -30,6 +31,7 @@ class FavoritesAdapter : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHold
 
     override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
         val item = favorites[position]
+
         holder.startLocation.text = item.startPlace.displayName
         holder.finishLocation.text = item.destinationPlace.displayName.split(",")?.take(3)?.joinToString(",")?:""
         holder.savedDate.text = item.date
@@ -42,6 +44,14 @@ class FavoritesAdapter : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHold
                 favoriteModel.deleteFavoriteRoute(item.id)
             }
         }
+        holder.itemView.setOnClickListener {
+            listener.startFavoriteRoute(item.startPlace, item.destinationPlace)
+            Log.i("Mati", "Start Place: ${item.startPlace.displayName + item.startPlace.point.latitude}")
+        }
+    }
+
+    interface StartFavoriteRouteListener {
+        fun startFavoriteRoute(startPlace: Place, destinationPlace: Place)
     }
 
     override fun getItemCount(): Int {

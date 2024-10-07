@@ -29,7 +29,7 @@ class FavoriteModel(context: Context) : FavoritesContract.FavoritesModel {
         return favoritesDao.findFavById(id)
     }
 
-    fun deleteFavorite(favorite: FavoriteRoute): ResultDBOperation = try {
+    private fun deleteFavorite(favorite: FavoriteRoute): ResultDBOperation = try {
         favoritesDao.deleteFavorite(favorite)
         ResultOk
     } catch (e: Exception){

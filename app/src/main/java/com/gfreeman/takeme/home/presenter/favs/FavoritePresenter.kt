@@ -1,5 +1,6 @@
 package com.gfreeman.takeme.home.presenter.favs
 
+import com.gfreeman.takeme.home.view.fav.FavFragment
 import contract.BaseContract
 import contract.FavoritesContract
 import kotlinx.coroutines.CoroutineScope
@@ -24,4 +25,5 @@ class FavoritePresenter(private val favoritesModel: FavoritesContract.FavoritesM
         favoritesView = view
         getFavoriteRoutes()
     }
+
 }

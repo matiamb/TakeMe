@@ -36,6 +36,7 @@ import com.gfreeman.takeme.home.presenter.map.MapPresenterFragment
 import com.gfreeman.takeme.home.view.map.PermissionUtils.isPermissionGranted
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 
 
@@ -71,13 +72,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         searchView = view.findViewById(R.id.map_search_view)
-        listView = view.findViewById<ListView>(R.id.map_list_view)
+        listView = view.findViewById(R.id.map_list_view)
         fab_weather = view.findViewById(R.id.floating_weather_button)
         super.onViewCreated(view, savedInstanceState)
         configureMap()
         initPresenter()
         initFusedLocationProviderClient()
-        //openCongratsScreen()
 
         fab_weather.setOnClickListener{
             CoroutineScope(Dispatchers.Main).launch {
@@ -348,6 +348,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
                 NOTIFICATION_PERMISSION_REQUEST_CODE
             )
         }
+    }
+
+    override fun getRouteFromFavs(startPlace: Place, destination: Place){
+        mapPresenter.getRouteFromFavs(startPlace, destination)
     }
 
     companion object {

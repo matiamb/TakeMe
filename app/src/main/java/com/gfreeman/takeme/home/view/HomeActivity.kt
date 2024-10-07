@@ -1,5 +1,6 @@
 package com.gfreeman.takeme.home.view
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Window
 import androidx.activity.enableEdgeToEdge
@@ -8,6 +9,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.gfreeman.takeme.R
+import com.gfreeman.takeme.home.model.map.Place
+import com.gfreeman.takeme.home.presenter.map.MapPresenterFragment
 import com.google.android.gms.maps.GoogleMap
 import com.gfreeman.takeme.home.view.map.MapFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -16,12 +19,14 @@ import com.gfreeman.takeme.home.view.profile.ProfileFragment
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.google.android.material.transition.platform.MaterialFadeThrough
 import com.google.android.material.transition.platform.MaterialSharedAxis
+import contract.HomeContract
+import contract.MapContract
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), HomeContract.HomeView {
     private lateinit var searchFragment: Fragment
     private lateinit var favFragment: Fragment
     private lateinit var profileFragment: Fragment
-    private lateinit var mMap: GoogleMap
+    private lateinit var bottomNavbarView: BottomNavigationView
     override fun onCreate(savedInstanceState: Bundle?) {
         //transition para activity con weather forecast
         window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
@@ -43,12 +48,12 @@ class HomeActivity : AppCompatActivity() {
         configureViews()
     }
     private fun configureViews(){
-
+        bottomNavbarView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         searchFragment = MapFragment()
         favFragment = FavFragment()
         profileFragment = ProfileFragment()
         loadFragment(searchFragment)
-        val bottomNavbarView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
         bottomNavbarView.setOnItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.nav_home_item1 -> {
@@ -80,6 +85,22 @@ class HomeActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.home_container, fragment)
         transaction.commit()
+    }
+
+    override fun openMapsScreenWithDestination(startPlace: Place, destinationPlace: Place) {
+        bottomNavbarView.selectedItemId = R.id.nav_home_item2
+        (searchFragment as? MapContract.MapView<*>)?.getRouteFromFavs(
+            startPlace,
+            destinationPlace
+        )
+    }
+
+    override fun showErrorMessage(message: String) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun getViewContext(): Context {
+        return this
     }
 
 }
