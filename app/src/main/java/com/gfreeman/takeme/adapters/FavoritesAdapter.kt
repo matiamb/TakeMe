@@ -1,6 +1,5 @@
 package com.gfreeman.takeme.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,7 +45,7 @@ class FavoritesAdapter(private val listener: StartFavoriteRouteListener) : Recyc
         }
         holder.itemView.setOnClickListener {
             listener.startFavoriteRoute(item.startPlace, item.destinationPlace)
-            Log.i("Mati", "Start Place: ${item.startPlace.displayName + item.startPlace.point.latitude}")
+            //Log.i("Mati", "Start Place: ${item.startPlace.displayName + item.startPlace.point.latitude}")
         }
     }
 

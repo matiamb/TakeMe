@@ -12,7 +12,8 @@
         android:layout_height="match_parent"
         android:id="@+id/map_fragment"
         tools:context="home.view.map.MapFragment"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        tools:layout="@layout/fragment_map"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_endroute_button"
@@ -63,5 +64,4 @@
 
                 </ListView>
             </com.google.android.material.search.SearchView>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

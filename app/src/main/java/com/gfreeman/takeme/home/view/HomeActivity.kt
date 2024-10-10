@@ -9,16 +9,16 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.gfreeman.takeme.R
+import com.gfreeman.takeme.home.model.map.MapRepository
 import com.gfreeman.takeme.home.model.map.Place
 import com.gfreeman.takeme.home.presenter.map.MapPresenterFragment
-import com.google.android.gms.maps.GoogleMap
 import com.gfreeman.takeme.home.view.map.MapFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.gfreeman.takeme.home.view.fav.FavFragment
 import com.gfreeman.takeme.home.view.profile.ProfileFragment
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.google.android.material.transition.platform.MaterialFadeThrough
 import com.google.android.material.transition.platform.MaterialSharedAxis
+import contract.BaseContract
 import contract.HomeContract
 import contract.MapContract
 

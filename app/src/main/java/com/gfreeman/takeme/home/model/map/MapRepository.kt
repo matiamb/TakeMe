@@ -91,6 +91,7 @@ class MapRepository: MapContract.MapModel {
                 -58.556671
             )
         )*/
+        mCurrentLocation = Point(startPlace.point.latitude, startPlace.point.longitude)
         val rawRouteResponse = ApiServiceProvider.routesServiceApi.getRoute(
             getFormatedPoints(startPlace),
             getFormatedPoints(destination)
@@ -219,7 +220,6 @@ class MapRepository: MapContract.MapModel {
     private fun setupServiceConnection(){
         Log.i("Mati", "Serivce connection started")
         routeCheckServiceConnection = object : ServiceConnection {
-            //NO PASA DE ACA NUNCA LLAMA A EL METODO SIGUIENTE
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 Log.i("Mati", "Starting connection")
                 val binder = service as RouteCheckService.RouteCheckBinder
@@ -227,10 +227,12 @@ class MapRepository: MapContract.MapModel {
                 routeCheckService.setLocationProvider(object :
                 RouteCheckService.CurrentLocationStatusProvider{
                     override fun getCurrentLocation(): Point? {
-                        //CHEQUEAR QUE SUCEDE CON ESTA VARIABLE
+                        //Log.i("Mati", "setupServiceConnection: ${mCurrentLocation.latitude}, ${mCurrentLocation.longitude}")
                         return mCurrentLocation
                     }
                     override fun getCurrentRoute(): List<Point>? {
+                        Log.i("Mati", "setupServiceConnection currentRoute: $currentRoute")
+                        //Devuelve null para getroutefromfavs....
                         return currentRoute
                     }
                 })
@@ -257,6 +259,7 @@ class MapRepository: MapContract.MapModel {
     //aca recibo el context para controlar que no me desvie de la ruta
     override fun startCheckingDistanceToRoute(context: Context){
         //este if es para que si el service esta bindeado, salga de este metodo y no me lo bindee cada vez que entra
+        Log.i("Mati", "startCheckingDistanceToRoute MapRepo, isServiceBound? $isServiceBound")
         if(isServiceBound){
             return
         }

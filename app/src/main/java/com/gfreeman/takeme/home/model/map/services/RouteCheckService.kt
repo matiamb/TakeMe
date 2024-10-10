@@ -117,6 +117,7 @@ class RouteCheckService : Service() {
         return locationProvider?.let {
             val currentLocation = it.getCurrentLocation()
             val currentRoute = it.getCurrentRoute()
+            Log.i("Mati", "arrivedToDestination service currentLocation: $currentLocation, currentRoute: $currentRoute")
             return currentRoute?.let {
                 currentLocation?.let {
                     val distance =
@@ -149,6 +150,6 @@ class RouteCheckService : Service() {
     companion object {
         const val CHANNEL_ID = "Out of route"
         const val NOTIFICATION_ID = 23223
-        const val DISTANCE_TO_ARRIVE = 20
+        const val DISTANCE_TO_ARRIVE = 50
     }
 }

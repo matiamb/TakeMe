@@ -45,7 +45,7 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
         CoroutineScope(Dispatchers.IO).launch {
             startPlace = Place("MyPosition", getCurrentPosition()!!)
             finishPlace = destination
-            val route = mapModel.getRoute(startPlace, destination)?.map {
+            val route = mapModel.getRoute(startPlace, finishPlace)?.map {
                 LatLng(it.latitude, it.longitude)
             }
             withContext(Dispatchers.Main){
@@ -60,7 +60,7 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
         this.startPlace = startPlace
         finishPlace = destination
         CoroutineScope(Dispatchers.IO).launch {
-            val route = mapModel.getRoute(this@MapPresenterFragment.startPlace, destination)?.map {
+            val route = mapModel.getRoute(this@MapPresenterFragment.startPlace, finishPlace)?.map {
                 LatLng(it.latitude, it.longitude)
             }
             withContext(Dispatchers.Main){
@@ -133,9 +133,9 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
         mapModel.startCheckingDistanceToRoute(context)
         mapModel.setArriveDestinationListener(object : RouteCheckService.OnArriveDestinationListener {
             override fun onArriveDestination() {
+                mapView.openCongratsScreen(getCongratsParams())
                 stopCheckingDistanceToRoute(context)
                 stopLocationUpdates()
-                mapView.openCongratsScreen(getCongratsParams())
             }
         })
     }
@@ -146,9 +146,10 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
         }
         catch (_: IllegalArgumentException){}
     }
-    private fun getCongratsParams(): Bundle {
+    fun getCongratsParams(): Bundle {
         val congratsParams = Bundle()
         Log.i("Mati", "Is navigating? "+ mapModel.isNavigating().toString())
+        Log.i("Mati", "getCongratsParams start, startPlace: ${startPlace.displayName}, finishPlace: ${finishPlace.displayName}")
         if (mapModel.isNavigating()) {
                 congratsParams.putSerializable(
                     EXTRA_START_PLACE,
