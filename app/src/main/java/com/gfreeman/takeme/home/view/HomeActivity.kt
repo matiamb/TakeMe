@@ -21,6 +21,10 @@ import com.google.android.material.transition.platform.MaterialSharedAxis
 import contract.BaseContract
 import contract.HomeContract
 import contract.MapContract
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity(), HomeContract.HomeView {
     private lateinit var searchFragment: Fragment

@@ -1,67 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<fragment
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/map_fragment"
     tools:context="home.view.map.MapFragment"
-    >
+    android:name="com.google.android.gms.maps.SupportMapFragment"
+    tools:layout="@layout/fragment_map">
 
-    <fragment
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/map_fragment"
         tools:context="home.view.map.MapFragment"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        tools:layout="@layout/fragment_map"/>
+        >
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floating_endroute_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="146dp"
-        android:contentDescription="@string/btn_cancel_route"
-        android:visibility="gone"
-        app:srcCompat="@drawable/ic_map_cancel_route"
-        app:backgroundTint="@color/design_default_color_on_primary"
-        />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floating_endroute_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="146dp"
+            android:contentDescription="@string/btn_cancel_route"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_map_cancel_route"
+            app:backgroundTint="@color/design_default_color_on_primary"
+            />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floating_weather_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="80dp"
-        android:contentDescription="@string/btn_map_forecast"
-        android:transitionName="transition_weather_forecast"
-        app:srcCompat="@drawable/ic_forecast_sunny"
-        android:backgroundTint="@color/md_theme_light_primaryContainer"
-        app:tint="@null"
-        />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floating_weather_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="80dp"
+            android:contentDescription="@string/btn_map_forecast"
+            android:transitionName="transition_weather_forecast"
+            app:srcCompat="@drawable/ic_forecast_sunny"
+            android:backgroundTint="@color/md_theme_light_primaryContainer"
+            app:tint="@null"
+            />
 
-            <com.google.android.material.search.SearchBar
-                android:id="@+id/search_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                app:menu="@menu/search_bar_menu"
-                android:hint="@string/sheet_home_search_hint"
-                />
-            <com.google.android.material.search.SearchView
-                android:id="@+id/map_search_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="@string/sheet_home_search_hint"
-                app:menu="@menu/search_bar_menu"
-                app:layout_anchor="@id/search_bar">
-                <ListView
+                <com.google.android.material.search.SearchBar
+                    android:id="@+id/search_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/map_list_view">
+                    android:layout_gravity="bottom"
+                    app:menu="@menu/search_bar_menu"
+                    android:hint="@string/sheet_home_search_hint"
+                    />
+                <com.google.android.material.search.SearchView
+                    android:id="@+id/map_search_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/sheet_home_search_hint"
+                    app:menu="@menu/search_bar_menu"
+                    app:layout_anchor="@id/search_bar">
+                    <ListView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/map_list_view">
 
-                </ListView>
-            </com.google.android.material.search.SearchView>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                    </ListView>
+                </com.google.android.material.search.SearchView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</fragment>
