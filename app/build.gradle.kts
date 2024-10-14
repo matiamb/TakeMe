@@ -15,15 +15,22 @@ android {
         applicationId = "com.gfreeman.takeme"
         minSdk = 28
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 100
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-        release {
+        debug{
+            isDebuggable = true
             isMinifyEnabled = false
+            android.buildFeatures.buildConfig = true
+            buildConfigField("Boolean", "IS_DEBUGGABLE", "true")
+        }
+        release {
+            isMinifyEnabled = true
+            isDebuggable = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
