@@ -13,7 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.gfreeman.takeme.R
@@ -33,27 +34,31 @@ import com.gfreeman.takeme.home.model.map.Place
 import com.gfreeman.takeme.home.model.map.MapRepository
 import com.gfreeman.takeme.home.model.map.Point
 import com.gfreeman.takeme.home.presenter.map.MapPresenterFragment
-import com.gfreeman.takeme.home.view.map.PermissionUtils.isPermissionGranted
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseContract.IBaseView> {
-    //private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
-    //private lateinit var placesSearchView: CustomSearchView
     private lateinit var mapPresenter: MapContract.IFragmentMapPresenter<MapContract.MapView<BaseContract.IBaseView>>
     private lateinit var googleMap: GoogleMap
     private lateinit var searchView: SearchView
     private lateinit var listView: ListView
-    private lateinit var fab_weather: FloatingActionButton
-    private lateinit var fab_cancel_route: FloatingActionButton
+    private lateinit var fabWeather: FloatingActionButton
+    private lateinit var fabCancelRoute: FloatingActionButton
+    private val fineLocation = Manifest.permission.ACCESS_FINE_LOCATION
+    private val coarseLocation = Manifest.permission.ACCESS_COARSE_LOCATION
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private val notification = Manifest.permission.POST_NOTIFICATIONS
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    private var multiplePermissionRequest = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){
+        checkLocationPermission()
     }
+    private var singlePermissionRequest = registerForActivityResult(ActivityResultContracts.RequestPermission()){
+        checkNotificationPermission()
+    }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,19 +78,19 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         searchView = view.findViewById(R.id.map_search_view)
         listView = view.findViewById(R.id.map_list_view)
-        fab_weather = view.findViewById(R.id.floating_weather_button)
+        fabWeather = view.findViewById(R.id.floating_weather_button)
         super.onViewCreated(view, savedInstanceState)
         configureMap()
         initPresenter()
         initFusedLocationProviderClient()
 
-        fab_weather.setOnClickListener{
+        fabWeather.setOnClickListener{
             CoroutineScope(Dispatchers.Main).launch {
                 val currentPosition = mapPresenter.getCurrentPosition()
                 val weatherIntent = Intent(context, WeatherReportActivity::class.java)
                 val options = ActivityOptions.makeSceneTransitionAnimation(
                     activity,
-                    fab_weather,
+                    fabWeather,
                     "transition_weather_forecast" // The transition name to be matched in Activity B.
                 )
                 weatherIntent.putExtra(LAT_EXTRA, currentPosition?.latitude.toString())
@@ -154,7 +159,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
 //        val initialFakePoint = LatLng(-34.679437, -58.553777)
 //        MapsManager.addMarkerToMap(googleMap, initialFakePoint)
 //        MapsManager.centerMapIntoLocation(googleMap, initialFakePoint)
-        enableMyLocation()
+        checkLocationPermission()
     }
 
     private fun initPresenter(){
@@ -177,6 +182,28 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             mapPresenter.getRoute(search[position])
         }
     }
+    @SuppressLint("MissingPermission")
+    private fun checkLocationPermission(){
+        val fineLoc = isPermissionGranted(fineLocation)
+        val coarseLoc = isPermissionGranted(coarseLocation)
+
+        when {
+            fineLoc or coarseLoc -> {
+                enableMyLocation()
+            }
+            !fineLoc or !coarseLoc -> {
+                multiplePermissionRequest.launch(arrayOf(fineLocation, coarseLocation))
+            }
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private fun checkNotificationPermission(){
+        val notif = isPermissionGranted(notification)
+        if(!notif){
+            singlePermissionRequest.launch(notification)
+        }
+    }
 
     override fun drawRoute(route: List<LatLng>) {
         context?.let { safeContext ->
@@ -184,7 +211,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             MapsManager.alignMapToRoute(googleMap, route)
             MapsManager.addMarkerToMap(googleMap, route.last())
             startLocationUpdates()
-            requestNotificationPermission()
+            checkNotificationPermission()
+            //requestNotificationPermission()
         }
     }
 
@@ -200,18 +228,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     }
 
     override fun startLocationUpdates() {
-        fab_cancel_route = requireView().findViewById(R.id.floating_endroute_button)
+        fabCancelRoute = requireView().findViewById(R.id.floating_endroute_button)
         context?.let { safeContext ->
             mapPresenter.startLocationUpdates(safeContext)
         }
-        fab_cancel_route.show()
-        fab_cancel_route.setOnClickListener{
+        fabCancelRoute.show()
+        fabCancelRoute.setOnClickListener{
             googleMap.clear()
             stopLocationUpdates()
             context?.let { safeContext ->
                 mapPresenter.stopCheckingDistanceToRoute(safeContext)
             }
-            fab_cancel_route.hide()
+            fabCancelRoute.hide()
         }
         //mapPresenter.updateMapLocation()
     }
@@ -236,15 +264,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
         context?.let { safeContext ->
-            // 1. Check if permissions are granted, if so, enable the my location layer
-            if (ContextCompat.checkSelfPermission(
-                    safeContext,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
-                    safeContext,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
                 googleMap.isMyLocationEnabled = true
                 try {
                     mapPresenter.getLastLocation()
@@ -268,68 +287,67 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             }*/
             //SI ESTOY EN UN FRAGMENT, NO NECESITO EL ACTIVITYCOMPAT ANTES DE REQUEST PERMISSIONS O SHOULDSHOW...
             // 3. Otherwise, request permission
-            requestLocationPermission()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
-            super.onRequestPermissionsResult(
-                requestCode,
-                permissions,
-                grantResults
-            )
-            requestLocationPermission()
-            return
+            //requestLocationPermission()
         }
 
-        if (isPermissionGranted(
-                permissions,
-                grantResults,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) || isPermissionGranted(
-                permissions,
-                grantResults,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-        ) {
-            // Enable the my location layer if the permission has been granted.
-            enableMyLocation()
-        } else {
-            // Permission was denied. Display an error message
-            Toast.makeText(
-                context,
-                "Location Permission denied, please change it through settings",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-        //siempre da false, por que post notifications no esta en el array, no se como agregarlo
-        if (isPermissionGranted(
-                permissions,
-                grantResults,
-                Manifest.permission.POST_NOTIFICATIONS
-            )
-        ) {
-            //do nothing
-        } else {
-            // Permission was denied. Display an error message
-            Toast.makeText(context, "Notification Permission denied, please change it through settings", Toast.LENGTH_LONG).show()
-        }
-    }
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<String>,
+//        grantResults: IntArray
+//    ) {
+//        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
+//            super.onRequestPermissionsResult(
+//                requestCode,
+//                permissions,
+//                grantResults
+//            )
+//            requestLocationPermission()
+//            return
+//        }
+//
+//        if (isPermissionGranted(
+//                permissions,
+//                grantResults,
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) || isPermissionGranted(
+//                permissions,
+//                grantResults,
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            )
+//        ) {
+//            // Enable the my location layer if the permission has been granted.
+//            enableMyLocation()
+//        } else {
+//            // Permission was denied. Display an error message
+//            Toast.makeText(
+//                context,
+//                "Location Permission denied, please change it through settings",
+//                Toast.LENGTH_LONG
+//            ).show()
+//        }
+//        //siempre da false, por que post notifications no esta en el array, no se como agregarlo
+//        if (isPermissionGranted(
+//                permissions,
+//                grantResults,
+//                Manifest.permission.POST_NOTIFICATIONS
+//            )
+//        ) {
+//            //do nothing
+//        } else {
+//            // Permission was denied. Display an error message
+//            Toast.makeText(context, "Notification Permission denied, please change it through settings", Toast.LENGTH_LONG).show()
+//        }
+//    }
 
-    private fun requestLocationPermission(){
-        requestPermissions(
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ),
-            LOCATION_PERMISSION_REQUEST_CODE
-        )
-    }
+//    private fun requestLocationPermission(){
+//        requestPermissions(
+//            arrayOf(
+//                Manifest.permission.ACCESS_FINE_LOCATION,
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ),
+//            LOCATION_PERMISSION_REQUEST_CODE
+//        )
+//    }
     override fun getLastLocation(myLocation: LatLng) {
         MapsManager.addMarkerToMap(googleMap, myLocation)
         MapsManager.centerMapIntoLocation(googleMap, myLocation)
@@ -341,18 +359,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         )))
     }
 
-    private fun requestNotificationPermission(){
-        if (Build.VERSION.SDK_INT >= 33){
-            requestPermissions(
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                NOTIFICATION_PERMISSION_REQUEST_CODE
-            )
-        }
-    }
+//    private fun requestNotificationPermission(){
+//        if (Build.VERSION.SDK_INT >= 33){
+//            requestPermissions(
+//                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+//                NOTIFICATION_PERMISSION_REQUEST_CODE
+//            )
+//        }
+//    }
 
     override fun getRouteFromFavs(startPlace: Place, destination: Place){
         mapPresenter.getRouteFromFavs(startPlace, destination)
     }
+
+    private fun isPermissionGranted(name: String) = ContextCompat.checkSelfPermission(
+        requireContext(), name
+    ) == PackageManager.PERMISSION_GRANTED
 
     companion object {
         /**
