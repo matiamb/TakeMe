@@ -12,7 +12,20 @@
           "package_name": "com.gfreeman.takeme"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "675085672839-o2suf7s4hrfpr3a30o4rqmu2v71s4v9r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gfreeman.takeme",
+            "certificate_hash": "936ff2f5fb191e826a3d1c97abdba22c8a614ba4"
+          }
+        },
+        {
+          "client_id": "675085672839-80jjlkgi47nal7nlfk7ksj6mgmckha1l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDT7HZNBOG9QrHPdoqtzYlLK7i413u8pVg"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675085672839-80jjlkgi47nal7nlfk7ksj6mgmckha1l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

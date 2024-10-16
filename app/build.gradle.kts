@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("com.google.gms.google-services")
     kotlin("kapt")
 }
 
@@ -61,7 +62,9 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.common)
-
+    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
