@@ -1,14 +1,198 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.view.profile.ProfileFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".home.view.fav.FavFragment"
+    android:name="com.gfreeman.takeme.home.view.profile.ProfileFragment"
+    tools:layout="@layout/fragment_profile">
 
-    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        tools:context=".home.view.profile.ProfileFragment">
+
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Profile fragment"
-        android:gravity="center"/>
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/my_profile_title"
+        android:textAllCaps="true"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
-</FrameLayout>
+    <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewElevatedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="16dp"
+        android:checkable="true"
+        android:clickable="true"
+        android:focusable="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:contentDescription="@string/content_desc_user_profile_pic"
+                android:padding="10dp"
+                android:src="@drawable/user_circle_profile_com"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="Name"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/profile_email"
+                app:layout_constraintStart_toEndOf="@+id/profile_image"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="Fake Name" />
+
+            <TextView
+                android:id="@+id/profile_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="Fake email"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/profile_image"
+                app:layout_constraintTop_toBottomOf="@+id/profile_name"
+                tools:text="Fake email" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewElevatedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:padding="16dp"
+                android:text="@string/general_card_title"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <com.gfreeman.takeme.ui.components.ProfileSectionItem
+                android:id="@+id/edit_profile_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                app:details="@string/profile_settings_edit_profile_details"
+                app:iconResource="@drawable/user_settings_item"
+                app:itemTitle="@string/profile_settings_edit_profile" />
+
+            <com.gfreeman.takeme.ui.components.ProfileSectionItem
+                android:id="@+id/change_password_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                app:details="@string/profile_settings_change_password_details"
+                app:iconResource="@drawable/key_password_settings"
+                app:itemTitle="@string/profile_settings_change_password" />
+
+            <com.gfreeman.takeme.ui.components.ProfileSectionItem
+                android:id="@+id/terms_of_use_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                app:details="@string/profile_settings_terms_of_use_details"
+                app:iconResource="@drawable/user_terms_settings"
+                app:itemTitle="@string/profile_settings_terms_of_use" />
+
+            <com.gfreeman.takeme.ui.components.ProfileSectionItem
+                android:id="@+id/add_card_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                app:details="@string/profile_settings_add_card_details"
+                app:iconResource="@drawable/credit_card_settings"
+                app:itemTitle="@string/profile_settings_add_card" />
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewElevatedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:padding="16dp"
+                android:text="@string/preferences_title"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <com.gfreeman.takeme.ui.components.ProfileSectionItem
+                android:id="@+id/notifications_profile_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                app:details="@string/profile_settings_notification_details"
+                app:iconResource="@drawable/notification_settings"
+                app:itemTitle="@string/profile_settings_notification" />
+
+            <com.gfreeman.takeme.ui.components.ProfileSectionItem
+                android:id="@+id/faq_profile_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                app:details="@string/profile_settings_faq_details"
+                app:iconResource="@drawable/help_settings"
+                app:itemTitle="@string/profile_settings_faq" />
+
+            <com.gfreeman.takeme.ui.components.ProfileSectionItem
+                android:id="@+id/logout_profile_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                app:details="@string/profile_settings_logout_details"
+                app:iconResource="@drawable/user_logout_settings"
+                app:itemTitle="@string/profile_settings_logout" />
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
+
+</ScrollView>
