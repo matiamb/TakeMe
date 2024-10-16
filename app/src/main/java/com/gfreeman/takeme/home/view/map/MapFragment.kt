@@ -13,6 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -46,6 +48,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     private lateinit var listView: ListView
     private lateinit var fabWeather: FloatingActionButton
     private lateinit var fabCancelRoute: FloatingActionButton
+    private lateinit var searchProgressBar: ProgressBar
     private val fineLocation = Manifest.permission.ACCESS_FINE_LOCATION
     private val coarseLocation = Manifest.permission.ACCESS_COARSE_LOCATION
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -79,6 +82,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         searchView = view.findViewById(R.id.map_search_view)
         listView = view.findViewById(R.id.map_list_view)
         fabWeather = view.findViewById(R.id.floating_weather_button)
+        searchProgressBar = view.findViewById(R.id.search_places_loading_spinner)
         super.onViewCreated(view, savedInstanceState)
         configureMap()
         initPresenter()
@@ -126,6 +130,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
             }*/
             val text = searchView.text
             mapPresenter.performSearchPlaces(text.toString())
+            searchProgressBar.visibility = View.VISIBLE
             Log.i("Mati", text.toString())
             false
         }
@@ -176,7 +181,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
                 }
             )
         }
+        searchProgressBar.visibility = View.GONE
         listView.adapter = adapter
+        if (search.size == 0){
+            Toast.makeText(context, R.string.search_result_failed, Toast.LENGTH_LONG).show()
+        }
         listView.setOnItemClickListener { parent, view, position, id ->
             searchView.hide()
             mapPresenter.getRoute(search[position])

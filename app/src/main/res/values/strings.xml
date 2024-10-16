@@ -44,5 +44,6 @@
     <string name="don_t_have_an_account_login_txt">Don\'t have an account?</string>
     <string name="sign_up_login_button">Sign Up</string>
     <string name="skip_for_now_login_button">Skip for now</string>
+    <string name="search_result_failed">We could not find such place</string>
 
 </resources>
