@@ -138,12 +138,12 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
                 stopLocationUpdates()
             }
         })
-        try{
-            mapView.openCongratsScreen(getCongratsParams())
-        }
-        catch (e: Exception){
-            e.printStackTrace()
-        }
+//        try{
+//            mapView.openCongratsScreen(getCongratsParams())
+//        }
+//        catch (e: Exception){
+//            e.printStackTrace()
+//        }
     }
     override fun stopCheckingDistanceToRoute(context: Context){
         try {
