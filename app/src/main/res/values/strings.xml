@@ -35,5 +35,14 @@
     <string name="profile_settings_faq_details">Common questions about us</string>
     <string name="profile_settings_logout">Log Out</string>
     <string name="profile_settings_logout_details">Securely log out of Account</string>
+    <string name="application_icon_description">Application TakeMe icon</string>
+    <string name="user_login_textfield">User</string>
+    <string name="password_login_textfield">Password</string>
+    <string name="remind_me_login_checkbox">Remind me!</string>
+    <string name="forgot_password_login_button">Forgot Password?</string>
+    <string name="loginbtn_login_button">Login</string>
+    <string name="don_t_have_an_account_login_txt">Don\'t have an account?</string>
+    <string name="sign_up_login_button">Sign Up</string>
+    <string name="skip_for_now_login_button">Skip for now</string>
 
 </resources>

@@ -35,6 +35,11 @@ class LoginActivity : AppCompatActivity(), LoginContract.LoginView {
         val inputUser = findViewById<TextInputLayout>(R.id.textfield_user)
         val inputPassword = findViewById<TextInputLayout>(R.id.textfield_password)
         val btnLogin = findViewById<Button>(R.id.btn_login)
+        val btnSkip = findViewById<Button>(R.id.btn_skip_login)
+        btnSkip.setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
         btnLogin.setOnClickListener {
             loginPresenter.loginWithUserAndPass(
                 inputUser.editText?.text.toString(),

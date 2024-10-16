@@ -26,7 +26,7 @@ class LoginPresenter(private val loginModel: LoginContract.ILoginModel): LoginCo
     }
 
     override fun loginWithProvider(provider: String) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun attachView(loginView: LoginContract.LoginView) {
