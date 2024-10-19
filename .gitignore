@@ -21,3 +21,4 @@ local.properties
 /caches/transforms-4/gc.properties
 /daemon/8.7/registry.bin
 /daemon/8.7/registry.bin.lock
+/app/google-services.json

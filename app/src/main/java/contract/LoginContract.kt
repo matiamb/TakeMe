@@ -8,9 +8,11 @@ interface LoginContract {
     interface ILoginPresenter<T: BaseContract.IBaseView>: BaseContract.IBasePresenter<T> {
         fun loginWithUserAndPass(user: String, password: String)
         fun loginWithProvider(provider: String)
+        fun logOut()
     }
     interface ILoginModel{
-        fun loginWithUserAndPass(user: String, password: String):Boolean
+        suspend fun loginWithUserAndPass(user: String, password: String):Boolean
         fun loginWithProvider(provider: String)
+        fun logOut()
     }
 }

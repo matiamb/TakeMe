@@ -3,6 +3,8 @@ agp = "8.7.1"
 artifactid = "version"
 converterGson = "latest.version"
 converterGsonVersion = "2.3.0"
+credentials = "1.5.0-alpha06"
+firebaseBom = "33.4.0"
 gson = "2.11.0"
 kotlin = "2.0.20"
 coreKtx = "1.10.1"
@@ -20,14 +22,21 @@ playServicesLocation = "21.3.0"
 navigationFragmentKtx = "2.8.0"
 roomCommon = "2.6.1"
 secretsGradlePlugin = "2.0.1"
+googleid = "1.1.1"
+firebaseAuthCommon = "9.8.0"
+firebaseAuthKtx = "23.0.0"
+credentialsVersion = "1.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 androidx-room-compiler = { module = "androidx.room:room-compiler" }
 androidx-room-runtime = { module = "androidx.room:room-runtime" }
 artifactid = { module = "groupId:artifactId", version.ref = "artifactid" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 converter-gson-v230 = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGsonVersion" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -43,6 +52,10 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+firebase-auth-common = { group = "com.google.firebase", name = "firebase-auth-common", version.ref = "firebaseAuthCommon" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentialsVersion" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
