@@ -55,11 +55,14 @@ object MapsManager {
             val startPoint = route[0]
             val endPoint = route[1]
             bearingBetweenLocations(startPoint, endPoint).toFloat()
-        } else 0f
+        } else {
+            0f
+        }
         val cameraPosition = CameraPosition.Builder()
-            .target(route[0])
+            .target(route.first())
             .zoom(18f)
             .bearing(bearing)
+            .tilt(0f)
             .build()
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }

@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".home.view.fav.FavFragment"
-    android:name="com.gfreeman.takeme.home.view.profile.ProfileFragment"
-    tools:layout="@layout/fragment_profile">
+    android:name="com.gfreeman.takeme.home.view.profile.ProfileFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

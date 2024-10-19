@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.ProgressBar
@@ -215,12 +216,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     }
 
     override fun drawRoute(route: List<LatLng>) {
+        checkNotificationPermission()
         context?.let { safeContext ->
             MapsManager.addRouteToMap(safeContext, googleMap, route)
             MapsManager.alignMapToRoute(googleMap, route)
             MapsManager.addMarkerToMap(googleMap, route.last())
             startLocationUpdates()
-            checkNotificationPermission()
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             //requestNotificationPermission()
         }
     }
@@ -255,6 +257,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
 
     override fun stopLocationUpdates() {
         mapPresenter.stopLocationUpdates()
+        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         //throw UninitializedPropertyAccessException()
     }
 
@@ -385,14 +388,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         requireContext(), name
     ) == PackageManager.PERMISSION_GRANTED
 
-    companion object {
-        /**
-         * Request code for location permission request.
-         *
-         * @see .onRequestPermissionsResult
-         */
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
-        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 2
-    }
+//    companion object {
+//        /**
+//         * Request code for location permission request.
+//         *
+//         * @see .onRequestPermissionsResult
+//         */
+//        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+//        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 2
+//    }
 
 }
