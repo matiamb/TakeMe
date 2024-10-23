@@ -11,7 +11,7 @@ interface LoginContract {
         fun logOut()
     }
     interface ILoginModel{
-        suspend fun loginWithUserAndPass(user: String, password: String):Boolean
+        suspend fun loginWithUserAndPass(user: String, password: String): Boolean
         fun loginWithProvider(provider: String)
         fun logOut()
     }

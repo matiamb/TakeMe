@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/signup_activity"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_gravity="center"
+    android:padding="20dp"
+    android:background="@drawable/login_background"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/company_icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:contentDescription="@string/application_icon_description"
+        android:src="@drawable/app_logo"
+        android:foregroundGravity="right"
+        app:layout_constraintBottom_toTopOf="@id/textfield_container"
+        app:layout_constraintEnd_toStartOf="@id/signup_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/signup_title"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/signup_fragment_title"
+        android:textColor="#2F23B4"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:gravity="center|start"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@id/textfield_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/company_icon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/textfield_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/btn_google_fragment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/signup_title"
+        >
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textfield_signup_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?attr/textInputFilledStyle"
+            android:hint="@string/user_login_textfield"
+            android:textColorHint="@color/white">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#2F23B4"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textfield_signup_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?attr/textInputFilledStyle"
+            android:hint="@string/password_login_textfield"
+            android:layout_marginTop="100dp"
+            android:textColorHint="@color/white"
+            app:endIconMode="password_toggle"
+            app:endIconTint="@color/white">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#2F23B4"
+                android:inputType="textPassword"
+                android:layout_marginBottom="10dp"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <Button
+        android:id="@+id/btn_google_fragment"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Google"
+        android:layout_marginEnd="5dp"
+        android:backgroundTint="@color/white"
+        android:textColor="#2F23B4"
+        app:icon="@drawable/icon_google"
+        app:iconGravity="textStart"
+        app:iconTintMode="multiply"
+        app:cornerRadius="10dp"
+        app:tint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_signup_fragment"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textfield_container"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/btn_signup_fragment"
+        style="@style/Widget.Material3.Button.ElevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:textColor="#2F23B4"
+        android:layout_marginEnd="5dp"
+        app:cornerRadius="10dp"
+        android:text="@string/sign_up_login_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_google_fragment"
+        app:layout_constraintTop_toBottomOf="@id/textfield_container" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,6 +11,7 @@ import kotlinx.coroutines.tasks.await
 
 class LoginRepository(private val context: Context): LoginContract.ILoginModel {
     private lateinit var auth: FirebaseAuth
+
     override suspend fun loginWithUserAndPass(email: String, password: String): Boolean {
         auth = Firebase.auth
         var result = false
@@ -24,14 +25,15 @@ class LoginRepository(private val context: Context): LoginContract.ILoginModel {
                         // Sign in success, update UI with the signed-in user's information
                         val user = auth.currentUser
                         Log.d("Mati", "signInWithEmail:success, $user")
-                        result = true
+//                        result = true
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w("Mati", "signInWithEmail:failure", task.exception)
-                        result = false
+//                        result = false
                     }
                 }
             job.await()
+            result = job.isSuccessful
         }
         return result
     }

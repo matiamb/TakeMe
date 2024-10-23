@@ -4,36 +4,31 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.credentials.CredentialManager
-import androidx.credentials.CustomCredential
-import androidx.credentials.GetCredentialRequest
-import androidx.credentials.GetCredentialResponse
 import com.gfreeman.takeme.R
 import com.gfreeman.takeme.login.model.LoginRepository
 import com.gfreeman.takeme.login.presenter.LoginPresenter
 import com.google.android.material.textfield.TextInputLayout
 import contract.LoginContract
 import com.gfreeman.takeme.home.view.HomeActivity
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity(), LoginContract.LoginView {
 
-    lateinit var loginPresenter: LoginContract.ILoginPresenter<LoginContract.LoginView>
-    lateinit var btnGoogle: MaterialButton
+    private lateinit var loginPresenter: LoginContract.ILoginPresenter<LoginContract.LoginView>
+    private lateinit var btnGoogle: MaterialButton
+    private lateinit var btnSignup: MaterialButton
     val credentialManager = CredentialManager.create(getViewContext())
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,12 +51,19 @@ class LoginActivity : AppCompatActivity(), LoginContract.LoginView {
         val inputPassword = findViewById<TextInputLayout>(R.id.textfield_password)
         val btnLogin = findViewById<Button>(R.id.btn_login)
         val btnSkip = findViewById<Button>(R.id.btn_skip_login)
+        btnSignup = findViewById(R.id.btn_signup)
         btnGoogle = findViewById(R.id.btn_google)
+
+        btnSignup.setOnClickListener {
+            val intent = Intent(this, SignupActivity::class.java)
+            startActivity(intent)
+        }
         btnSkip.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
         }
         btnLogin.setOnClickListener {
+            //TODO This or Firebase crashes the app when supplied user or email is not registered
             loginPresenter.loginWithUserAndPass(
                 inputUser.editText?.text.toString(),
                 inputPassword.editText?.text.toString())

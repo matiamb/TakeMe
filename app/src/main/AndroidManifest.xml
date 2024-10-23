@@ -18,6 +18,9 @@
         android:theme="@style/Theme.TakeMe"
         tools:targetApi="31">
         <activity
+            android:name=".login.view.SignupActivity"
+            android:exported="false" />
+        <activity
             android:name=".home.view.map.ArrivedToDestinationActivity"
             android:exported="false" />
         <activity
