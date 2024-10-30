@@ -63,6 +63,20 @@ class LoginPresenter(private val loginModel: LoginContract.ILoginModel): LoginCo
             Log.i("Mati", "No user logged in")
         }
     }
+
+    override fun sendPasswordResetEmail(email: String){
+        CoroutineScope(Dispatchers.IO).launch {
+            val passwordResetResult = loginModel.sendPasswordResetEmail(email)
+            withContext(Dispatchers.Main){
+                if (passwordResetResult){
+                    loginView.showErrorMessage("Email sent!")
+                } else {
+                    loginView.showErrorMessage("Email could not be sent")
+                }
+            }
+        }
+    }
+
     private fun saveSession(){
         val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(loginView.getViewContext())
         val editor:SharedPreferences.Editor = sharedPreferences.edit()

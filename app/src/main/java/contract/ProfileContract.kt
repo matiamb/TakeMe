@@ -9,10 +9,10 @@ interface ProfileContract {
     }
     interface ProfilePresenter<T: FragmentBaseContract.IFragmentBaseView<*>>: FragmentBaseContract.IFragmentBasePresenter<T>{
         fun logOut(context: Context)
-        fun getUserData(): String?
+        fun getUserData(): List<String?>
     }
     interface  ProfileModel{
         fun logOut()
-        fun getUserData(): String?
+        fun getUserData(): List<String?>
     }
 }

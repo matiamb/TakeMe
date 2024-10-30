@@ -17,12 +17,13 @@ class ProfileModel: ProfileContract.ProfileModel {
             Log.i("Mati", "Not logged in to Firebase")
         }
     }
-    override fun getUserData(): String? {
+    override fun getUserData(): List<String?> {
         val user = auth.currentUser
         if (user != null){
-            return user.email
+            val list = arrayListOf(user.displayName, user.email)
+            return list
         } else {
-            return null
+            return emptyList()
         }
     }
 }

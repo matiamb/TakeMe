@@ -25,7 +25,7 @@ class ProfilePresenter: ProfileContract.ProfilePresenter<ProfileContract.Profile
         editor.apply()
     }
 
-    override fun getUserData(): String? {
+    override fun getUserData(): List<String?> {
         return profileModel.getUserData()
     }
 

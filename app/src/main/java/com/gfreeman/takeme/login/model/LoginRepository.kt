@@ -11,10 +11,9 @@ import contract.LoginContract
 import kotlinx.coroutines.tasks.await
 
 class LoginRepository(private val context: Context): LoginContract.ILoginModel {
-    private lateinit var auth: FirebaseAuth
+    private var auth = Firebase.auth
 
     override suspend fun loginWithUserAndPass(email: String, password: String): Boolean {
-        auth = Firebase.auth
         var result = false
         if (email == "" || password == ""){
             Log.i("Mati", "signInWithEmail:failure")
@@ -50,6 +49,18 @@ class LoginRepository(private val context: Context): LoginContract.ILoginModel {
 
     override fun logOut(){
         auth.signOut()
+    }
+
+    override suspend fun sendPasswordResetEmail(email: String): Boolean{
+        var result = false
+        try {
+            val job = auth.sendPasswordResetEmail(email)
+            job.await()
+            result = job.isSuccessful
+        } catch (e : FirebaseAuthException){
+            result = false
+        }
+        return result
     }
 
     override fun loginWithProvider(provider: String) {

@@ -9,10 +9,12 @@ interface LoginContract {
         fun loginWithUserAndPass(user: String, password: String)
         fun loginWithProvider(provider: String)
         fun logOut()
+        fun sendPasswordResetEmail(email: String)
     }
     interface ILoginModel{
         suspend fun loginWithUserAndPass(user: String, password: String): Boolean
         fun loginWithProvider(provider: String)
         fun logOut()
+        suspend fun sendPasswordResetEmail(email: String): Boolean
     }
 }

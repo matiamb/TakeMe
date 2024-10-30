@@ -29,6 +29,7 @@ class LoginActivity : AppCompatActivity(), LoginContract.LoginView {
     private lateinit var loginPresenter: LoginContract.ILoginPresenter<LoginContract.LoginView>
     private lateinit var btnGoogle: MaterialButton
     private lateinit var btnSignup: MaterialButton
+    private lateinit var btnForgotPassword: MaterialButton
     val credentialManager = CredentialManager.create(getViewContext())
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +54,16 @@ class LoginActivity : AppCompatActivity(), LoginContract.LoginView {
         val btnSkip = findViewById<Button>(R.id.btn_skip_login)
         btnSignup = findViewById(R.id.btn_signup)
         btnGoogle = findViewById(R.id.btn_google)
+        btnForgotPassword = findViewById(R.id.btn_forgotpassword)
+
+        btnForgotPassword.setOnClickListener {
+            val email = inputUser.editText?.text.toString()
+            if (email != ""){
+                loginPresenter.sendPasswordResetEmail(inputUser.editText?.text.toString())
+            } else {
+                showErrorMessage("Please complete the email field with your email")
+            }
+        }
 
         btnSignup.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)

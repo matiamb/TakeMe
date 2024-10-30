@@ -51,9 +51,6 @@ class SignupActivity : AppCompatActivity(), SignupContract.SignupView {
         signupPresenter = SignupPresenter(signupModel)
         signupPresenter.attachView(this)
     }
-    fun finishSignupActivity(){
-        this.finish()
-    }
 
     override fun showErrorMessage(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
