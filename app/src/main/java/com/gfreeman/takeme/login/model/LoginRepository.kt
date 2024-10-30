@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.auth
 import contract.LoginContract
 import kotlinx.coroutines.tasks.await
@@ -19,22 +20,31 @@ class LoginRepository(private val context: Context): LoginContract.ILoginModel {
             Log.i("Mati", "signInWithEmail:failure")
             result = false
         } else {
-            val job = auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        val user = auth.currentUser
-                        Log.d("Mati", "signInWithEmail:success, $user")
-//                        result = true
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w("Mati", "signInWithEmail:failure", task.exception)
-//                        result = false
-                    }
-                }
-            job.await()
-            result = job.isSuccessful
+            try {
+                val job = auth.signInWithEmailAndPassword(email, password)
+                job.await()
+                result = job.isSuccessful
+                Log.i("Mati", "Result: $result")
+            } catch(e : FirebaseAuthException) {
+                print(e.message)
+            }
+
+//                .addOnCompleteListener { task ->
+//                    if (task.isSuccessful) {
+//                        // Sign in success, update UI with the signed-in user's information
+//                        val user = auth.currentUser
+//                        Log.d("Mati", "signInWithEmail:success, $user")
+////                        result = true
+//                    } else {
+//                        // If sign in fails, display a message to the user.
+//                        Log.w("Mati", "signInWithEmail:failure", task.exception)
+////                        result = false
+//                    }
+//                }
+
+
         }
+        Log.i("Mati", "Result returned: $result")
         return result
     }
 

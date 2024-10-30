@@ -36,14 +36,13 @@ class SignupActivity : AppCompatActivity(), SignupContract.SignupView {
         btnSignup.setOnClickListener {
             val email = txtEmail.editText?.text.toString()
             val password = txtPassword.editText?.text.toString()
-            if (email != null || password != null){
+            if (email != "" && password != ""){
                 Log.i("Mati", "Email: $email, Password: $password")
                 signupPresenter.signUpUser(email, password)
-                Toast.makeText(this, getString(string.welcome_signup_message), Toast.LENGTH_SHORT).show()
-                this.finish()
+//                Toast.makeText(this, getString(string.welcome_signup_message), Toast.LENGTH_SHORT).show()
             }
             else {
-                Toast.makeText(this, "Email or password cannot be null", Toast.LENGTH_SHORT).show()
+                showErrorMessage("Email or password cannot be null")
             }
         }
     }
@@ -52,9 +51,12 @@ class SignupActivity : AppCompatActivity(), SignupContract.SignupView {
         signupPresenter = SignupPresenter(signupModel)
         signupPresenter.attachView(this)
     }
+    fun finishSignupActivity(){
+        this.finish()
+    }
 
     override fun showErrorMessage(message: String) {
-        TODO("Not yet implemented")
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     override fun getViewContext(): Context {

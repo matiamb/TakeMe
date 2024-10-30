@@ -25,15 +25,13 @@ class LoginPresenter(private val loginModel: LoginContract.ILoginModel): LoginCo
         CoroutineScope(Dispatchers.IO).launch {
             val loginResult = loginModel.loginWithUserAndPass(user, password)
             Log.i("Mati", "LoginResult= $loginResult")
-            if (!loginResult){
-                withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main){
+                if (!loginResult){
                     loginView.showErrorMessage("Incorrect user or pass")
-                }
-            } else{
-                withContext(Dispatchers.Main){
-                    saveSession()
-                    loginView.openMapsScreen()
-                }
+                } else{
+                        saveSession()
+                        loginView.openMapsScreen()
+                    }
             }
         }
     }
