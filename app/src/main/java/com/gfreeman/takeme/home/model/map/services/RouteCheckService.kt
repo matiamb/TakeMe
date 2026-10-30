@@ -133,14 +133,15 @@ class RouteCheckService : Service() {
     }
 
     private fun checkIfOutOfRoute(): Boolean {
-        return locationProvider?.let {
-            val currentLocation = it.getCurrentLocation()
-            val currentRoute = it.getCurrentRoute()
-            return currentRoute?.let {
-                currentLocation?.let {
-                    MapsManager.isOutsideOfRoute(currentLocation, currentRoute) }
-            } ?: false
-        } ?: false
+//        return locationProvider?.let {
+//            val currentLocation = it.getCurrentLocation()
+//            val currentRoute = it.getCurrentRoute()
+//            return currentRoute?.let {
+//                currentLocation?.let {
+//                    MapsManager.isOutsideOfRoute(currentLocation, currentRoute) }
+//            } ?: false
+//        } ?: false
+        return false
     }
 
     interface OnArriveDestinationListener{

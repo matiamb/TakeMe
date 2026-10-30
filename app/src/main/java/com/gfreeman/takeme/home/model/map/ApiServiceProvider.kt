@@ -30,16 +30,16 @@ object ApiServiceProvider {
         return Interceptor { chain ->
             val request = chain.request()
 
-            val requestBodyString = request.body()?.let { body ->
+            val requestBodyString = request.body?.let { body ->
                 val buffer = Buffer()
                 body.writeTo(buffer)
                 buffer.readUtf8()
             } ?: ""
 
             val requestLog = """
-            URL: ${request.url()}
-            Method: ${request.method()}
-            Headers: ${request.headers()}
+            URL: ${request.url}
+            Method: ${request.method}
+            Headers: ${request.headers}
             Body: $requestBodyString
         """.trimIndent()
 

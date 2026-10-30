@@ -55,9 +55,9 @@ class ProfileFragment : Fragment(), ProfileContract.ProfileView<BaseContract.IBa
     }
 
     private fun loadProfileData() {
-        val list = profilePresenter.getUserData()
-        profileName.text = list.first()
-        profileEmail.text = list.last()
+//        val list = profilePresenter.getUserData()
+//        profileName.text = list.first()
+//        profileEmail.text = list.last()
     }
 
     override fun logOut() {

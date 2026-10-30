@@ -24,11 +24,11 @@ import com.gfreeman.takeme.R
 import com.gfreeman.takeme.weather_forecast.view.WeatherReportActivity
 import com.gfreeman.takeme.weather_forecast.view.WeatherReportActivity.Companion.LAT_EXTRA
 import com.gfreeman.takeme.weather_forecast.view.WeatherReportActivity.Companion.LONG_EXTRA
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
+//import com.google.android.gms.maps.CameraUpdateFactory
+//import com.google.android.gms.maps.GoogleMap
+//import com.google.android.gms.maps.OnMapReadyCallback
+//import com.google.android.gms.maps.SupportMapFragment
+//import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.search.SearchView
 import contract.BaseContract
@@ -42,9 +42,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseContract.IBaseView> {
+class MapFragment : Fragment(),
+    //OnMapReadyCallback,
+    MapContract.MapView<BaseContract.IBaseView> {
     private lateinit var mapPresenter: MapContract.IFragmentMapPresenter<MapContract.MapView<BaseContract.IBaseView>>
-    private lateinit var googleMap: GoogleMap
+    //private lateinit var googleMap: GoogleMap
     private lateinit var searchView: SearchView
     private lateinit var listView: ListView
     private lateinit var fabWeather: FloatingActionButton
@@ -156,12 +158,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
 //    }
 
     private fun configureMap(){
-        val mapSupportFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
-        mapSupportFragment?.getMapAsync(this)
+//        val mapSupportFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
+//        mapSupportFragment?.getMapAsync(this)
     }
 
-    override fun onMapReady(map: GoogleMap) {
-        googleMap = map
+    fun onMapReady(
+        //map: GoogleMap
+    ) {
+        //googleMap = map
 //        val initialFakePoint = LatLng(-34.679437, -58.553777)
 //        MapsManager.addMarkerToMap(googleMap, initialFakePoint)
 //        MapsManager.centerMapIntoLocation(googleMap, initialFakePoint)
@@ -171,7 +175,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     private fun initPresenter(){
         val mapModel = MapRepository()
         mapPresenter = MapPresenterFragment(mapModel)
-        mapPresenter.attachView(this)
+        //mapPresenter.attachView(this)
     }
 
     override fun showSearchResults(search: List<Place>){
@@ -215,17 +219,17 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         }
     }
 
-    override fun drawRoute(route: List<LatLng>) {
-        checkNotificationPermission()
-        context?.let { safeContext ->
-            MapsManager.addRouteToMap(safeContext, googleMap, route)
-            MapsManager.alignMapToRoute(googleMap, route)
-            MapsManager.addMarkerToMap(googleMap, route.last())
-            startLocationUpdates()
-            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            //requestNotificationPermission()
-        }
-    }
+//    override fun drawRoute(route: List<LatLng>) {
+//        checkNotificationPermission()
+//        context?.let { safeContext ->
+////            MapsManager.addRouteToMap(safeContext, googleMap, route)
+////            MapsManager.alignMapToRoute(googleMap, route)
+////            MapsManager.addMarkerToMap(googleMap, route.last())
+//            startLocationUpdates()
+//            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//            //requestNotificationPermission()
+//        }
+//    }
 
     override fun showResult(search: String): String {
         val result = mapPresenter.getResult(search)
@@ -245,7 +249,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
         }
         fabCancelRoute.show()
         fabCancelRoute.setOnClickListener{
-            googleMap.clear()
+            //googleMap.clear()
             stopLocationUpdates()
             context?.let { safeContext ->
                 mapPresenter.stopCheckingDistanceToRoute(safeContext)
@@ -276,7 +280,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
     @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
         context?.let { safeContext ->
-                googleMap.isMyLocationEnabled = true
+                //googleMap.isMyLocationEnabled = true
                 try {
                     mapPresenter.getLastLocation()
                 } catch (e: Exception){
@@ -360,15 +364,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapContract.MapView<BaseCont
 //            LOCATION_PERMISSION_REQUEST_CODE
 //        )
 //    }
-    override fun getLastLocation(myLocation: LatLng) {
-        MapsManager.addMarkerToMap(googleMap, myLocation)
-        MapsManager.centerMapIntoLocation(googleMap, myLocation)
-    }
+//    override fun getLastLocation(myLocation: LatLng) {
+////        MapsManager.addMarkerToMap(googleMap, myLocation)
+////        MapsManager.centerMapIntoLocation(googleMap, myLocation)
+//    }
 
     override fun updateMapLocation(location: Point) {
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(LatLng(
-            location.latitude, location.longitude
-        )))
+//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(LatLng(
+//            location.latitude, location.longitude
+//        )))
     }
 
 //    private fun requestNotificationPermission(){

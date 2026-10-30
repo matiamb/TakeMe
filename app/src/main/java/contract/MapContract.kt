@@ -2,7 +2,7 @@ package contract
 
 import android.content.Context
 import android.os.Bundle
-import com.google.android.gms.maps.model.LatLng
+//import com.google.android.gms.maps.model.LatLng
 import com.gfreeman.takeme.home.model.map.MapRepository.OnNewLocationListener
 import com.gfreeman.takeme.home.model.map.Place
 import com.gfreeman.takeme.home.model.map.Point
@@ -11,12 +11,12 @@ import com.gfreeman.takeme.home.model.map.services.RouteCheckService
 interface MapContract {
     interface MapView <T : BaseContract.IBaseView>: FragmentBaseContract.IFragmentBaseView<T>{
         fun showSearchResults(search: List<Place>)
-        fun drawRoute(route: List<LatLng>)
+        //fun drawRoute(route: List<LatLng>)
         fun showResult(search: String): String
         fun initFusedLocationProviderClient()
         fun startLocationUpdates()
         fun stopLocationUpdates()
-        fun getLastLocation(myLocation: LatLng)
+        //fun getLastLocation(myLocation: LatLng)
         fun updateMapLocation(location: Point)
         fun openCongratsScreen(congratsParams: Bundle)
         fun getRouteFromFavs(startPlace: Place, destination: Place)

@@ -91,7 +91,7 @@ class ArrivedToDestinationActivity : AppCompatActivity(), ArrivedToDestinationCo
 
         val dialog = MaterialAlertDialogBuilder(
             this@ArrivedToDestinationActivity,
-            com.google.android.material.R.style.AlertDialog_AppCompat
+            //com.google.android.material.R.style.AlertDialog_AppCompat
         )
             .setTitle("Ingresa el nombre del punto inicial")
             .setView(customView)

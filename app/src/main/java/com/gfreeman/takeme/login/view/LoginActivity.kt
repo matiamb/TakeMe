@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.credentials.CredentialManager
+//import androidx.credentials.CredentialManager
 import com.gfreeman.takeme.R
 import com.gfreeman.takeme.login.model.LoginRepository
 import com.gfreeman.takeme.login.presenter.LoginPresenter
@@ -20,9 +20,9 @@ import contract.LoginContract
 import com.gfreeman.takeme.home.view.HomeActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
+//import com.google.firebase.Firebase
+//import com.google.firebase.auth.FirebaseAuth
+//import com.google.firebase.auth.auth
 
 class LoginActivity : AppCompatActivity(), LoginContract.LoginView {
 
@@ -30,13 +30,13 @@ class LoginActivity : AppCompatActivity(), LoginContract.LoginView {
     private lateinit var btnGoogle: MaterialButton
     private lateinit var btnSignup: MaterialButton
     private lateinit var btnForgotPassword: MaterialButton
-    val credentialManager = CredentialManager.create(getViewContext())
-    private lateinit var auth: FirebaseAuth
+    //val credentialManager = CredentialManager.create(getViewContext())
+    //private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
-        auth = Firebase.auth
+        //auth = Firebase.auth
         /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
