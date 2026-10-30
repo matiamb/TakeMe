@@ -47,11 +47,11 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
             startPlace = Place("MyPosition", getCurrentPosition()!!)
             finishPlace = destination
             val route = mapModel.getRoute(startPlace, finishPlace)?.map {
-                //LatLng(it.latitude, it.longitude)
+                LatLng(it.longitude, it.latitude)
             }
             withContext(Dispatchers.Main){
                 if (route != null) {
-                    //mapView.drawRoute(route)
+                    mapView.drawRoute(route)
                 }
             }
         }

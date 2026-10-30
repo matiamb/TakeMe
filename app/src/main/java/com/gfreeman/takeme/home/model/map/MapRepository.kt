@@ -94,12 +94,11 @@ class MapRepository: MapContract.MapModel {
             )
         )*/
         mCurrentLocation = Point(startPlace.point.latitude, startPlace.point.longitude)
-        val rawRouteResponse = ApiServiceProvider.routesServiceApi.getRoute(
-            getFormatedPoints(startPlace),
-            getFormatedPoints(destination)
-        )
+        val destination = destination.point
+        val coordinates = "${mCurrentLocation.longitude},${mCurrentLocation.latitude};${destination.longitude},${destination.latitude}"
+        val rawRouteResponse = ApiServiceProvider.routesServiceApi.getRoute(coordinates = coordinates)
         if (rawRouteResponse.isSuccessful){
-            currentRoute = mapRoute(rawRouteResponse.body()?.route?.geometry?.coordinates)
+            currentRoute = mapRoute(rawRouteResponse.body()?.routes?.first()?.geometry?.coordinates)
             Log.i("Mati", "Current route list: ${currentRoute.toString()}")
         } else {
             return emptyList()

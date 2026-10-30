@@ -287,7 +287,7 @@ class MapFragment : Fragment(),
         }
         listView.setOnItemClickListener { parent, view, position, id ->
             searchView.hide()
-            //mapPresenter.getRoute(search[position])
+            mapPresenter.getRoute(search[position])
         }
     }
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -313,17 +313,18 @@ class MapFragment : Fragment(),
         }
     }
 
-//    override fun drawRoute(route: List<LatLng>) {
-//        checkNotificationPermission()
-//        context?.let { safeContext ->
-////            MapsManager.addRouteToMap(safeContext, googleMap, route)
-////            MapsManager.alignMapToRoute(googleMap, route)
-////            MapsManager.addMarkerToMap(googleMap, route.last())
-//            startLocationUpdates()
-//            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//            //requestNotificationPermission()
-//        }
-//    }
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun drawRoute(route: List<LatLng>) {
+        checkNotificationPermission()
+        context?.let { safeContext ->
+            MapsManager.addRouteToMap(route, currentStyle ?: return)
+//            MapsManager.alignMapToRoute(googleMap, route)
+//            MapsManager.addMarkerToMap(googleMap, route.last())
+            //startLocationUpdates()
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            //requestNotificationPermission()
+        }
+    }
 
     override fun showResult(search: String): String {
         val result = mapPresenter.getResult(search)
