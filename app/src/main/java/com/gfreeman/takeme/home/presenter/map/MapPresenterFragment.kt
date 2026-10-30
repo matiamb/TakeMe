@@ -73,11 +73,12 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
 
     override suspend fun getCurrentPosition(): Point? {
         //DEFERRED ES UN JOB QUE DEVUELVE UN RESULTADO
-        val job: Deferred<Point?> = CoroutineScope(Dispatchers.IO).async {
-            mapModel.getCurrentPosition()
-        }
-        //Al usar async puedo usar await o join, si uso launch uso join para esperar que termine el job
-        return job.await()
+//        val job: Deferred<Point?> = CoroutineScope(Dispatchers.IO).async {
+//            mapModel.getCurrentPosition()
+//        }
+//        //Al usar async puedo usar await o join, si uso launch uso join para esperar que termine el job
+//        return job.await()
+        return Point(12.0,11.0)
     }
 
     override fun getResult(search: String): String {
@@ -120,9 +121,9 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
         CoroutineScope(Dispatchers.IO).launch {
             val location = getCurrentPosition()!!
             //val myLocation = LatLng(location.latitude, location.longitude)
-            withContext(Dispatchers.Main){
+            //withContext(Dispatchers.Main){
                 //mapView.getLastLocation(myLocation)
-            }
+            //}
         }
     }
 

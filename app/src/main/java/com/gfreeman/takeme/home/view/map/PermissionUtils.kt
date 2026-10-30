@@ -1,13 +1,22 @@
 package com.gfreeman.takeme.home.view.map
 
+import android.Manifest
+import android.app.AlertDialog
+import android.app.Dialog
+import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.DialogFragment
 
 object PermissionUtils {
     /**
      * Requests the fine and coarse location permissions. If a rationale with an additional
      * explanation should be shown to the user, displays a dialog that triggers the request.
      */
-    /*fun requestLocationPermissions(
+    fun requestLocationPermissions(
         activity: AppCompatActivity,
         requestId: Int,
         finishActivity: Boolean
@@ -36,7 +45,7 @@ object PermissionUtils {
                 requestId
             )
         }
-    }*/
+    }
 
     /**
      * Checks if the result contains a [PackageManager.PERMISSION_GRANTED] result for a
@@ -60,13 +69,13 @@ object PermissionUtils {
     /**
      * A dialog that displays a permission denied message.
      */
-    /*class PermissionDeniedDialog : DialogFragment() {
+    class PermissionDeniedDialog : DialogFragment() {
         private var finishActivity = false
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             finishActivity =
                 arguments?.getBoolean(ARGUMENT_FINISH_ACTIVITY) ?: false
             return AlertDialog.Builder(activity)
-                .setMessage(R.string.location_permission_denied)
+                .setMessage("Location permission denied")
                 .setPositiveButton(android.R.string.ok, null)
                 .create()
         }
@@ -75,14 +84,14 @@ object PermissionUtils {
             super.onDismiss(dialog)
             if (finishActivity) {
                 Toast.makeText(
-                    activity, R.string.permission_required_toast,
+                    activity, "Permission required",
                     Toast.LENGTH_SHORT
                 ).show()
                 activity?.finish()
             }
-        }*/
+        }
 
-        /*companion object {
+        companion object {
             private const val ARGUMENT_FINISH_ACTIVITY = "finish"
 
             /**
@@ -99,7 +108,7 @@ object PermissionUtils {
                 }
             }
         }
-    }*/
+    }
 
     /**
      * A dialog that explains the use of the location permission and requests the necessary
@@ -110,7 +119,7 @@ object PermissionUtils {
      * [androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback]
      * to handle permit or denial of this permission request.
      */
-    /*class RationaleDialog : DialogFragment() {
+    class RationaleDialog : DialogFragment() {
         private var finishActivity = false
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             val requestCode =
@@ -118,7 +127,7 @@ object PermissionUtils {
             finishActivity =
                 arguments?.getBoolean(ARGUMENT_FINISH_ACTIVITY) ?: false
             return AlertDialog.Builder(activity)
-                .setMessage(R.string.permission_rationale_location)
+                .setMessage("Location permission is needed to show your location. Allow it?")
                 .setPositiveButton(android.R.string.ok) { dialog, which -> // After click on Ok, request the permission.
                     ActivityCompat.requestPermissions(
                         requireActivity(),
@@ -140,7 +149,7 @@ object PermissionUtils {
             if (finishActivity) {
                 Toast.makeText(
                     activity,
-                    R.string.permission_required_toast,
+                    "Permission required",
                     Toast.LENGTH_SHORT
                 ).show()
                 activity?.finish()
@@ -177,5 +186,5 @@ object PermissionUtils {
                 }
             }
         }
-    }*/
+    }
 }

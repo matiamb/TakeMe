@@ -31,6 +31,7 @@ class HomeActivity : AppCompatActivity(), HomeContract.HomeView {
     private lateinit var favFragment: Fragment
     private lateinit var profileFragment: Fragment
     private lateinit var bottomNavbarView: BottomNavigationView
+    private var currentFragment: Fragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         //transition para activity con weather forecast
         window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
@@ -56,7 +57,7 @@ class HomeActivity : AppCompatActivity(), HomeContract.HomeView {
         searchFragment = MapFragment()
         favFragment = FavFragment()
         profileFragment = ProfileFragment()
-        loadFragment(searchFragment)
+        //loadFragment(searchFragment)
 
         bottomNavbarView.setOnItemSelectedListener { item ->
             when(item.itemId) {
@@ -86,6 +87,8 @@ class HomeActivity : AppCompatActivity(), HomeContract.HomeView {
         bottomNavbarView.selectedItemId = R.id.nav_home_item2
     }
     private fun loadFragment(fragment: Fragment) {
+        if (currentFragment === fragment) return
+        currentFragment = fragment
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.home_container, fragment)
         transaction.commit()
