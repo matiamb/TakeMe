@@ -113,39 +113,39 @@ class MapRepository: MapContract.MapModel {
 
     @SuppressLint("MissingPermission")
     override fun getCurrentPosition(): Point? {
-        return Point(-34.679437, -58.553777)
-//        var lastKnownLocation: Point?
-//        val lastLocation = fusedLocationClient.lastLocation
-//            .addOnSuccessListener { location : Location? ->
-//                // Got last known location. In some rare situations this can be null.
-//                //Log.i("Mati", "Location request successful")
-//                if (location != null) {
-//                    val latitude = location.latitude
-//                    val longitude = location.longitude
-//                    // Do something with the latitude and longitude
-//                    //Log.i("Mati", "Location from inside: "+latitude.toString() +" "+ longitude.toString())
-//                }
-//            }
-//            .addOnFailureListener { exception: Exception ->
-//                // Handle location retrieval failure here
-//                Log.e("Mati", "Location request failed")
-//            }
-//        //pero aca me pone el valor por default, por que? tiene algo que ver con que la task no se completa, y por eso no debe guardar los cambios.
-//        //Log.i("Mati", lastKnownLocation.latitude.toString() +" "+ lastKnownLocation.longitude.toString())
-//        /*if (lastLocation.isComplete){
-//            lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
-//            return lastKnownLocation
-//        } else {
-//            await(lastLocation)
-//            lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
-//            return lastKnownLocation
-//        }*/
-//        //await va a esperar a que una tarea especifica termine antes de seguir con el resto del codigo
-////        await(lastLocation)
-//        //Log.i("Mati", "Last location test: " + lastLocation.result.latitude.toString())
-//        lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
-//        mCurrentLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
-//        return lastKnownLocation
+        //return Point(-34.679437, -58.553777)
+        var lastKnownLocation: Point?
+        val lastLocation = fusedLocationClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                // Got last known location. In some rare situations this can be null.
+                Log.i("Mati", "Location request successful")
+                if (location != null) {
+                    val latitude = location.latitude
+                    val longitude = location.longitude
+                    // Do something with the latitude and longitude
+                    Log.i("Mati", "Location from inside: "+latitude.toString() +" "+ longitude.toString())
+                }
+            }
+            .addOnFailureListener { exception: Exception ->
+                // Handle location retrieval failure here
+                Log.e("Mati", "Location request failed")
+            }
+        //pero aca me pone el valor por default, por que? tiene algo que ver con que la task no se completa, y por eso no debe guardar los cambios.
+        //Log.i("Mati", lastKnownLocation.latitude.toString() +" "+ lastKnownLocation.longitude.toString())
+        /*if (lastLocation.isComplete){
+            lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
+            return lastKnownLocation
+        } else {
+            await(lastLocation)
+            lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
+            return lastKnownLocation
+        }*/
+        //await va a esperar a que una tarea especifica termine antes de seguir con el resto del codigo
+        await(lastLocation)
+        //Log.i("Mati", "Last location test: " + lastLocation.result.latitude.toString())
+        lastKnownLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
+        mCurrentLocation = Point(lastLocation.result.latitude, lastLocation.result.longitude)
+        return lastKnownLocation
     }
     @SuppressLint("MissingPermission")
     override fun startLocationUpdates(context: Context, locationListener: OnNewLocationListener){
