@@ -41,6 +41,10 @@ import com.gfreeman.takeme.home.view.map.PermissionUtils.isPermissionGranted
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.maplibre.android.MapLibre
+import org.maplibre.android.camera.CameraPosition
+import org.maplibre.android.geometry.LatLng
+import org.maplibre.android.maps.MapView
 
 
 class MapFragment : Fragment(),
@@ -57,6 +61,7 @@ class MapFragment : Fragment(),
     private val coarseLocation = Manifest.permission.ACCESS_COARSE_LOCATION
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val notification = Manifest.permission.POST_NOTIFICATIONS
+    private lateinit var mapView: MapView
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val multiplePermissionRequest =
@@ -94,15 +99,39 @@ class MapFragment : Fragment(),
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_map, container, false)
+        MapLibre.getInstance(requireContext())
+        val view = inflater.inflate(
+            R.layout.fragment_map,
+            container,
+            false
+        )
         /*val bottomSheet = view.findViewById<View>(R.id.map_bottom_sheet)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         bottomSheetBehavior.isHideable = false
         bottomSheetBehavior.peekHeight = resources.getDimensionPixelSize(com.google.android.material.R.dimen.m3_searchbar_height)*/
 //        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ true)
 //        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ true)
-        return view
+        mapView = view.findViewById(R.id.mapView)
+        mapView.onCreate(savedInstanceState)
 
+//        mapView.getMapAsync { map ->
+//            map.setStyle(
+//                "https://demotiles.maplibre.org/style.json"
+//            ) {
+//
+//                val cordoba = LatLng(
+//                    -31.4201,
+//                    -64.1888
+//                )
+//
+//                map.cameraPosition =
+//                    CameraPosition.Builder()
+//                        .target(cordoba)
+//                        .zoom(3.0)
+//                        .build()
+//            }
+//        }
+        return view
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -168,6 +197,7 @@ class MapFragment : Fragment(),
 
     override fun onStop() {
         super.onStop()
+        mapView.onStop()
         try {
             stopLocationUpdates()
             context?.let { safeContext ->
@@ -179,14 +209,50 @@ class MapFragment : Fragment(),
         }
    }
 
-//    override fun onResume() {
-//        super.onResume()
-//        startLocationUpdates()
-//    }
+    override fun onResume() {
+        super.onResume()
+        //startLocationUpdates()
+        mapView.onResume()
+    }
+    override fun onPause() {
+        mapView.onPause()
+        super.onPause()
+    }
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
+    }
+
+    override fun onDestroyView() {
+        mapView.onDestroy()
+        super.onDestroyView()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        mapView.onSaveInstanceState(outState)
+        super.onSaveInstanceState(outState)
+    }
 
     private fun configureMap(){
 //        val mapSupportFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
 //        mapSupportFragment?.getMapAsync(this)
+        mapView.getMapAsync { map ->
+            map.setStyle(
+                "https://tiles.openfreemap.org/styles/liberty"
+            ) {
+
+                val cordoba = LatLng(
+                    -31.4201,
+                    -64.1888
+                )
+
+                map.cameraPosition =
+                    CameraPosition.Builder()
+                        .target(cordoba)
+                        .zoom(13.0)
+                        .build()
+            }
+        }
     }
 
     fun onMapReady(

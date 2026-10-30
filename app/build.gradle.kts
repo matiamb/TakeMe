@@ -68,6 +68,7 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.common)
+    implementation("org.maplibre.gl:android-sdk:13.7.1")
 
 
     testImplementation(libs.junit)
