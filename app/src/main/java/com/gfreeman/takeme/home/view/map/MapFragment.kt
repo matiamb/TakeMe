@@ -18,6 +18,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.gfreeman.takeme.R
@@ -44,7 +45,13 @@ import kotlinx.coroutines.launch
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.geometry.LatLng
+import org.maplibre.android.location.LocationComponentActivationOptions
+import org.maplibre.android.location.LocationComponentOptions
+import org.maplibre.android.location.modes.CameraMode
+import org.maplibre.android.location.modes.RenderMode
+import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
+import org.maplibre.android.maps.Style
 
 
 class MapFragment : Fragment(),
@@ -62,12 +69,15 @@ class MapFragment : Fragment(),
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val notification = Manifest.permission.POST_NOTIFICATIONS
     private lateinit var mapView: MapView
+    private var currentMap: MapLibreMap? = null
+    private var currentStyle: Style? = null
 
+    @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val multiplePermissionRequest =
         registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
-        ){ permissions ->
+        ) { permissions ->
         //checkLocationPermission()
             val fineGranted = permissions[fineLocation] == true
             val coarseGranted = permissions[coarseLocation] == true
@@ -113,24 +123,6 @@ class MapFragment : Fragment(),
 //        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ true)
         mapView = view.findViewById(R.id.mapView)
         mapView.onCreate(savedInstanceState)
-
-//        mapView.getMapAsync { map ->
-//            map.setStyle(
-//                "https://demotiles.maplibre.org/style.json"
-//            ) {
-//
-//                val cordoba = LatLng(
-//                    -31.4201,
-//                    -64.1888
-//                )
-//
-//                map.cameraPosition =
-//                    CameraPosition.Builder()
-//                        .target(cordoba)
-//                        .zoom(3.0)
-//                        .build()
-//            }
-//        }
         return view
     }
 
@@ -209,6 +201,11 @@ class MapFragment : Fragment(),
         }
    }
 
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+
     override fun onResume() {
         super.onResume()
         //startLocationUpdates()
@@ -239,7 +236,9 @@ class MapFragment : Fragment(),
         mapView.getMapAsync { map ->
             map.setStyle(
                 "https://tiles.openfreemap.org/styles/liberty"
-            ) {
+            ) { style ->
+                currentMap = map
+                currentStyle = style
 
                 val cordoba = LatLng(
                     -31.4201,
@@ -251,6 +250,11 @@ class MapFragment : Fragment(),
                         .target(cordoba)
                         .zoom(13.0)
                         .build()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    checkLocationPermission()
+                } else {
+                    enableMyLocation()
+                }
             }
         }
     }
@@ -370,17 +374,43 @@ class MapFragment : Fragment(),
         }
     }
 
-    @SuppressLint("MissingPermission")
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun enableMyLocation() {
-        context?.let { safeContext ->
-                //googleMap.isMyLocationEnabled = true
-                try {
-                    mapPresenter.getLastLocation()
-                } catch (e: Exception){
-                    Log.i("Mati", "mCurrentLocation is $e")
-                }
-                return
-            }
+        val map = currentMap ?: return
+        val style = currentStyle ?: return
+        val locationComponent = map.locationComponent
+
+        if (!isPermissionGranted(fineLocation) && !isPermissionGranted(coarseLocation)) {
+            return
+        }
+
+        if (!locationComponent.isLocationComponentActivated) {
+            val options = LocationComponentOptions.builder(requireContext())
+                .pulseEnabled(true)
+                .build()
+
+            val activationOptions =
+                LocationComponentActivationOptions.builder(
+                    requireContext(),
+                    style
+                )
+                    .locationComponentOptions(options)
+                    .build()
+
+            locationComponent.activateLocationComponent(activationOptions)
+        }
+        locationComponent.isLocationComponentEnabled = true
+        locationComponent.cameraMode = CameraMode.TRACKING
+        locationComponent.renderMode = RenderMode.NORMAL
+//        context?.let { safeContext ->
+//                //googleMap.isMyLocationEnabled = true
+//                try {
+//                    mapPresenter.getLastLocation()
+//                } catch (e: Exception){
+//                    Log.i("Mati", "mCurrentLocation is $e")
+//                }
+//                return
+//            }
             //PERMISSION RATIONALE ES PARA MOSTRAR UN DIALOGO QUE EXPLIQUE POR QUE NECESITAS EL PERMISO
             // 2. If if a permission rationale dialog should be shown
             /*if (shouldShowRequestPermissionRationale(
@@ -399,6 +429,7 @@ class MapFragment : Fragment(),
             //requestLocationPermission()
         }
 
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
