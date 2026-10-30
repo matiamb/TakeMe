@@ -29,6 +29,8 @@ import contract.MapContract
 import com.gfreeman.takeme.home.model.map.broadcasts.BatteryLowReceiver
 import com.gfreeman.takeme.home.model.map.services.RouteCheckService
 import com.gfreeman.takeme.home.view.HomeActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.lang.ref.WeakReference
 
 class MapRepository: MapContract.MapModel {
@@ -52,7 +54,7 @@ class MapRepository: MapContract.MapModel {
     private var alarmMgr: AlarmManager? = null
     private var arriveDestinationListener: RouteCheckService.OnArriveDestinationListener? = null
 
-    override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place> {
+    override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place>{
         /*return listOf(
             Place(
                 "Abasto, Balvanera, Buenos Aires, Comuna 3, Autonomous City of Buenos Aires, C1193AAF, Argentina",

@@ -34,9 +34,9 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
     override fun performSearchPlaces(placeToSearch: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val results = mapModel.getPlacesFromSearch(placeToSearch)
-//            withContext(Dispatchers.Main){
-//                mapView.showSearchResults(results)
-//            }
+            withContext(Dispatchers.Main){
+                mapView.showSearchResults(results)
+            }
         }
         //return mapModel.getPlacesFromSearch(placeToSearch)
     }
