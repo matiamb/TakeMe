@@ -1,0 +1,71 @@
+package com.gfreeman.takeme.login.model
+
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
+//import com.google.firebase.Firebase
+//import com.google.firebase.auth.FirebaseAuth
+//import com.google.firebase.auth.FirebaseAuthException
+//import com.google.firebase.auth.auth
+import contract.LoginContract
+//import kotlinx.coroutines.tasks.await
+
+class LoginRepository(private val context: Context): LoginContract.ILoginModel {
+    //private var auth = Firebase.auth
+
+    override suspend fun loginWithUserAndPass(email: String, password: String): Boolean {
+//        var result = false
+//        if (email == "" || password == ""){
+//            Log.i("Mati", "signInWithEmail:failure")
+//            result = false
+//        } else {
+//            try {
+//                val job = auth.signInWithEmailAndPassword(email, password)
+//                job.await()
+//                result = job.isSuccessful
+//                Log.i("Mati", "Result: $result")
+//            } catch(e : FirebaseAuthException) {
+//                print(e.message)
+//            }
+
+//                .addOnCompleteListener { task ->
+//                    if (task.isSuccessful) {
+//                        // Sign in success, update UI with the signed-in user's information
+//                        val user = auth.currentUser
+//                        Log.d("Mati", "signInWithEmail:success, $user")
+////                        result = true
+//                    } else {
+//                        // If sign in fails, display a message to the user.
+//                        Log.w("Mati", "signInWithEmail:failure", task.exception)
+////                        result = false
+//                    }
+//                }
+
+
+//        }
+//        Log.i("Mati", "Result returned: $result")
+//        return result
+        return false
+    }
+
+    override fun logOut(){
+        //auth.signOut()
+    }
+
+    override suspend fun sendPasswordResetEmail(email: String): Boolean{
+//        var result = false
+//        try {
+//            val job = auth.sendPasswordResetEmail(email)
+//            job.await()
+//            result = job.isSuccessful
+//        } catch (e : FirebaseAuthException){
+//            result = false
+//        }
+//        return result
+        return false
+    }
+
+    override fun loginWithProvider(provider: String) {
+        TODO("Not yet implemented")
+    }
+}

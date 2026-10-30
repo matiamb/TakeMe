@@ -5,15 +5,16 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#4100AD"
+    android:background="@drawable/login_background"
     android:padding="20dp"
-    tools:context=".LoginActivity">
+    tools:context=".login.view.LoginActivity">
 
     <ImageView
         android:id="@+id/company_icon"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/ic_app_icon_foreground"
+        android:contentDescription="@string/application_icon_description"
+        android:src="@drawable/app_logo"
         app:layout_constraintBottom_toTopOf="@+id/company_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
@@ -27,8 +28,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
-        android:textColor="@color/white"
-        android:textSize="25dp"
+        android:textColor="#2F23B4"
+        android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/textfield_user"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,8 +41,10 @@
         android:id="@+id/textfield_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="User"
+        style="?attr/textInputFilledStyle"
+        android:hint="@string/user_login_textfield"
         android:textColorHint="@color/white"
+        app:boxStrokeWidth="0dp"
         app:layout_constraintBottom_toTopOf="@id/textfield_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +53,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#5D21BE" />
+            android:background="#2F23B4"
+            />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -58,10 +62,12 @@
         android:id="@+id/textfield_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
+        style="?attr/textInputFilledStyle"
+        android:hint="@string/password_login_textfield"
         android:textColorHint="@color/white"
-
+        app:boxStrokeWidth="0dp"
         app:endIconMode="password_toggle"
+        app:endIconTint="@color/white"
         app:layout_constraintBottom_toTopOf="@id/check_rememberme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,7 +76,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#5D21BE"
+            android:background="#2F23B4"
             android:inputType="textPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -79,8 +85,8 @@
         android:id="@+id/check_rememberme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Remind me!"
-        android:textColor="@color/white"
+        android:text="@string/remind_me_login_checkbox"
+        android:textColor="#2F23B4"
         app:layout_constraintBottom_toTopOf="@id/btn_login"
         app:layout_constraintEnd_toStartOf="@id/btn_forgotpassword"
         app:layout_constraintStart_toStartOf="parent"
@@ -91,8 +97,8 @@
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Forgot Password?"
-        android:textColor="@color/white"
+        android:text="@string/forgot_password_login_button"
+        android:textColor="#2F23B4"
         app:layout_constraintBottom_toTopOf="@id/btn_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"
@@ -104,7 +110,10 @@
         style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="@string/loginbtn_login_button"
+        android:backgroundTint="#2F23B4"
+        android:textColor="@color/white"
+        app:cornerRadius="10dp"
         app:layout_constraintBottom_toTopOf="@id/txt_noAccount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -114,8 +123,8 @@
         android:id="@+id/txt_noAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Don't have an account?"
-        android:textColor="@color/white"
+        android:text="@string/don_t_have_an_account_login_txt"
+        android:textColor="#2F23B4"
         app:layout_constraintBottom_toTopOf="@id/btn_google"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -124,37 +133,67 @@
     <Button
         android:id="@+id/btn_google"
         style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Google"
-        app:icon="@mipmap/ic_google_foreground"
+        android:layout_marginEnd="5dp"
+        android:backgroundTint="@color/white"
+        android:textColor="#2F23B4"
+        app:icon="@drawable/icon_google"
+        app:iconGravity="textStart"
+        app:iconTintMode="multiply"
+        app:cornerRadius="10dp"
         app:layout_constraintBottom_toTopOf="@id/btn_signup"
         app:layout_constraintEnd_toStartOf="@id/btn_facebook"
-        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_noAccount" />
+        app:layout_constraintTop_toBottomOf="@id/txt_noAccount"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/btn_facebook"
-        style="@style/Widget.Material3.Button.ElevatedButton"
-        android:layout_width="wrap_content"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:textColor="#2F23B4"
         android:text="Facebook"
+        app:iconTintMode="multiply"
+        app:iconGravity="textStart"
+        app:icon="@drawable/ic_facebook"
+        app:cornerRadius="10dp"
         app:layout_constraintBottom_toTopOf="@id/btn_signup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_google"
         app:layout_constraintTop_toBottomOf="@id/txt_noAccount"
-        />
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/btn_signup"
         style="@style/Widget.Material3.Button.ElevatedButton"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Sign Up"
+        android:backgroundTint="@color/white"
+        android:textColor="#2F23B4"
+        android:layout_marginEnd="5dp"
+        app:cornerRadius="10dp"
+        android:text="@string/sign_up_login_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_skip_login"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_google" />
+    <Button
+        android:id="@+id/btn_skip_login"
+        style="@style/Widget.Material3.Button.ElevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:textColor="#2F23B4"
+        app:cornerRadius="10dp"
+        android:text="@string/skip_for_now_login_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_signup"
         app:layout_constraintTop_toBottomOf="@id/btn_google" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
