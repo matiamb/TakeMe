@@ -19,6 +19,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.maplibre.android.geometry.LatLng
 
 class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContract.IFragmentMapPresenter<MapContract.MapView<BaseContract.IBaseView>>{
     private lateinit var mapView: MapContract.MapView<BaseContract.IBaseView>
@@ -33,9 +34,9 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
     override fun performSearchPlaces(placeToSearch: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val results = mapModel.getPlacesFromSearch(placeToSearch)
-//            withContext(Dispatchers.Main){
-//                mapView.showSearchResults(results)
-//            }
+            withContext(Dispatchers.Main){
+                mapView.showSearchResults(results)
+            }
         }
         //return mapModel.getPlacesFromSearch(placeToSearch)
     }
@@ -46,11 +47,11 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
             startPlace = Place("MyPosition", getCurrentPosition()!!)
             finishPlace = destination
             val route = mapModel.getRoute(startPlace, finishPlace)?.map {
-                //LatLng(it.latitude, it.longitude)
+                LatLng(it.longitude, it.latitude)
             }
             withContext(Dispatchers.Main){
                 if (route != null) {
-                    //mapView.drawRoute(route)
+                    mapView.drawRoute(route)
                 }
             }
         }
@@ -78,6 +79,7 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
         }
         //Al usar async puedo usar await o join, si uso launch uso join para esperar que termine el job
         return job.await()
+        //return Point(12.0,11.0)
     }
 
     override fun getResult(search: String): String {
@@ -119,10 +121,10 @@ class MapPresenterFragment(private val mapModel: MapContract.MapModel): MapContr
     override fun getLastLocation(){
         CoroutineScope(Dispatchers.IO).launch {
             val location = getCurrentPosition()!!
-            //val myLocation = LatLng(location.latitude, location.longitude)
-            withContext(Dispatchers.Main){
-                //mapView.getLastLocation(myLocation)
-            }
+            val myLocation = LatLng(location.latitude, location.longitude)
+//            withContext(Dispatchers.Main){
+//                mapView.getLastLocation(myLocation)
+//            }
         }
     }
 

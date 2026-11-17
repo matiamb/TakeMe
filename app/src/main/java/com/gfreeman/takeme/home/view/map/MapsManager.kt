@@ -10,6 +10,15 @@ import com.gfreeman.takeme.R
 //import com.google.android.gms.maps.model.MarkerOptions
 //import com.google.android.gms.maps.model.PolylineOptions
 import com.gfreeman.takeme.home.model.map.Point
+import org.maplibre.android.geometry.LatLng
+import org.maplibre.android.maps.MapLibreMap
+import org.maplibre.android.maps.Style
+import org.maplibre.android.style.layers.LineLayer
+import org.maplibre.android.style.layers.Property
+import org.maplibre.android.style.layers.PropertyFactory
+import org.maplibre.android.style.sources.GeoJsonSource
+import org.maplibre.geojson.Feature
+import org.maplibre.geojson.LineString
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -42,14 +51,46 @@ object MapsManager {
 //
 //        return brng
 //    }
-//    fun addRouteToMap(safeContext: Context, googleMap: GoogleMap, route: List<LatLng>){
-//        googleMap.clear()
-//        val polyLineOptions = PolylineOptions()
-//            .addAll(route)
-//            .color(safeContext.getColor(R.color.md_theme_dark_inversePrimary))
-//            .width(30f)
-//        googleMap.addPolyline(polyLineOptions)
-//    }
+    fun addRouteToMap(route: List<LatLng>, currentStyle: Style){
+        //currentMap.clear()
+        val routeCoordinates = route.map { coordinate ->
+//            Point.fromLngLat(
+//                coordinate[0],
+//                coordinate[1]
+//            )
+            org.maplibre.geojson.Point.fromLngLat(
+                coordinate.longitude,
+                coordinate.latitude
+            )
+        }
+
+        val lineString = LineString.fromLngLats(routeCoordinates)
+
+        // Fuente GeoJSON
+        val geoJsonSource = GeoJsonSource(
+            "route-source",
+            Feature.fromGeometry(lineString)
+        )
+
+        // Eliminar ruta anterior si existe
+        currentStyle.removeLayer("route-layer")
+        currentStyle.removeSource("route-source")
+
+        currentStyle.addSource(geoJsonSource)
+
+        // Dibujar línea
+        val lineLayer = LineLayer(
+            "route-layer",
+            "route-source"
+        ).withProperties(
+            PropertyFactory.lineColor("#2878FF"),
+            PropertyFactory.lineWidth(5f),
+            PropertyFactory.lineCap(Property.LINE_CAP_ROUND),
+            PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND)
+        )
+
+        currentStyle.addLayer(lineLayer)
+    }
 //    fun alignMapToRoute(googleMap: GoogleMap, route: List<LatLng>){
 //        val bearing = if (route.size >= 2){
 //            val startPoint = route[0]
