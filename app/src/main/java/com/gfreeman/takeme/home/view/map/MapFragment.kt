@@ -138,14 +138,16 @@ class MapFragment : Fragment(),
             CoroutineScope(Dispatchers.IO).launch {
                 val currentPosition = mapPresenter.getCurrentPosition()
                 val weatherIntent = Intent(context, WeatherReportActivity::class.java)
-                val options = ActivityOptions.makeSceneTransitionAnimation(
-                    activity,
-                    fabWeather,
-                    "transition_weather_forecast" // The transition name to be matched in Activity B.
-                )
+//                val options = ActivityOptions.makeSceneTransitionAnimation(
+//                    activity,
+//                    fabWeather,
+//                    "transition_weather_forecast" // The transition name to be matched in Activity B.
+//                )
                 weatherIntent.putExtra(LAT_EXTRA, currentPosition?.latitude.toString())
                 weatherIntent.putExtra(LONG_EXTRA, currentPosition?.longitude.toString())
-                startActivity(weatherIntent, options.toBundle())
+                startActivity(weatherIntent
+                    //,options.toBundle()
+                )
                 //activity?.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out)
             }
         }
