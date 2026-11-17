@@ -25,11 +25,6 @@ import com.gfreeman.takeme.R
 import com.gfreeman.takeme.weather_forecast.view.WeatherReportActivity
 import com.gfreeman.takeme.weather_forecast.view.WeatherReportActivity.Companion.LAT_EXTRA
 import com.gfreeman.takeme.weather_forecast.view.WeatherReportActivity.Companion.LONG_EXTRA
-//import com.google.android.gms.maps.CameraUpdateFactory
-//import com.google.android.gms.maps.GoogleMap
-//import com.google.android.gms.maps.OnMapReadyCallback
-//import com.google.android.gms.maps.SupportMapFragment
-//import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.search.SearchView
 import contract.BaseContract
@@ -182,7 +177,6 @@ class MapFragment : Fragment(),
             val text = searchView.text
             mapPresenter.performSearchPlaces(text.toString())
             searchProgressBar.visibility = View.VISIBLE
-            Log.i("Mati", text.toString())
             false
         }
     }
@@ -278,7 +272,10 @@ class MapFragment : Fragment(),
     override fun showSearchResults(search: List<Place>){
         val adapter = activity?.let {
             ArrayAdapter<String>(
-                it, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, search.mapTo(arrayListOf()){
+                it,
+                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                search.mapTo(arrayListOf())
+                {
                     it.displayName
                 }
             )
@@ -316,17 +313,18 @@ class MapFragment : Fragment(),
         }
     }
 
-//    override fun drawRoute(route: List<LatLng>) {
-//        checkNotificationPermission()
-//        context?.let { safeContext ->
-////            MapsManager.addRouteToMap(safeContext, googleMap, route)
-////            MapsManager.alignMapToRoute(googleMap, route)
-////            MapsManager.addMarkerToMap(googleMap, route.last())
-//            startLocationUpdates()
-//            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//            //requestNotificationPermission()
-//        }
-//    }
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun drawRoute(route: List<LatLng>) {
+        checkNotificationPermission()
+        context?.let { safeContext ->
+            MapsManager.addRouteToMap(route, currentStyle ?: return)
+//            MapsManager.alignMapToRoute(googleMap, route)
+//            MapsManager.addMarkerToMap(googleMap, route.last())
+            //startLocationUpdates()
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            //requestNotificationPermission()
+        }
+    }
 
     override fun showResult(search: String): String {
         val result = mapPresenter.getResult(search)

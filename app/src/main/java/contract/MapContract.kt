@@ -7,11 +7,12 @@ import com.gfreeman.takeme.home.model.map.MapRepository.OnNewLocationListener
 import com.gfreeman.takeme.home.model.map.Place
 import com.gfreeman.takeme.home.model.map.Point
 import com.gfreeman.takeme.home.model.map.services.RouteCheckService
+import org.maplibre.android.geometry.LatLng
 
 interface MapContract {
     interface MapView <T : BaseContract.IBaseView>: FragmentBaseContract.IFragmentBaseView<T>{
         fun showSearchResults(search: List<Place>)
-        //fun drawRoute(route: List<LatLng>)
+        fun drawRoute(route: List<LatLng>)
         fun showResult(search: String): String
         fun initFusedLocationProviderClient()
         fun startLocationUpdates()

@@ -11,10 +11,13 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiServiceProvider {
     private const val SEARCH_SERVICE_BASE_URL = "https://nominatim.openstreetmap.org"
-    private const val ROUTES_SERVICE_BASE_URL = "https://trueway-directions2.p.rapidapi.com"
+    private const val ROUTES_SERVICE_BASE_URL = "https://router.project-osrm.org"
     val searchServiceApi: SearchServiceApi = getRetrofitInstance(SEARCH_SERVICE_BASE_URL).create(SearchServiceApi::class.java)
-    val routesServiceApi: RoutesServiceApi =
-        getRetrofitInstance(ROUTES_SERVICE_BASE_URL).create(RoutesServiceApi::class.java)
+    val routesServiceApi: RoutesServiceApi = Retrofit.Builder()
+        .baseUrl(ROUTES_SERVICE_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(RoutesServiceApi::class.java)
     private val defaultInterceptor = getDefaultInterceptor()
 
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder()

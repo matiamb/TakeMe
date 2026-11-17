@@ -1,16 +1,14 @@
 package com.gfreeman.takeme.home.model.map
 
-import com.google.gson.annotations.SerializedName
-
 data class RouteSearchResponse (
-    @SerializedName("route")
-    val route: RouteRawResponse
+    val code: String,
+    val routes: List<OsrmRoute>
 )
-data class RouteRawResponse(
-    @SerializedName("geometry")
+data class OsrmRoute(
+    val distance: Double,
+    val duration: Double,
     val geometry: GeometryResponse
 )
 data class GeometryResponse (
-    @SerializedName("coordinates")
     val coordinates: List<List<Double>>
 )

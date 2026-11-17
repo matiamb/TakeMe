@@ -29,6 +29,8 @@ import contract.MapContract
 import com.gfreeman.takeme.home.model.map.broadcasts.BatteryLowReceiver
 import com.gfreeman.takeme.home.model.map.services.RouteCheckService
 import com.gfreeman.takeme.home.view.HomeActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.lang.ref.WeakReference
 
 class MapRepository: MapContract.MapModel {
@@ -52,7 +54,7 @@ class MapRepository: MapContract.MapModel {
     private var alarmMgr: AlarmManager? = null
     private var arriveDestinationListener: RouteCheckService.OnArriveDestinationListener? = null
 
-    override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place> {
+    override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place>{
         /*return listOf(
             Place(
                 "Abasto, Balvanera, Buenos Aires, Comuna 3, Autonomous City of Buenos Aires, C1193AAF, Argentina",
@@ -92,12 +94,11 @@ class MapRepository: MapContract.MapModel {
             )
         )*/
         mCurrentLocation = Point(startPlace.point.latitude, startPlace.point.longitude)
-        val rawRouteResponse = ApiServiceProvider.routesServiceApi.getRoute(
-            getFormatedPoints(startPlace),
-            getFormatedPoints(destination)
-        )
+        val destination = destination.point
+        val coordinates = "${mCurrentLocation.longitude},${mCurrentLocation.latitude};${destination.longitude},${destination.latitude}"
+        val rawRouteResponse = ApiServiceProvider.routesServiceApi.getRoute(coordinates = coordinates)
         if (rawRouteResponse.isSuccessful){
-            currentRoute = mapRoute(rawRouteResponse.body()?.route?.geometry?.coordinates)
+            currentRoute = mapRoute(rawRouteResponse.body()?.routes?.first()?.geometry?.coordinates)
             Log.i("Mati", "Current route list: ${currentRoute.toString()}")
         } else {
             return emptyList()
