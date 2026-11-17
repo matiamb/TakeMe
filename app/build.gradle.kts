@@ -3,6 +3,7 @@ import com.android.build.api.dsl.ViewBinding
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.kotlinCompose)
     //id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     //id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
@@ -21,6 +22,10 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     buildTypes {
@@ -70,6 +75,17 @@ dependencies {
     implementation(libs.androidx.room.common)
     implementation("org.maplibre.gl:android-sdk:13.7.1")
 
+    // Jetpack Compose Dependencies
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.lottie.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
