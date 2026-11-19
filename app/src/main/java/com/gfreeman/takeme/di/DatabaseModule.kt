@@ -9,6 +9,8 @@ import com.gfreeman.takeme.home.model.favs.FavoriteRepository
 import com.gfreeman.takeme.home.model.favs.FavoriteRepositoryImpl
 import com.gfreeman.takeme.home.model.profile.ProfileRepository
 import com.gfreeman.takeme.home.model.profile.ProfileRepositoryImpl
+import com.gfreeman.takeme.login.model.AuthRepository
+import com.gfreeman.takeme.login.model.AuthRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -70,5 +72,16 @@ object DatabaseModule {
         @ApplicationContext context: Context
     ): ProfileRepository {
         return ProfileRepositoryImpl(context)
+    }
+
+    /**
+     * Provides AuthRepository implementation.
+     */
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        @ApplicationContext context: Context
+    ): AuthRepository {
+        return AuthRepositoryImpl(context)
     }
 }
