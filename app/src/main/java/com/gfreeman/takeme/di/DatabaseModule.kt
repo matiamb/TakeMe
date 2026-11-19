@@ -7,6 +7,8 @@ import com.gfreeman.takeme.home.model.db.FavoritesDao
 import com.gfreeman.takeme.home.model.db.FavoritesDatabase
 import com.gfreeman.takeme.home.model.favs.FavoriteRepository
 import com.gfreeman.takeme.home.model.favs.FavoriteRepositoryImpl
+import com.gfreeman.takeme.home.model.profile.ProfileRepository
+import com.gfreeman.takeme.home.model.profile.ProfileRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -57,5 +59,16 @@ object DatabaseModule {
         favoritesDao: FavoritesDao
     ): FavoriteRepository {
         return FavoriteRepositoryImpl(favoritesDao)
+    }
+
+    /**
+     * Provides ProfileRepository implementation.
+     */
+    @Provides
+    @Singleton
+    fun provideProfileRepository(
+        @ApplicationContext context: Context
+    ): ProfileRepository {
+        return ProfileRepositoryImpl(context)
     }
 }
