@@ -9,36 +9,28 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.gfreeman.takeme.R
-import com.gfreeman.takeme.home.model.map.MapRepository
 import com.gfreeman.takeme.home.model.map.Place
-import com.gfreeman.takeme.home.presenter.map.MapPresenterFragment
-import com.gfreeman.takeme.home.view.map.MapFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.gfreeman.takeme.home.view.fav.FavFragment
+import com.gfreeman.takeme.home.view.map.MapFragment
 import com.gfreeman.takeme.home.view.profile.ProfileFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.transition.platform.MaterialFadeThrough
 import com.google.android.material.transition.platform.MaterialSharedAxis
-import contract.BaseContract
 import contract.HomeContract
 import contract.MapContract
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeActivity : AppCompatActivity(), HomeContract.HomeView {
     private lateinit var searchFragment: Fragment
     private lateinit var favFragment: Fragment
     private lateinit var profileFragment: Fragment
     private lateinit var bottomNavbarView: BottomNavigationView
     private var currentFragment: Fragment? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        //transition para activity con weather forecast
         window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
         val exit = MaterialFadeThrough().apply {
-
-            // Only run the transition on the contents of this activity, excluding
-            // system bars or app bars if provided by the app’s theme.
             addTarget(R.id.home_container)
         }
         window.exitTransition = exit
@@ -52,20 +44,22 @@ class HomeActivity : AppCompatActivity(), HomeContract.HomeView {
         }
         configureViews()
     }
-    private fun configureViews(){
+
+    private fun configureViews() {
         bottomNavbarView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         searchFragment = MapFragment()
         favFragment = FavFragment()
         profileFragment = ProfileFragment()
-        //loadFragment(searchFragment)
 
         bottomNavbarView.setOnItemSelectedListener { item ->
-            when(item.itemId) {
+            when (item.itemId) {
                 R.id.nav_home_item1 -> {
                     searchFragment.enterTransition = MaterialSharedAxis(
-                        MaterialSharedAxis.X, /* forward= */ true)
+                        MaterialSharedAxis.X, /* forward= */ true
+                    )
                     searchFragment.exitTransition = MaterialSharedAxis(
-                        MaterialSharedAxis.X, /* forward= */ false)
+                        MaterialSharedAxis.X, /* forward= */ false
+                    )
                     loadFragment(favFragment)
                     true
                 }
@@ -75,9 +69,11 @@ class HomeActivity : AppCompatActivity(), HomeContract.HomeView {
                 }
                 R.id.nav_home_item3 -> {
                     searchFragment.enterTransition = MaterialSharedAxis(
-                        MaterialSharedAxis.X, /* forward= */ false)
+                        MaterialSharedAxis.X, /* forward= */ false
+                    )
                     searchFragment.exitTransition = MaterialSharedAxis(
-                        MaterialSharedAxis.X, /* forward= */ true)
+                        MaterialSharedAxis.X, /* forward= */ true
+                    )
                     loadFragment(profileFragment)
                     true
                 }
@@ -86,6 +82,7 @@ class HomeActivity : AppCompatActivity(), HomeContract.HomeView {
         }
         bottomNavbarView.selectedItemId = R.id.nav_home_item2
     }
+
     private fun loadFragment(fragment: Fragment) {
         if (currentFragment === fragment) return
         currentFragment = fragment
@@ -103,11 +100,10 @@ class HomeActivity : AppCompatActivity(), HomeContract.HomeView {
     }
 
     override fun showErrorMessage(message: String) {
-        //TODO("Not yet implemented")
+        // Not yet implemented
     }
 
     override fun getViewContext(): Context {
         return this
     }
-
 }

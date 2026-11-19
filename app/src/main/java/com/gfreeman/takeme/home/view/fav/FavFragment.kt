@@ -1,68 +1,61 @@
 package com.gfreeman.takeme.home.view.fav
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.gfreeman.takeme.R
-import com.gfreeman.takeme.adapters.FavoritesAdapter
-import com.gfreeman.takeme.home.model.db.entities.FavoriteRoute
-import com.gfreeman.takeme.home.model.favs.FavoriteModel
-import com.gfreeman.takeme.home.model.map.Place
-import com.gfreeman.takeme.home.presenter.favs.FavoritePresenter
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.gfreeman.takeme.home.viewmodel.favs.FavoritesViewModel
+import com.gfreeman.takeme.ui.theme.TakeMeTheme
 import com.google.android.material.transition.platform.MaterialSharedAxis
-import contract.BaseContract
-import contract.FavoritesContract
 import contract.HomeContract
+import dagger.hilt.android.AndroidEntryPoint
 
-class FavFragment : Fragment(), FavoritesContract.FavoritesView<BaseContract.IBaseView> {
-    private lateinit var favoritesPresenter: FavoritesContract.IFavoritesPresenter<FavoritesContract.FavoritesView<BaseContract.IBaseView>>
-    private lateinit var favoritesAdapter: FavoritesAdapter
-    private lateinit var favoritesRecyclerView: RecyclerView
+/**
+ * FavFragment using Compose Interoperability API (ComposeView inside Fragment) + Hilt Dependency Injection.
+ *
+ * WHY @AndroidEntryPoint:
+ * Marks this Fragment for Hilt dependency injection, allowing by viewModels() to automatically
+ * create and inject HiltViewModel instances (FavoritesViewModel).
+ */
+@AndroidEntryPoint
+class FavFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    // Hilt automatically injects FavoritesViewModel!
+    private val favoritesViewModel: FavoritesViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ false)
         exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ true)
         reenterTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ false)
-        val favoritesView = inflater.inflate(R.layout.fragment_fav, container, false)
-        favoritesRecyclerView = favoritesView.findViewById(R.id.fav_list_recycler_view)
-        return favoritesView
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initPresenter()
-    }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
 
-    override fun setFavoritesItems(favorites: List<FavoriteRoute>) {
-        favoritesAdapter = FavoritesAdapter(object : FavoritesAdapter.StartFavoriteRouteListener {
-            override fun startFavoriteRoute(startPlace: Place, destinationPlace: Place) {
-                getParentView()?.let {
-                    it.openMapsScreenWithDestination(startPlace, destinationPlace)
+            setContent {
+                TakeMeTheme {
+                    FavoritesScreen(
+                        viewModel = favoritesViewModel,
+                        onRouteClick = { startPlace, destinationPlace ->
+                            getParentView()?.openMapsScreenWithDestination(startPlace, destinationPlace)
+                        }
+                    )
                 }
             }
-
-        })
-        //Tengo que setear la data antes de decirle al recycler view cual es el adapter,
-        //si no recibe que no tiene elementos y no crea la lista IMPORTANTISIMO
-        favoritesAdapter.setData(favorites)
-        favoritesRecyclerView.layoutManager = LinearLayoutManager(context)
-        favoritesRecyclerView.adapter = favoritesAdapter
-    }
-
-    override fun getParentView(): HomeContract.HomeView {
-        return activity as HomeContract.HomeView
-    }
-
-    private fun initPresenter(){
-        context?.let {
-            val favoritesModel = FavoriteModel(it)
-            favoritesPresenter = FavoritePresenter(favoritesModel)
-            favoritesPresenter.attachView(this)
         }
+    }
+
+    private fun getParentView(): HomeContract.HomeView? {
+        return activity as? HomeContract.HomeView
     }
 }

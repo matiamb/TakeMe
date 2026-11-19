@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlinCompose) apply false
     //id("com.google.gms.google-services") version "4.4.2" apply false
     id("com.google.devtools.ksp") version "2.3.4" apply false
+    alias(libs.plugins.hilt) apply false
 }
 buildscript {
     dependencies {
