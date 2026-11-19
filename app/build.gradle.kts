@@ -7,6 +7,7 @@ plugins {
     //id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     //id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
+    alias(libs.plugins.hilt)
     //kotlin("kapt")
 }
 
@@ -71,6 +72,8 @@ dependencies {
     //implementation(libs.googleid)
     //kapt("androidx.room:room-compiler:2.6.1")
     ksp(libs.room.compiler)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.common)
     implementation("org.maplibre.gl:android-sdk:13.7.1")
