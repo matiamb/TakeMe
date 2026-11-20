@@ -1,5 +1,6 @@
 package com.gfreeman.takeme.home.view.map
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import com.gfreeman.takeme.R
@@ -11,6 +12,10 @@ import com.gfreeman.takeme.R
 //import com.google.android.gms.maps.model.PolylineOptions
 import com.gfreeman.takeme.home.model.map.Point
 import org.maplibre.android.geometry.LatLng
+import org.maplibre.android.location.LocationComponentActivationOptions
+import org.maplibre.android.location.LocationComponentOptions
+import org.maplibre.android.location.modes.CameraMode
+import org.maplibre.android.location.modes.RenderMode
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.Style
 import org.maplibre.android.style.layers.LineLayer
@@ -160,4 +165,29 @@ object MapsManager {
 //        }
 //        return nearestIndex
 //    }
+    /**
+     * Enables MapLibre GL location puck (blue dot) and pulsing ring.
+     */
+    @SuppressLint("MissingPermission")
+    fun enableLocationComponent(map: MapLibreMap, style: Style, context: Context) {
+        try {
+            val locationComponent = map.locationComponent
+
+            val options = LocationComponentOptions.builder(context)
+                .pulseEnabled(true)
+                .build()
+
+            val activationOptions = LocationComponentActivationOptions
+                .builder(context, style)
+                .locationComponentOptions(options)
+                .build()
+
+            locationComponent.activateLocationComponent(activationOptions)
+            locationComponent.isLocationComponentEnabled = true
+            locationComponent.cameraMode = CameraMode.TRACKING
+            locationComponent.renderMode = RenderMode.NORMAL
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }

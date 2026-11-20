@@ -1,529 +1,58 @@
 package com.gfreeman.takeme.home.view.map
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.app.ActivityOptions
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import android.widget.ProgressBar
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import androidx.annotation.RequiresPermission
-import androidx.core.content.ContextCompat
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import com.gfreeman.takeme.R
+import androidx.fragment.app.viewModels
+import com.gfreeman.takeme.home.model.map.Place
+import com.gfreeman.takeme.home.viewmodel.map.MapViewModel
+import com.gfreeman.takeme.ui.theme.TakeMeTheme
 import com.gfreeman.takeme.weather_forecast.view.WeatherReportActivity
 import com.gfreeman.takeme.weather_forecast.view.WeatherReportActivity.Companion.LAT_EXTRA
 import com.gfreeman.takeme.weather_forecast.view.WeatherReportActivity.Companion.LONG_EXTRA
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.search.SearchView
-import contract.BaseContract
-import contract.MapContract
-import com.gfreeman.takeme.home.model.map.Place
-import com.gfreeman.takeme.home.model.map.MapRepository
-import com.gfreeman.takeme.home.model.map.Point
-import com.gfreeman.takeme.home.presenter.map.MapPresenterFragment
-import com.gfreeman.takeme.home.view.map.PermissionUtils.isPermissionGranted
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.maplibre.android.MapLibre
-import org.maplibre.android.camera.CameraPosition
-import org.maplibre.android.geometry.LatLng
-import org.maplibre.android.location.LocationComponentActivationOptions
-import org.maplibre.android.location.LocationComponentOptions
-import org.maplibre.android.location.modes.CameraMode
-import org.maplibre.android.location.modes.RenderMode
-import org.maplibre.android.maps.MapLibreMap
-import org.maplibre.android.maps.MapView
-import org.maplibre.android.maps.Style
+import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * MapFragment hosting MapScreen via ComposeView Interop API + Hilt DI.
+ */
+@AndroidEntryPoint
+class MapFragment : Fragment() {
 
-class MapFragment : Fragment(),
-    //OnMapReadyCallback,
-    MapContract.MapView<BaseContract.IBaseView> {
-    private lateinit var mapPresenter: MapContract.IFragmentMapPresenter<MapContract.MapView<BaseContract.IBaseView>>
-    //private lateinit var googleMap: GoogleMap
-    private lateinit var searchView: SearchView
-    private lateinit var listView: ListView
-    private lateinit var fabWeather: FloatingActionButton
-    private lateinit var fabCancelRoute: FloatingActionButton
-    private lateinit var searchProgressBar: ProgressBar
-    private val fineLocation = Manifest.permission.ACCESS_FINE_LOCATION
-    private val coarseLocation = Manifest.permission.ACCESS_COARSE_LOCATION
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private val notification = Manifest.permission.POST_NOTIFICATIONS
-    private lateinit var mapView: MapView
-    private var currentMap: MapLibreMap? = null
-    private var currentStyle: Style? = null
-
-    @SuppressLint("MissingPermission")
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private val multiplePermissionRequest =
-        registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { permissions ->
-        //checkLocationPermission()
-            val fineGranted = permissions[fineLocation] == true
-            val coarseGranted = permissions[coarseLocation] == true
-            if (fineGranted || coarseGranted){
-                enableMyLocation()
-            } else {
-                context?.let {
-                    Toast.makeText(it, "Location permission denied", Toast.LENGTH_SHORT).show()
-                }
-            }
-            checkNotificationPermission()
-    }
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private var singlePermissionRequest =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ){ isGranted ->
-            if(!isGranted){
-                context?.let {
-                    Toast.makeText(it, "Notification permission denied", Toast.LENGTH_SHORT).show()
-                }
-            }
-        //checkNotificationPermission()
-    }
-
-
+    private val mapViewModel: MapViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        MapLibre.getInstance(requireContext())
-        val view = inflater.inflate(
-            R.layout.fragment_map,
-            container,
-            false
-        )
-        /*val bottomSheet = view.findViewById<View>(R.id.map_bottom_sheet)
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        bottomSheetBehavior.isHideable = false
-        bottomSheetBehavior.peekHeight = resources.getDimensionPixelSize(com.google.android.material.R.dimen.m3_searchbar_height)*/
-//        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ true)
-//        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ true)
-        mapView = view.findViewById(R.id.mapView)
-        mapView.onCreate(savedInstanceState)
-        return view
-    }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        searchView = view.findViewById(R.id.map_search_view)
-        listView = view.findViewById(R.id.map_list_view)
-        fabWeather = view.findViewById(R.id.floating_weather_button)
-        searchProgressBar = view.findViewById(R.id.search_places_loading_spinner)
-        super.onViewCreated(view, savedInstanceState)
-        configureMap()
-        initPresenter()
-        initFusedLocationProviderClient()
-        checkLocationPermission()
-//        checkNotificationPermission()
-
-        fabWeather.setOnClickListener{
-            CoroutineScope(Dispatchers.IO).launch {
-                val currentPosition = mapPresenter.getCurrentPosition()
-                val weatherIntent = Intent(context, WeatherReportActivity::class.java)
-//                val options = ActivityOptions.makeSceneTransitionAnimation(
-//                    activity,
-//                    fabWeather,
-//                    "transition_weather_forecast" // The transition name to be matched in Activity B.
-//                )
-                weatherIntent.putExtra(LAT_EXTRA, currentPosition?.latitude.toString())
-                weatherIntent.putExtra(LONG_EXTRA, currentPosition?.longitude.toString())
-                startActivity(weatherIntent
-                    //,options.toBundle()
-                )
-                //activity?.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out)
-            }
-        }
-        //Recibo la lista de tipo places desde el backend
-        //val query: ArrayList<Place> = ArrayList(showSearchResults(text.toString()))
-        //con el mapTo solo busco la propiedad que me interesa de la lista
-        /*val searchResults: ArrayList<String> = query.mapTo(arrayListOf()){
-            it.displayName
-        }*/
-        //Esto es para setear un listener en el searchView de Material3 ya que no tiene el onQueryTextListener
-        searchView.editText.setOnEditorActionListener { v, actionId, event ->
-            //Esto comentado de abajo es para filtrar con lo que se escriba en el editText
-            //adapter?.filter?.filter(text)
-            //Esto es para mostrar el ListView dentro de un Fragment
-            /*val adapter = activity?.let {
-                ArrayAdapter<String>(
-                    it, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, searchResults
-                )
-            }*/
-            //adapter?.filter?.filter(text)
-            //click listener para los items de la lista
-            /*listView.setOnItemClickListener { parent, view, position, id ->
-                searchView.hide()
-                //una vez realizada la busqueda, se borra la opcion correctamente,
-                // pero si hago otra busqueda el listview queda vacio
-                //adapter?.clear()
-                mapPresenter.getRoute(query[0])
-            }*/
-            val text = searchView.text
-            mapPresenter.performSearchPlaces(text.toString())
-            searchProgressBar.visibility = View.VISIBLE
-            false
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mapView.onStop()
-        try {
-            stopLocationUpdates()
-            context?.let { safeContext ->
-                mapPresenter.stopCheckingDistanceToRoute(safeContext)
-            }
-            Log.i("Mati", "Location updates stopped")
-        }
-        catch (_: UninitializedPropertyAccessException){
-        }
-   }
-
-    override fun onStart() {
-        super.onStart()
-        mapView.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        //startLocationUpdates()
-        mapView.onResume()
-    }
-    override fun onPause() {
-        mapView.onPause()
-        super.onPause()
-    }
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapView.onLowMemory()
-    }
-
-    override fun onDestroyView() {
-        mapView.onDestroy()
-        super.onDestroyView()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        mapView.onSaveInstanceState(outState)
-        super.onSaveInstanceState(outState)
-    }
-
-    private fun configureMap(){
-//        val mapSupportFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
-//        mapSupportFragment?.getMapAsync(this)
-        mapView.getMapAsync { map ->
-            map.setStyle(
-                "https://tiles.openfreemap.org/styles/liberty"
-            ) { style ->
-                currentMap = map
-                currentStyle = style
-
-                val cordoba = LatLng(
-                    -31.4201,
-                    -64.1888
-                )
-
-                map.cameraPosition =
-                    CameraPosition.Builder()
-                        .target(cordoba)
-                        .zoom(13.0)
-                        .build()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    checkLocationPermission()
-                } else {
-                    enableMyLocation()
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                TakeMeTheme {
+                    MapScreen(
+                        viewModel = mapViewModel,
+                        onNavigateToWeather = { point ->
+                            val intent = Intent(context, WeatherReportActivity::class.java).apply {
+                                putExtra(LAT_EXTRA, point.latitude.toString())
+                                putExtra(LONG_EXTRA, point.longitude.toString())
+                            }
+                            context.startActivity(intent)
+                        }
+                    )
                 }
             }
         }
     }
 
-    fun onMapReady(
-        //map: GoogleMap
-    ) {
-        //googleMap = map
-//        val initialFakePoint = LatLng(-34.679437, -58.553777)
-//        MapsManager.addMarkerToMap(googleMap, initialFakePoint)
-//        MapsManager.centerMapIntoLocation(googleMap, initialFakePoint)
-        //checkLocationPermission()
+    /**
+     * Called from HomeActivity when starting a route from Favorites.
+     */
+    fun getRouteFromFavs(startPlace: Place, destination: Place) {
+        mapViewModel.getRouteFromFavs(startPlace, destination)
     }
-
-    private fun initPresenter(){
-        val mapModel = MapRepository()
-        mapPresenter = MapPresenterFragment(mapModel)
-        mapPresenter.attachView(this)
-    }
-
-    override fun showSearchResults(search: List<Place>){
-        val adapter = activity?.let {
-            ArrayAdapter<String>(
-                it,
-                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
-                search.mapTo(arrayListOf())
-                {
-                    it.displayName
-                }
-            )
-        }
-        searchProgressBar.visibility = View.GONE
-        listView.adapter = adapter
-        if (search.size == 0){
-            Toast.makeText(context, R.string.search_result_failed, Toast.LENGTH_LONG).show()
-        }
-        listView.setOnItemClickListener { parent, view, position, id ->
-            searchView.hide()
-            mapPresenter.getRoute(search[position])
-        }
-    }
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun checkLocationPermission(){
-        val fineLoc = isPermissionGranted(fineLocation)
-        val coarseLoc = isPermissionGranted(coarseLocation)
-
-        if (fineLoc || coarseLoc) {
-                enableMyLocation()
-                checkNotificationPermission()
-        }
-        else {
-            multiplePermissionRequest.launch(arrayOf(fineLocation, coarseLocation))
-        }
-    }
-
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun checkNotificationPermission(){
-        val notif = isPermissionGranted(notification)
-        if(!notif){
-            singlePermissionRequest.launch(notification)
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    override fun drawRoute(route: List<LatLng>) {
-        checkNotificationPermission()
-        context?.let { safeContext ->
-            MapsManager.addRouteToMap(route, currentStyle ?: return)
-//            MapsManager.alignMapToRoute(googleMap, route)
-//            MapsManager.addMarkerToMap(googleMap, route.last())
-            //startLocationUpdates()
-            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            //requestNotificationPermission()
-        }
-    }
-
-    override fun showResult(search: String): String {
-        val result = mapPresenter.getResult(search)
-        return result
-    }
-
-    override fun initFusedLocationProviderClient() {
-        context?.let { safeContext ->
-            mapPresenter.initFusedLocationProviderClient(safeContext)
-        }
-    }
-
-    override fun startLocationUpdates() {
-        fabCancelRoute = requireView().findViewById(R.id.floating_endroute_button)
-        context?.let { safeContext ->
-            mapPresenter.startLocationUpdates(safeContext)
-        }
-        fabCancelRoute.show()
-        fabCancelRoute.setOnClickListener{
-            //googleMap.clear()
-            stopLocationUpdates()
-            context?.let { safeContext ->
-                mapPresenter.stopCheckingDistanceToRoute(safeContext)
-            }
-            fabCancelRoute.hide()
-        }
-        //mapPresenter.updateMapLocation()
-    }
-
-    override fun stopLocationUpdates() {
-        mapPresenter.stopLocationUpdates()
-        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        //throw UninitializedPropertyAccessException()
-    }
-
-    override fun getParentView(): BaseContract.IBaseView? {
-        return activity as? BaseContract.IBaseView
-    }
-
-    override fun openCongratsScreen(congratsParams: Bundle) {
-        context?.let {
-            val congratsIntent = Intent(it, ArrivedToDestinationActivity::class.java)
-            congratsIntent.putExtras(congratsParams)
-            startActivity(congratsIntent)
-        }
-    }
-
-    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
-    private fun enableMyLocation() {
-        val map = currentMap ?: return
-        val style = currentStyle ?: return
-        val locationComponent = map.locationComponent
-
-        if (!isPermissionGranted(fineLocation) && !isPermissionGranted(coarseLocation)) {
-            return
-        }
-
-        if (!locationComponent.isLocationComponentActivated) {
-            val options = LocationComponentOptions.builder(requireContext())
-                .pulseEnabled(true)
-                .build()
-
-            val activationOptions =
-                LocationComponentActivationOptions.builder(
-                    requireContext(),
-                    style
-                )
-                    .locationComponentOptions(options)
-                    .build()
-
-            locationComponent.activateLocationComponent(activationOptions)
-        }
-        locationComponent.isLocationComponentEnabled = true
-        locationComponent.cameraMode = CameraMode.TRACKING
-        locationComponent.renderMode = RenderMode.NORMAL
-//        context?.let { safeContext ->
-//                //googleMap.isMyLocationEnabled = true
-//                try {
-//                    mapPresenter.getLastLocation()
-//                } catch (e: Exception){
-//                    Log.i("Mati", "mCurrentLocation is $e")
-//                }
-//                return
-//            }
-            //PERMISSION RATIONALE ES PARA MOSTRAR UN DIALOGO QUE EXPLIQUE POR QUE NECESITAS EL PERMISO
-            // 2. If if a permission rationale dialog should be shown
-            /*if (shouldShowRequestPermissionRationale(
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) || shouldShowRequestPermissionRationale(
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            ) {
-                PermissionUtils.RationaleDialog.newInstance(
-                    LOCATION_PERMISSION_REQUEST_CODE, true
-                ).show(supportFragmentManager, "dialog")
-                return
-            }*/
-            //SI ESTOY EN UN FRAGMENT, NO NECESITO EL ACTIVITYCOMPAT ANTES DE REQUEST PERMISSIONS O SHOULDSHOW...
-            // 3. Otherwise, request permission
-            //requestLocationPermission()
-        }
-
-    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
-            super.onRequestPermissionsResult(
-                requestCode,
-                permissions,
-                grantResults
-            )
-            requestLocationPermission()
-            return
-        }
-
-        if (isPermissionGranted(
-                permissions,
-                grantResults,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) || isPermissionGranted(
-                permissions,
-                grantResults,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-        ) {
-            // Enable the my location layer if the permission has been granted.
-            enableMyLocation()
-        } else {
-            // Permission was denied. Display an error message
-            Toast.makeText(
-                context,
-                "Location Permission denied, please change it through settings",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-        //siempre da false, por que post notifications no esta en el array, no se como agregarlo
-        if (isPermissionGranted(
-                permissions,
-                grantResults,
-                Manifest.permission.POST_NOTIFICATIONS
-            )
-        ) {
-            //do nothing
-        } else {
-            // Permission was denied. Display an error message
-            Toast.makeText(context, "Notification Permission denied, please change it through settings", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun requestLocationPermission(){
-        requestPermissions(
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ),
-            LOCATION_PERMISSION_REQUEST_CODE
-        )
-    }
-//    fun getLastLocation(myLocation: LatLng) {
-////        MapsManager.addMarkerToMap(googleMap, myLocation)
-////        MapsManager.centerMapIntoLocation(googleMap, myLocation)
-//    }
-
-    override fun updateMapLocation(location: Point) {
-//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(LatLng(
-//            location.latitude, location.longitude
-//        )))
-    }
-
-    private fun requestNotificationPermission(){
-        if (Build.VERSION.SDK_INT >= 33){
-            requestPermissions(
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                NOTIFICATION_PERMISSION_REQUEST_CODE
-            )
-        }
-    }
-
-    override fun getRouteFromFavs(startPlace: Place, destination: Place){
-        mapPresenter.getRouteFromFavs(startPlace, destination)
-    }
-
-    private fun isPermissionGranted(name: String) = ContextCompat.checkSelfPermission(
-        requireContext(), name
-    ) == PackageManager.PERMISSION_GRANTED
-
-    companion object {
-        /**
-         * Request code for location permission request.
-         *
-         * @see .onRequestPermissionsResult
-         */
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
-        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 2
-    }
-
 }

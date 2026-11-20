@@ -7,6 +7,8 @@ import com.gfreeman.takeme.home.model.db.FavoritesDao
 import com.gfreeman.takeme.home.model.db.FavoritesDatabase
 import com.gfreeman.takeme.home.model.favs.FavoriteRepository
 import com.gfreeman.takeme.home.model.favs.FavoriteRepositoryImpl
+import com.gfreeman.takeme.home.model.map.MapRepository
+import com.gfreeman.takeme.home.model.map.MapRepositoryImpl
 import com.gfreeman.takeme.home.model.profile.ProfileRepository
 import com.gfreeman.takeme.home.model.profile.ProfileRepositoryImpl
 import com.gfreeman.takeme.login.model.AuthRepository
@@ -25,6 +27,19 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
+
+    /**
+     * Provides MapRepository implementation.
+     */
+    @Provides
+    @Singleton
+    fun provideMapRepository(
+        @ApplicationContext context: Context
+    ): MapRepository {
+        return MapRepositoryImpl(
+            context = context
+        )
+    }
 
     /**
      * Provides a single instance of Room FavoritesDatabase.

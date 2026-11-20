@@ -2,7 +2,6 @@ package com.gfreeman.takeme.home.view.map
 
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.Window
 import android.widget.EditText
@@ -12,14 +11,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.BundleCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.gfreeman.takeme.R
 import com.gfreeman.takeme.home.model.congrats.ArrivedToDestinationModel
 import com.gfreeman.takeme.home.model.map.Place
 import com.gfreeman.takeme.home.presenter.congrats.ArrivedToDestinationPresenter
-import com.gfreeman.takeme.home.presenter.map.MapPresenterFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.transition.platform.MaterialFadeThrough
@@ -42,8 +39,6 @@ class ArrivedToDestinationActivity : AppCompatActivity(), ArrivedToDestinationCo
         }
         window.enterTransition = enter
 
-        // Allow Activity A’s exit transition to play at the same time as this Activity’s
-        // enter transition instead of playing them sequentially.
         window.allowEnterTransitionOverlap = true
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -68,7 +63,6 @@ class ArrivedToDestinationActivity : AppCompatActivity(), ArrivedToDestinationCo
                     return@setOnClickListener
                 }
                 arrivedToDestinationPresenter.saveFavoriteRoute(startPlace, finishPlace, isFavorite)
-                //notifyFavoriteSaved()
             }
         }
 
@@ -90,8 +84,7 @@ class ArrivedToDestinationActivity : AppCompatActivity(), ArrivedToDestinationCo
         val editTextPlaceName = customView.findViewById<EditText>(R.id.editTextPlaceName)
 
         val dialog = MaterialAlertDialogBuilder(
-            this@ArrivedToDestinationActivity,
-            //com.google.android.material.R.style.AlertDialog_AppCompat
+            this@ArrivedToDestinationActivity
         )
             .setTitle("Ingresa el nombre del punto inicial")
             .setView(customView)
