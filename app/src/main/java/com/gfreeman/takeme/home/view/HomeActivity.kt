@@ -17,7 +17,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.transition.platform.MaterialFadeThrough
 import com.google.android.material.transition.platform.MaterialSharedAxis
 import contract.HomeContract
-import contract.MapContract
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -93,7 +92,7 @@ class HomeActivity : AppCompatActivity(), HomeContract.HomeView {
 
     override fun openMapsScreenWithDestination(startPlace: Place, destinationPlace: Place) {
         bottomNavbarView.selectedItemId = R.id.nav_home_item2
-        (searchFragment as? MapContract.MapView<*>)?.getRouteFromFavs(
+        (searchFragment as? MapFragment)?.getRouteFromFavs(
             startPlace,
             destinationPlace
         )
