@@ -230,19 +230,21 @@ fun SearchBar(
             },
             placeholder = { Text("Search places or destination...") },
             leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search Icon",
-                    tint = MaterialTheme.colorScheme.primary
-                )
+                if (uiState.isSearching) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search Icon",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             },
             trailingIcon = {
                 if (uiState.searchQuery.isNotEmpty()) {
                     IconButton(onClick = onClearSearchClicked) {
                         Icon(imageVector = Icons.Default.Close, contentDescription = "Clear Search")
                     }
-                } else if (uiState.isSearching) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
                 }
             },
             singleLine = true,
