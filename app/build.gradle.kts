@@ -73,6 +73,7 @@ dependencies {
     //kapt("androidx.room:room-compiler:2.6.1")
     ksp(libs.room.compiler)
     implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.common)
@@ -88,6 +89,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.lottie.compose)
     debugImplementation(libs.androidx.compose.ui.tooling)
 

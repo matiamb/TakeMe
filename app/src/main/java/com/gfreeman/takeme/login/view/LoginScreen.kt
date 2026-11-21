@@ -30,7 +30,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -179,7 +178,7 @@ fun LoginScreen(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = MaterialTheme.colorScheme.primaryContainer,
                     unfocusedTextColor = MaterialTheme.colorScheme.primaryContainer
-                        )
+                )
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -227,7 +226,8 @@ fun LoginScreen(
             ) {
                 Text(
                     text = "Skip and Continue as Guest",
-                    color = Color.Black)
+                    color = Color.Black
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
