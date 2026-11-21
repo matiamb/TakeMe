@@ -1,108 +1,54 @@
 package com.gfreeman.takeme.home.view
 
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.view.Window
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.Fragment
-import com.gfreeman.takeme.R
-import com.gfreeman.takeme.home.model.map.Place
-import com.gfreeman.takeme.home.view.fav.FavFragment
-import com.gfreeman.takeme.home.view.map.MapFragment
-import com.gfreeman.takeme.home.view.profile.ProfileFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.transition.platform.MaterialFadeThrough
-import com.google.android.material.transition.platform.MaterialSharedAxis
-import contract.HomeContract
+import androidx.activity.viewModels
+import com.gfreeman.takeme.home.viewmodel.favs.FavoritesViewModel
+import com.gfreeman.takeme.home.viewmodel.map.MapViewModel
+import com.gfreeman.takeme.home.viewmodel.profile.ProfileViewModel
+import com.gfreeman.takeme.login.view.LoginActivity
+import com.gfreeman.takeme.ui.theme.TakeMeTheme
+import com.gfreeman.takeme.weather_forecast.view.WeatherReportActivity
+import com.gfreeman.takeme.weather_forecast.view.WeatherReportActivity.Companion.LAT_EXTRA
+import com.gfreeman.takeme.weather_forecast.view.WeatherReportActivity.Companion.LONG_EXTRA
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * HomeActivity hosting the main Compose navigation shell (HomeScreen).
+ */
 @AndroidEntryPoint
-class HomeActivity : AppCompatActivity(), HomeContract.HomeView {
-    private lateinit var searchFragment: Fragment
-    private lateinit var favFragment: Fragment
-    private lateinit var profileFragment: Fragment
-    private lateinit var bottomNavbarView: BottomNavigationView
-    private var currentFragment: Fragment? = null
+class HomeActivity : ComponentActivity() {
+
+    private val favoritesViewModel: FavoritesViewModel by viewModels()
+    private val mapViewModel: MapViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
-        val exit = MaterialFadeThrough().apply {
-            addTarget(R.id.home_container)
-        }
-        window.exitTransition = exit
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_home)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.home_container)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
-            insets
-        }
-        configureViews()
-    }
 
-    private fun configureViews() {
-        bottomNavbarView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        searchFragment = MapFragment()
-        favFragment = FavFragment()
-        profileFragment = ProfileFragment()
-
-        bottomNavbarView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home_item1 -> {
-                    searchFragment.enterTransition = MaterialSharedAxis(
-                        MaterialSharedAxis.X, /* forward= */ true
-                    )
-                    searchFragment.exitTransition = MaterialSharedAxis(
-                        MaterialSharedAxis.X, /* forward= */ false
-                    )
-                    loadFragment(favFragment)
-                    true
-                }
-                R.id.nav_home_item2 -> {
-                    loadFragment(searchFragment)
-                    true
-                }
-                R.id.nav_home_item3 -> {
-                    searchFragment.enterTransition = MaterialSharedAxis(
-                        MaterialSharedAxis.X, /* forward= */ false
-                    )
-                    searchFragment.exitTransition = MaterialSharedAxis(
-                        MaterialSharedAxis.X, /* forward= */ true
-                    )
-                    loadFragment(profileFragment)
-                    true
-                }
-                else -> false
+        setContent {
+            TakeMeTheme {
+                HomeScreen(
+                    favoritesViewModel = favoritesViewModel,
+                    mapViewModel = mapViewModel,
+                    profileViewModel = profileViewModel,
+                    onNavigateToWeather = { point ->
+                        val intent = Intent(this, WeatherReportActivity::class.java).apply {
+                            putExtra(LAT_EXTRA, point.latitude.toString())
+                            putExtra(LONG_EXTRA, point.longitude.toString())
+                        }
+                        startActivity(intent)
+                    },
+                    onLogoutClick = {
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
+                    }
+                )
             }
         }
-        bottomNavbarView.selectedItemId = R.id.nav_home_item2
-    }
-
-    private fun loadFragment(fragment: Fragment) {
-        if (currentFragment === fragment) return
-        currentFragment = fragment
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.home_container, fragment)
-        transaction.commit()
-    }
-
-    override fun openMapsScreenWithDestination(startPlace: Place, destinationPlace: Place) {
-        bottomNavbarView.selectedItemId = R.id.nav_home_item2
-        (searchFragment as? MapFragment)?.getRouteFromFavs(
-            startPlace,
-            destinationPlace
-        )
-    }
-
-    override fun showErrorMessage(message: String) {
-        // Not yet implemented
-    }
-
-    override fun getViewContext(): Context {
-        return this
     }
 }
