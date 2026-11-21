@@ -56,7 +56,7 @@ fun FavoritesScreen(
     FavoritesContent(
         uiState = uiState,
         onRouteClick = onRouteClick,
-        onDeleteClick = { route -> viewModel.deleteFavoriteRoute(route) }
+        onDeleteClick = { route: FavoriteRoute -> viewModel.deleteFavoriteRoute(route) }
     )
 }
 
@@ -90,7 +90,7 @@ fun FavoritesContent(
                 ) {
                     items(
                         items = uiState.favorites,
-                        key = { route -> route.id } // Key helps Compose optimize list animations & reordering
+                        key = { route -> route.id }
                     ) { favoriteRoute ->
                         FavoriteRouteCard(
                             route = favoriteRoute,
