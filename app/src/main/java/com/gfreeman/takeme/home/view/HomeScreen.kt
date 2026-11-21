@@ -1,5 +1,11 @@
 package com.gfreeman.takeme.home.view
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -17,14 +23,17 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gfreeman.takeme.R
 import com.gfreeman.takeme.home.model.map.Place
@@ -61,6 +70,50 @@ fun HomeScreen(
     onLogoutClick: () -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(HomeTab.MAP) }
+    val context = LocalContext.current
+
+    // 1. Permission Launcher
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+        val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+        val notificationGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions[Manifest.permission.POST_NOTIFICATIONS] ?: false
+        } else {
+            true
+        }
+
+        if (fineLocationGranted || coarseLocationGranted) {
+            mapViewModel.getCurrentPosition()
+        } else {
+            Toast.makeText(
+                context,
+                "Location permission is needed to show your position and calculate routes.",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    // 2. Request permissions on initial screen load
+    LaunchedEffect(Unit) {
+        val permissionsToRequest = mutableListOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        val missingPermissions = permissionsToRequest.filter { permission ->
+            ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED
+        }
+
+        if (missingPermissions.isNotEmpty()) {
+            permissionLauncher.launch(missingPermissions.toTypedArray())
+        }
+    }
 
     Scaffold(
         bottomBar = {

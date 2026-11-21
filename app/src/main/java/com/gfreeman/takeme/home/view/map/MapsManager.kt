@@ -1,8 +1,10 @@
 package com.gfreeman.takeme.home.view.map
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import androidx.annotation.RequiresPermission
 import com.gfreeman.takeme.R
 //import com.google.android.gms.maps.CameraUpdateFactory
 //import com.google.android.gms.maps.GoogleMap
@@ -170,19 +172,34 @@ object MapsManager {
      */
     @SuppressLint("MissingPermission")
     fun enableLocationComponent(map: MapLibreMap, style: Style, context: Context) {
+        val hasFine = androidx.core.content.ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+        val hasCoarse = androidx.core.content.ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+        if (!hasFine && !hasCoarse) return
+
         try {
             val locationComponent = map.locationComponent
 
-            val options = LocationComponentOptions.builder(context)
-                .pulseEnabled(true)
-                .build()
+            if (!locationComponent.isLocationComponentActivated) {
+                val options = LocationComponentOptions.builder(context)
+                    .pulseEnabled(true)
+                    .build()
 
-            val activationOptions = LocationComponentActivationOptions
-                .builder(context, style)
-                .locationComponentOptions(options)
-                .build()
+                val activationOptions = LocationComponentActivationOptions
+                    .builder(context, style)
+                    .locationComponentOptions(options)
+                    .build()
 
-            locationComponent.activateLocationComponent(activationOptions)
+                locationComponent.activateLocationComponent(activationOptions)
+            }
+
             locationComponent.isLocationComponentEnabled = true
             locationComponent.cameraMode = CameraMode.TRACKING
             locationComponent.renderMode = RenderMode.NORMAL

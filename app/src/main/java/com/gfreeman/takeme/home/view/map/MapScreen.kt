@@ -108,16 +108,20 @@ fun MapScreen(
             viewModel.onWeatherNavigationHandled()
         }
     }
-    LaunchedEffect(mapLibreMap,uiState.userLocation) {
+    LaunchedEffect(mapLibreMap, currentStyle, uiState.userLocation) {
         val map = mapLibreMap
+        val style = currentStyle
         val userLoc = uiState.userLocation
-        if (map != null && userLoc != null) {
-            map.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    LatLng(userLoc.latitude, userLoc.longitude),
-                    15.0
+        if (map != null && style != null) {
+            mapsManager.enableLocationComponent(map, style, context)
+            if (userLoc != null) {
+                map.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        LatLng(userLoc.latitude, userLoc.longitude),
+                        15.0
+                    )
                 )
-            )
+            }
         }
     }
 
