@@ -5,6 +5,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.annotation.RequiresPermission
+import androidx.compose.material3.MaterialTheme
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.graphics.toColorInt
 import com.gfreeman.takeme.R
 //import com.google.android.gms.maps.CameraUpdateFactory
 //import com.google.android.gms.maps.GoogleMap
@@ -13,7 +17,9 @@ import com.gfreeman.takeme.R
 //import com.google.android.gms.maps.model.MarkerOptions
 //import com.google.android.gms.maps.model.PolylineOptions
 import com.gfreeman.takeme.home.model.map.Point
+import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
+import org.maplibre.android.geometry.LatLngBounds
 import org.maplibre.android.location.LocationComponentActivationOptions
 import org.maplibre.android.location.LocationComponentOptions
 import org.maplibre.android.location.modes.CameraMode
@@ -23,6 +29,7 @@ import org.maplibre.android.maps.Style
 import org.maplibre.android.style.layers.LineLayer
 import org.maplibre.android.style.layers.Property
 import org.maplibre.android.style.layers.PropertyFactory
+import org.maplibre.android.style.layers.SymbolLayer
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Feature
 import org.maplibre.geojson.LineString
@@ -58,8 +65,11 @@ object MapsManager {
 //
 //        return brng
 //    }
-    fun addRouteToMap(route: List<LatLng>, currentStyle: Style){
+    fun addRouteToMap(route: List<LatLng>, currentStyle: Style, context: Context){
         //currentMap.clear()
+        if (route.isEmpty()){
+            return
+        }
         val routeCoordinates = route.map { coordinate ->
 //            Point.fromLngLat(
 //                coordinate[0],
@@ -82,9 +92,10 @@ object MapsManager {
         // Eliminar ruta anterior si existe
         currentStyle.removeLayer("route-layer")
         currentStyle.removeSource("route-source")
+        currentStyle.removeLayer("destination-layer")
+        currentStyle.removeSource("destination-source")
 
         currentStyle.addSource(geoJsonSource)
-
         // Dibujar línea
         val lineLayer = LineLayer(
             "route-layer",
@@ -97,7 +108,30 @@ object MapsManager {
         )
 
         currentStyle.addLayer(lineLayer)
+
+    if (currentStyle.getImage("destination-icon") == null) {
+        ContextCompat.getDrawable(context, R.drawable.baseline_location_pin_24)?.let { drawable ->
+            val tinted = DrawableCompat.wrap(drawable).mutate()
+            DrawableCompat.setTint(tinted, "#FF504AD3".toColorInt())
+            currentStyle.addImage("destination-icon", tinted)
+        }
     }
+
+    val endPoint = routeCoordinates.last()
+    currentStyle.addSource(
+        GeoJsonSource("destination-source", Feature.fromGeometry(endPoint))
+    )
+
+    val symbolLayer = SymbolLayer("destination-layer", "destination-source").withProperties(
+        PropertyFactory.iconImage("destination-icon"),
+        PropertyFactory.iconAnchor(Property.ICON_ANCHOR_BOTTOM),
+        PropertyFactory.iconSize(1.5f),
+        PropertyFactory.iconAllowOverlap(true),
+        PropertyFactory.iconIgnorePlacement(true)
+    )
+    currentStyle.addLayer(symbolLayer)
+
+}
 //    fun alignMapToRoute(googleMap: GoogleMap, route: List<LatLng>){
 //        val bearing = if (route.size >= 2){
 //            val startPoint = route[0]
@@ -130,6 +164,39 @@ object MapsManager {
 //                .title(title)
 //        )
 //    }
+fun fitCameraToRoute(map: MapLibreMap, route: List<LatLng>, context: Context) {
+    if (route.isEmpty()) return
+
+    // Release tracking mode so LocationComponent doesn't fight the camera zoom-out
+    if (map.locationComponent.isLocationComponentActivated) {
+        map.locationComponent.cameraMode = CameraMode.NONE
+    }
+
+    if (route.size == 1) {
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(route.first(), 15.0))
+        return
+    }
+
+    val bounds = LatLngBounds.Builder()
+        .includes(route)
+        .build()
+
+    val density = context.resources.displayMetrics.density
+    val sidePadding = (64 * density).toInt()
+    val topPadding = (110 * density).toInt() // Extra space so SearchBar doesn't cover the route
+    val bottomPadding = (64 * density).toInt()
+
+    map.animateCamera(
+        CameraUpdateFactory.newLatLngBounds(
+            bounds,
+            sidePadding,
+            topPadding,
+            sidePadding,
+            bottomPadding
+        ),
+        1000 // smooth 1-second animation
+    )
+}
     fun calculateDistance(point1: Point, point2: Point): Double {
         val earthRadius = 6371 // Earth's radius in kilometers
         val lat1 = Math.toRadians(point1.latitude)
