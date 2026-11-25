@@ -47,6 +47,7 @@ import com.gfreeman.takeme.home.view.profile.ProfileScreen
 import com.gfreeman.takeme.home.viewmodel.favs.FavoritesViewModel
 import com.gfreeman.takeme.home.viewmodel.map.MapViewModel
 import com.gfreeman.takeme.home.viewmodel.profile.ProfileViewModel
+import com.gfreeman.takeme.ui.theme.TakeMeTheme
 
 /**
  * Enumeration of main bottom navigation destinations.
@@ -152,79 +153,78 @@ fun HomeScreen(
             )
         }
     }
-
-
-
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                HomeTab.entries.forEach { tab ->
-                    NavigationBarItem(
-                        selected = selectedTab == tab,
-                        onClick = { selectedTab = tab },
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = tab.iconRes),
-                                contentDescription = stringResource(id = tab.labelRes),
-                                modifier = Modifier.size(24.dp)
-                            )
-                        },
-                        label = { Text(stringResource(id = tab.labelRes)) }
-                    )
+    TakeMeTheme() {
+        Scaffold(
+            bottomBar = {
+                NavigationBar {
+                    HomeTab.entries.forEach { tab ->
+                        NavigationBarItem(
+                            selected = selectedTab == tab,
+                            onClick = { selectedTab = tab },
+                            icon = {
+                                Icon(
+                                    painter = painterResource(id = tab.iconRes),
+                                    contentDescription = stringResource(id = tab.labelRes),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            },
+                            label = { Text(stringResource(id = tab.labelRes)) }
+                        )
+                    }
                 }
             }
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            // AnimatedContent provides smooth direction-aware slide & fade transitions between tabs
-            AnimatedContent(
-                targetState = selectedTab,
-                transitionSpec = {
-                    val forward = targetState.ordinal > initialState.ordinal
-                    val slideIn = slideInHorizontally(animationSpec = tween(300))
-                    {
-                        width -> if (forward) width else -width
-                    } + fadeIn(animationSpec = tween(300))
-                    val slideOut = slideOutHorizontally(animationSpec = tween(300))
-                    {
-                        width -> if (forward) -width else width
-                    } + fadeOut(animationSpec = tween(300))
-                    slideIn togetherWith slideOut
-                },
-                label = "TabScreenTransition"
-            ) { tab ->
-                when (tab) {
-                    HomeTab.FAVORITES -> {
-                        FavoritesScreen(
-                            viewModel = favoritesViewModel,
-                            onRouteClick = { startPlace: Place, destinationPlace: Place ->
-                                if (PermissionUtils.hasLocationPermission(context)){
-                                    selectedTab = HomeTab.MAP
-                                    mapViewModel.getRouteFromFavs(startPlace, destinationPlace)
-                                } else {
+        ) { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                // AnimatedContent provides smooth direction-aware slide & fade transitions between tabs
+                AnimatedContent(
+                    targetState = selectedTab,
+                    transitionSpec = {
+                        val forward = targetState.ordinal > initialState.ordinal
+                        val slideIn = slideInHorizontally(animationSpec = tween(300))
+                        {
+                                width -> if (forward) width else -width
+                        } + fadeIn(animationSpec = tween(300))
+                        val slideOut = slideOutHorizontally(animationSpec = tween(300))
+                        {
+                                width -> if (forward) -width else width
+                        } + fadeOut(animationSpec = tween(300))
+                        slideIn togetherWith slideOut
+                    },
+                    label = "TabScreenTransition"
+                ) { tab ->
+                    when (tab) {
+                        HomeTab.FAVORITES -> {
+                            FavoritesScreen(
+                                viewModel = favoritesViewModel,
+                                onRouteClick = { startPlace: Place, destinationPlace: Place ->
+                                    if (PermissionUtils.hasLocationPermission(context)){
+                                        selectedTab = HomeTab.MAP
+                                        mapViewModel.getRouteFromFavs(startPlace, destinationPlace)
+                                    } else {
+                                        checkAndRequestPermissions()
+                                    }
+                                }
+                            )
+                        }
+                        HomeTab.MAP -> {
+                            MapScreen(
+                                viewModel = mapViewModel,
+                                onNavigateToWeather = onNavigateToWeather,
+                                onRequestPermission = {
                                     checkAndRequestPermissions()
                                 }
-                            }
-                        )
-                    }
-                    HomeTab.MAP -> {
-                        MapScreen(
-                            viewModel = mapViewModel,
-                            onNavigateToWeather = onNavigateToWeather,
-                            onRequestPermission = {
-                                checkAndRequestPermissions()
-                            }
-                        )
-                    }
-                    HomeTab.PROFILE -> {
-                        ProfileScreen(
-                            viewModel = profileViewModel,
-                            onLogoutClick = onLogoutClick
-                        )
+                            )
+                        }
+                        HomeTab.PROFILE -> {
+                            ProfileScreen(
+                                viewModel = profileViewModel,
+                                onLogoutClick = onLogoutClick
+                            )
+                        }
                     }
                 }
             }

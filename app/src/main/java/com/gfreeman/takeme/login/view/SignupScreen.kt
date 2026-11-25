@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gfreeman.takeme.R
 import com.gfreeman.takeme.login.viewmodel.SignupViewModel
+import com.gfreeman.takeme.ui.theme.TakeMeTheme
 
 /**
  * SignupScreen Composable.
@@ -67,145 +68,146 @@ fun SignupScreen(
             onSignupSuccess()
         }
     }
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        // Clean background image with no opacity/scrim overlay
-        Image(
-            painter = painterResource(R.drawable.login_background),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+    TakeMeTheme(darkTheme = false) {
+        Box(
             modifier = Modifier.fillMaxSize()
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
-            // App Logo & Title
+            // Clean background image with no opacity/scrim overlay
             Image(
-                painter = painterResource(id = R.drawable.app_logo),
-                contentDescription = "App Icon",
-                modifier = Modifier.size(80.dp)
+                painter = painterResource(R.drawable.login_background),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = "Create Account",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Email Input with solid surface background and crisp text colors
-            OutlinedTextField(
-                value = uiState.email,
-                onValueChange = { viewModel.onEmailChanged(it) },
-                label = { Text("Email") },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Email,
-                        contentDescription = "Email Icon",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                ),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MaterialTheme.colorScheme.primaryContainer,
-                    unfocusedTextColor = MaterialTheme.colorScheme.primaryContainer
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                // App Logo & Title
+                Image(
+                    painter = painterResource(id = R.drawable.app_logo),
+                    contentDescription = "App Icon",
+                    modifier = Modifier.size(80.dp)
                 )
-            )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            // Password Input
-            OutlinedTextField(
-                value = uiState.password,
-                onValueChange = { viewModel.onPasswordChanged(it) },
-                label = { Text("Password") },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Lock,
-                        contentDescription = "Lock Icon",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = { viewModel.onTogglePasswordVisibility() }) {
-                        val iconRes = if (uiState.isPasswordVisible) {
-                            R.drawable.ic_visibility_off
-                        } else {
-                            R.drawable.ic_visibility_on
-                        }
+                Text(
+                    text = "Create Account",
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Email Input with solid surface background and crisp text colors
+                OutlinedTextField(
+                    value = uiState.email,
+                    onValueChange = { viewModel.onEmailChanged(it) },
+                    label = { Text("Email") },
+                    leadingIcon = {
                         Icon(
-                            painter = painterResource(id = iconRes),
-                            contentDescription = "Toggle Password Visibility",
+                            imageVector = Icons.Default.Email,
+                            contentDescription = "Email Icon",
                             tint = MaterialTheme.colorScheme.primary
                         )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.primaryContainer,
+                        unfocusedTextColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Password Input
+                OutlinedTextField(
+                    value = uiState.password,
+                    onValueChange = { viewModel.onPasswordChanged(it) },
+                    label = { Text("Password") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = "Lock Icon",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { viewModel.onTogglePasswordVisibility() }) {
+                            val iconRes = if (uiState.isPasswordVisible) {
+                                R.drawable.ic_visibility_off
+                            } else {
+                                R.drawable.ic_visibility_on
+                            }
+                            Icon(
+                                painter = painterResource(id = iconRes),
+                                contentDescription = "Toggle Password Visibility",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    },
+                    visualTransformation = if (uiState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.primaryContainer,
+                        unfocusedTextColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Signup Button
+                Button(
+                    onClick = { viewModel.signUp() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    enabled = !uiState.isLoading
+                ) {
+                    if (uiState.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Text("Sign Up")
                     }
-                },
-                visualTransformation = if (uiState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MaterialTheme.colorScheme.primaryContainer,
-                    unfocusedTextColor = MaterialTheme.colorScheme.primaryContainer
-                )
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Signup Button
-            Button(
-                onClick = { viewModel.signUp() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                enabled = !uiState.isLoading
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Text("Sign Up")
                 }
-            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            // Back to Login
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Already have an account?",
-                    fontWeight = FontWeight.Medium
-                )
-                TextButton(onClick = onLoginClick) {
+                // Back to Login
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
-                        text = "Log In",
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        fontWeight = FontWeight.Bold
+                        text = "Already have an account?",
+                        fontWeight = FontWeight.Medium
                     )
+                    TextButton(onClick = onLoginClick) {
+                        Text(
+                            text = "Log In",
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
         }
