@@ -1,9 +1,5 @@
 package com.gfreeman.takeme.home.view
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -40,7 +36,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gfreeman.takeme.R
 import com.gfreeman.takeme.home.model.map.Place
@@ -92,7 +87,7 @@ fun HomeScreen(
         } else {
             if (!PermissionUtils.shouldShowLocationRationale(context)){
                 isDeniedPermanently = true
-                showRationaleDialog = true
+                //showRationaleDialog = true
             }
             Toast.makeText(
                 context,
@@ -207,15 +202,22 @@ fun HomeScreen(
                         FavoritesScreen(
                             viewModel = favoritesViewModel,
                             onRouteClick = { startPlace: Place, destinationPlace: Place ->
-                                selectedTab = HomeTab.MAP
-                                mapViewModel.getRouteFromFavs(startPlace, destinationPlace)
+                                if (PermissionUtils.hasLocationPermission(context)){
+                                    selectedTab = HomeTab.MAP
+                                    mapViewModel.getRouteFromFavs(startPlace, destinationPlace)
+                                } else {
+                                    checkAndRequestPermissions()
+                                }
                             }
                         )
                     }
                     HomeTab.MAP -> {
                         MapScreen(
                             viewModel = mapViewModel,
-                            onNavigateToWeather = onNavigateToWeather
+                            onNavigateToWeather = onNavigateToWeather,
+                            onRequestPermission = {
+                                checkAndRequestPermissions()
+                            }
                         )
                     }
                     HomeTab.PROFILE -> {

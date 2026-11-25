@@ -1,6 +1,9 @@
 package com.gfreeman.takeme.home.view.map
 
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -44,6 +47,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,7 +81,8 @@ import org.maplibre.android.maps.Style
 @Composable
 fun MapScreen(
     viewModel: MapViewModel,
-    onNavigateToWeather: (Point) -> Unit
+    onNavigateToWeather: (Point) -> Unit,
+    onRequestPermission: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -211,7 +216,11 @@ fun MapScreen(
                     viewModel.clearSearchResults()
                 },
                 onDestinationSelected = { place ->
-                    viewModel.selectDestination(place)
+                    if (PermissionUtils.hasLocationPermission(context)){
+                        viewModel.selectDestination(place)
+                    } else {
+                        onRequestPermission()
+                    }
                 },
                 onSearchDestination = {
                     viewModel.performSearchPlaces()
