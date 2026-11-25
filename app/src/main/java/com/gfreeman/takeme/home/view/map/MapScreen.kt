@@ -1,6 +1,9 @@
 package com.gfreeman.takeme.home.view.map
 
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -44,6 +47,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,7 +81,8 @@ import org.maplibre.android.maps.Style
 @Composable
 fun MapScreen(
     viewModel: MapViewModel,
-    onNavigateToWeather: (Point) -> Unit
+    onNavigateToWeather: (Point) -> Unit,
+    onRequestPermission: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -86,6 +91,12 @@ fun MapScreen(
 
     var mapLibreMap by remember { mutableStateOf<MapLibreMap?>(null) }
     var currentStyle by remember { mutableStateOf<Style?>(null) }
+    val mapView = remember {
+        MapLibre.getInstance(context)
+        MapView(context).apply {
+            onCreate(null)
+        }
+    }
 
     // Toast error observer
     LaunchedEffect(uiState.errorMessage) {
@@ -108,16 +119,20 @@ fun MapScreen(
             viewModel.onWeatherNavigationHandled()
         }
     }
-    LaunchedEffect(mapLibreMap,uiState.userLocation) {
+    LaunchedEffect(mapLibreMap, currentStyle, uiState.userLocation) {
         val map = mapLibreMap
+        val style = currentStyle
         val userLoc = uiState.userLocation
-        if (map != null && userLoc != null) {
-            map.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    LatLng(userLoc.latitude, userLoc.longitude),
-                    15.0
+        if (map != null && style != null) {
+            mapsManager.enableLocationComponent(map, style, context)
+            if (userLoc != null) {
+                map.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        LatLng(userLoc.latitude, userLoc.longitude),
+                        15.0
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -142,17 +157,15 @@ fun MapScreen(
             // 1. MapLibre Map Embedded via AndroidView
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
-                factory = { ctx ->
-                    MapLibre.getInstance(ctx)
-                    MapView(ctx).apply {
-                        onCreate(null)
+                factory = {
+                    mapView.apply {
                         getMapAsync { map ->
                             map.setStyle("https://tiles.openfreemap.org/styles/liberty") { style ->
                                 mapLibreMap = map
                                 currentStyle = style
 
                                 // Enable location blue dot and pulse ring
-                                mapsManager.enableLocationComponent(map, style, ctx)
+                                mapsManager.enableLocationComponent(map, style, context)
                                 map.cameraPosition = CameraPosition.Builder()
                                     .target(
                                         LatLng(
@@ -169,21 +182,26 @@ fun MapScreen(
             )
 
             // 2. Lifecycle Management for MapView
-            DisposableEffect(lifecycleOwner) {
-                val mapViewInstance = MapView(context)
+            DisposableEffect(lifecycleOwner, mapView) {
                 val observer = LifecycleEventObserver { _, event ->
                     when (event) {
-                        Lifecycle.Event.ON_START -> mapViewInstance.onStart()
-                        Lifecycle.Event.ON_RESUME -> mapViewInstance.onResume()
-                        Lifecycle.Event.ON_PAUSE -> mapViewInstance.onPause()
-                        Lifecycle.Event.ON_STOP -> mapViewInstance.onStop()
-                        Lifecycle.Event.ON_DESTROY -> mapViewInstance.onDestroy()
+                        Lifecycle.Event.ON_START -> mapView.onStart()
+                        Lifecycle.Event.ON_RESUME -> mapView.onResume()
+                        Lifecycle.Event.ON_PAUSE -> mapView.onPause()
+                        Lifecycle.Event.ON_STOP -> mapView.onStop()
                         else -> {}
                     }
                 }
                 lifecycleOwner.lifecycle.addObserver(observer)
                 onDispose {
                     lifecycleOwner.lifecycle.removeObserver(observer)
+                    if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                        mapView.onPause()
+                    }
+                    if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                        mapView.onStop()
+                    }
+                    mapView.onDestroy()
                 }
             }
 
@@ -198,7 +216,11 @@ fun MapScreen(
                     viewModel.clearSearchResults()
                 },
                 onDestinationSelected = { place ->
-                    viewModel.selectDestination(place)
+                    if (PermissionUtils.hasLocationPermission(context)){
+                        viewModel.selectDestination(place)
+                    } else {
+                        onRequestPermission()
+                    }
                 },
                 onSearchDestination = {
                     viewModel.performSearchPlaces()
