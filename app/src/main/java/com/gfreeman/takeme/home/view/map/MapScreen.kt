@@ -86,6 +86,12 @@ fun MapScreen(
 
     var mapLibreMap by remember { mutableStateOf<MapLibreMap?>(null) }
     var currentStyle by remember { mutableStateOf<Style?>(null) }
+    val mapView = remember {
+        MapLibre.getInstance(context)
+        MapView(context).apply {
+            onCreate(null)
+        }
+    }
 
     // Toast error observer
     LaunchedEffect(uiState.errorMessage) {
@@ -146,17 +152,15 @@ fun MapScreen(
             // 1. MapLibre Map Embedded via AndroidView
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
-                factory = { ctx ->
-                    MapLibre.getInstance(ctx)
-                    MapView(ctx).apply {
-                        onCreate(null)
+                factory = {
+                    mapView.apply {
                         getMapAsync { map ->
                             map.setStyle("https://tiles.openfreemap.org/styles/liberty") { style ->
                                 mapLibreMap = map
                                 currentStyle = style
 
                                 // Enable location blue dot and pulse ring
-                                mapsManager.enableLocationComponent(map, style, ctx)
+                                mapsManager.enableLocationComponent(map, style, context)
                                 map.cameraPosition = CameraPosition.Builder()
                                     .target(
                                         LatLng(
@@ -173,21 +177,26 @@ fun MapScreen(
             )
 
             // 2. Lifecycle Management for MapView
-            DisposableEffect(lifecycleOwner) {
-                val mapViewInstance = MapView(context)
+            DisposableEffect(lifecycleOwner, mapView) {
                 val observer = LifecycleEventObserver { _, event ->
                     when (event) {
-                        Lifecycle.Event.ON_START -> mapViewInstance.onStart()
-                        Lifecycle.Event.ON_RESUME -> mapViewInstance.onResume()
-                        Lifecycle.Event.ON_PAUSE -> mapViewInstance.onPause()
-                        Lifecycle.Event.ON_STOP -> mapViewInstance.onStop()
-                        Lifecycle.Event.ON_DESTROY -> mapViewInstance.onDestroy()
+                        Lifecycle.Event.ON_START -> mapView.onStart()
+                        Lifecycle.Event.ON_RESUME -> mapView.onResume()
+                        Lifecycle.Event.ON_PAUSE -> mapView.onPause()
+                        Lifecycle.Event.ON_STOP -> mapView.onStop()
                         else -> {}
                     }
                 }
                 lifecycleOwner.lifecycle.addObserver(observer)
                 onDispose {
                     lifecycleOwner.lifecycle.removeObserver(observer)
+                    if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                        mapView.onPause()
+                    }
+                    if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                        mapView.onStop()
+                    }
+                    mapView.onDestroy()
                 }
             }
 
