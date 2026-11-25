@@ -107,10 +107,12 @@ fun MapScreen(
     }
 
     // Update polyline route on map whenever routePoints changes
-    LaunchedEffect(uiState.routePoints, currentStyle) {
+    LaunchedEffect(uiState.routePoints, currentStyle, mapLibreMap) {
         val style = currentStyle
-        if (style != null && uiState.routePoints.isNotEmpty()) {
-            MapsManager.addRouteToMap(uiState.routePoints, style)
+        val map = mapLibreMap
+        if (map != null && style != null && uiState.routePoints.isNotEmpty()) {
+            MapsManager.addRouteToMap(uiState.routePoints, style, context)
+            MapsManager.fitCameraToRoute(map, route = uiState.routePoints, context = context)
         }
     }
     LaunchedEffect(uiState.navigateToWeather) {
@@ -123,7 +125,7 @@ fun MapScreen(
         val map = mapLibreMap
         val style = currentStyle
         val userLoc = uiState.userLocation
-        if (map != null && style != null) {
+        if (map != null && style != null && uiState.routePoints.isEmpty()) {
             mapsManager.enableLocationComponent(map, style, context)
             if (userLoc != null) {
                 map.animateCamera(
