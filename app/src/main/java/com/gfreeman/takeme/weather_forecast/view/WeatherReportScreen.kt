@@ -2,6 +2,7 @@ package com.gfreeman.takeme.weather_forecast.view
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Box
@@ -60,8 +61,14 @@ fun WeatherReportScreen(
                 modifier = Modifier.fillMaxSize(),
                 factory = { context ->
                     WebView(context).apply {
+                        layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
                         @SuppressLint("SetJavaScriptEnabled")
                         settings.javaScriptEnabled = true
+                        settings.domStorageEnabled = true
+
                         webViewClient = object : WebViewClient() {
                             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                                 super.onPageStarted(view, url, favicon)
@@ -74,11 +81,6 @@ fun WeatherReportScreen(
                             }
                         }
                         loadUrl(weatherUrl)
-                    }
-                },
-                update = { webView ->
-                    if (webView.url != weatherUrl) {
-                        webView.loadUrl(weatherUrl)
                     }
                 }
             )
