@@ -274,4 +274,51 @@ fun fitCameraToRoute(map: MapLibreMap, route: List<LatLng>, context: Context) {
             e.printStackTrace()
         }
     }
+    fun centerOnUserLocation(
+        map: MapLibreMap,
+        fallbackLocation: Point?,
+        context: Context
+    ): Boolean {
+        if (!PermissionUtils.hasLocationPermission(context)){
+            return false
+        }
+        val locationComponent = map.locationComponent
+        val liveLocation = if (locationComponent.isLocationComponentActivated){
+            locationComponent.lastKnownLocation
+        } else { null }
+        val target = when{
+            liveLocation != null -> {
+                LatLng(liveLocation.latitude, liveLocation.longitude)
+            }
+            fallbackLocation != null -> {
+                LatLng(fallbackLocation.latitude, fallbackLocation.longitude)
+            }
+            else -> {
+                return false
+            }
+        }
+        if (locationComponent.isLocationComponentActivated && liveLocation != null){
+            if (locationComponent.cameraMode == CameraMode.TRACKING){
+                locationComponent.zoomWhileTracking(
+                    15.5,
+                    600L
+                )
+            } else {
+                locationComponent.setCameraMode(
+                    CameraMode.TRACKING,
+                    600L,
+                    15.5,
+                    null,
+                    null,
+                    null
+                )
+            }
+        } else {
+            map.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(target, 15.5),
+                600
+            )
+        }
+        return true
+    }
 }
