@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,6 +36,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -42,6 +44,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -139,6 +142,7 @@ fun MapScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0),
         floatingActionButton = {
             FabColumn(
                 uiState = uiState,
@@ -172,7 +176,6 @@ fun MapScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
         ) {
             // 1. MapLibre Map Embedded via AndroidView
             AndroidView(
@@ -244,7 +247,8 @@ fun MapScreen(
                 },
                 onSearchDestination = {
                     viewModel.performSearchPlaces()
-                }
+                },
+                modifier = Modifier.padding(paddingValues)
             )
         }
     }
@@ -361,43 +365,46 @@ fun FabColumn(
     onMyLocationClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        horizontalAlignment = Alignment.End,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = modifier
-    ) {
-        // Cancel Route FAB
-        if (uiState.isNavigating) {
+    //To eliminate extra padding on small fabs which makes gaps uneven
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides(0.dp) ) {
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = modifier
+        ) {
+            // Cancel Route FAB
+            if (uiState.isNavigating) {
+                SmallFloatingActionButton(
+                    onClick = onCancelRoute,
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_map_cancel_route),
+                        contentDescription = "Cancel Route"
+                    )
+                }
+            }
             SmallFloatingActionButton(
-                onClick = onCancelRoute,
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                contentColor = MaterialTheme.colorScheme.onErrorContainer
+                onClick = onMyLocationClicked,
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_map_cancel_route),
-                    contentDescription = "Cancel Route"
+                    painterResource(R.drawable.ic_my_location_24),
+                    contentDescription = "My location"
                 )
             }
-        }
-        SmallFloatingActionButton(
-            onClick = onMyLocationClicked,
-        ) {
-            Icon(
-                painterResource(R.drawable.ic_my_location_24),
-                contentDescription = "My location"
-            )
-        }
 
-        // Weather Forecast FAB
-        FloatingActionButton(
-            onClick = onWeatherFabClicked
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_forecast_sunny),
-                contentDescription = "Weather Forecast",
-                tint = null,
-                modifier = Modifier.size(36.dp)
-            )
+            // Weather Forecast FAB
+            FloatingActionButton(
+                onClick = onWeatherFabClicked
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_forecast_sunny),
+                    contentDescription = "Weather Forecast",
+                    tint = null,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
         }
     }
 }
