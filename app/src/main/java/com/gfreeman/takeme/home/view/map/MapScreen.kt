@@ -147,6 +147,24 @@ fun MapScreen(
                 },
                 onWeatherFabClicked = {
                     viewModel.onWeatherFabClicked()
+                },
+                onMyLocationClicked = {
+                    if (PermissionUtils.hasLocationPermission(context)){
+                        val map = mapLibreMap
+                        val style = currentStyle
+                        val centerOnLocation = map != null && style != null && mapsManager.centerOnUserLocation(
+                            map = map,
+                            fallbackLocation = uiState.userLocation,
+                            context = context
+                        )
+                        if (!centerOnLocation){
+                            Toast.makeText(context, "Waiting for current location...", Toast.
+                            LENGTH_SHORT).show()
+                            viewModel.getCurrentPosition()
+                        }
+                    } else {
+                        onRequestPermission()
+                    }
                 }
             )
         }
@@ -340,11 +358,13 @@ fun FabColumn(
     uiState: MapUiState,
     onCancelRoute: () -> Unit,
     onWeatherFabClicked: () -> Unit,
+    onMyLocationClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.End,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = modifier
     ) {
         // Cancel Route FAB
         if (uiState.isNavigating) {
@@ -359,12 +379,18 @@ fun FabColumn(
                 )
             }
         }
+        SmallFloatingActionButton(
+            onClick = onMyLocationClicked,
+        ) {
+            Icon(
+                painterResource(R.drawable.ic_my_location_24),
+                contentDescription = "My location"
+            )
+        }
 
         // Weather Forecast FAB
         FloatingActionButton(
-            onClick = onWeatherFabClicked,
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            onClick = onWeatherFabClicked
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_forecast_sunny),
