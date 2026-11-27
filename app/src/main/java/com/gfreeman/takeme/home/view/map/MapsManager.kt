@@ -321,4 +321,10 @@ fun fitCameraToRoute(map: MapLibreMap, route: List<LatLng>, context: Context) {
         }
         return true
     }
+    fun clearRoute(currentStyle: Style){
+        currentStyle.removeLayer("route-layer")
+        currentStyle.removeSource("route-source")
+        currentStyle.removeLayer("destination-layer")
+        currentStyle.removeSource("destination-source")
+    }
 }

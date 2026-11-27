@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.gfreeman.takeme.home.model.map.MapRepository
 import com.gfreeman.takeme.home.model.map.Place
 import com.gfreeman.takeme.home.model.map.Point
+import com.gfreeman.takeme.home.view.map.MapsManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -98,7 +99,6 @@ class MapViewModel @Inject constructor(
                     searchResults = emptyList()
                 )
             }
-            startTrackingLocation()
         }
     }
 
@@ -169,7 +169,7 @@ class MapViewModel @Inject constructor(
     fun onWeatherNavigationHandled() {
         _uiState.update { it.copy(navigateToWeather = null) }
     }
-    private fun startTrackingLocation(){
+    fun startTrackingLocation(){
         locationJob?.cancel()
         locationJob = viewModelScope.launch {
             mapRepository.locationFlow.collect { point ->
