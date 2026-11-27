@@ -100,7 +100,7 @@ fun MapScreen(
             onCreate(null)
         }
     }
-
+    var hasCenteredOnce by remember { mutableStateOf(false) }
     // Toast error observer
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let { msg ->
@@ -128,7 +128,7 @@ fun MapScreen(
         val map = mapLibreMap
         val style = currentStyle
         val userLoc = uiState.userLocation
-        if (map != null && style != null && uiState.routePoints.isEmpty()) {
+        if (map != null && style != null && uiState.routePoints.isEmpty() && !hasCenteredOnce) {
             mapsManager.enableLocationComponent(map, style, context)
             if (userLoc != null) {
                 map.animateCamera(
@@ -137,6 +137,7 @@ fun MapScreen(
                         15.0
                     )
                 )
+                hasCenteredOnce = true
             }
         }
     }

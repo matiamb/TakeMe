@@ -7,6 +7,7 @@ import com.gfreeman.takeme.home.model.map.MapRepository
 import com.gfreeman.takeme.home.model.map.Place
 import com.gfreeman.takeme.home.model.map.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,6 +42,8 @@ class MapViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(MapUiState())
     val uiState: StateFlow<MapUiState> = _uiState.asStateFlow()
+
+    private var locationJob: Job? = null
 
     fun onSearchQueryChanged(query: String) {
         _uiState.update { it.copy(searchQuery = query) }
@@ -95,6 +98,7 @@ class MapViewModel @Inject constructor(
                     searchResults = emptyList()
                 )
             }
+            startTrackingLocation()
         }
     }
 
@@ -124,6 +128,7 @@ class MapViewModel @Inject constructor(
         viewModelScope.launch {
             mapRepository.stopLocationUpdates()
             mapRepository.stopCheckingDistanceToRoute(context)
+            stopTrackingLocation()
             _uiState.update {
                 it.copy(
                     routePoints = emptyList(),
@@ -163,6 +168,20 @@ class MapViewModel @Inject constructor(
     }
     fun onWeatherNavigationHandled() {
         _uiState.update { it.copy(navigateToWeather = null) }
+    }
+    private fun startTrackingLocation(){
+        locationJob?.cancel()
+        locationJob = viewModelScope.launch {
+            mapRepository.locationFlow.collect { point ->
+                _uiState.update {
+                    it.copy(userLocation = point)
+                }
+            }
+        }
+    }
+    private fun stopTrackingLocation(){
+        locationJob?.cancel()
+        locationJob = null
     }
     init {
         getCurrentPosition()

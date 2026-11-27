@@ -3,13 +3,21 @@ package com.gfreeman.takeme.home.model.map
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
+import android.os.Looper
 import android.util.Log
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.Tasks.await
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -22,6 +30,30 @@ class MapRepositoryImpl @Inject constructor(
 ) : MapRepository {
 
     private var fusedLocationClient: FusedLocationProviderClient? = LocationServices.getFusedLocationProviderClient(context)
+
+    @SuppressLint("MissingPermission")
+    override val locationFlow: Flow<Point> = callbackFlow {
+        val request = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            2000L
+        ).build()
+
+        val callback = object : LocationCallback(){
+            override fun onLocationResult(result: LocationResult) {
+                result.lastLocation?.let { loc ->
+                    trySend(Point(loc.latitude, loc.longitude))
+                }
+            }
+        }
+        fusedLocationClient?.requestLocationUpdates(
+            request,
+            callback,
+            Looper.getMainLooper()
+        )
+        awaitClose {
+            fusedLocationClient?.removeLocationUpdates(callback)
+        }
+    }
 
     override suspend fun getPlacesFromSearch(placeToSearch: String): List<Place> = withContext(ioDispatcher) {
         try {
@@ -73,15 +105,15 @@ class MapRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun initFusedLocationProviderClient(context: Context) {
+    override suspend fun initFusedLocationProviderClient() {
         withContext(ioDispatcher){
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         }
     }
 
-    override suspend fun startLocationUpdates(context: Context) {
+    override suspend fun startLocationUpdates() {
         withContext(ioDispatcher){
-            initFusedLocationProviderClient(context)
+            initFusedLocationProviderClient()
         }
     }
 
